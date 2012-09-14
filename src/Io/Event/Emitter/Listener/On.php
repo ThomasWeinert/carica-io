@@ -1,10 +1,10 @@
 <?php
 
-namespace Carica\Io\Event\Emitter\Listener {
+namespace Carica\Io\Event\Emitter\Listener  {
 
   use Carica\Io\Event;
 
-  class On {
+  class On implements Event\Emitter\Listener {
 
     protected $_emitter = NULL;
     protected $_event = NULL;
