@@ -36,5 +36,36 @@ namespace Carica\Io\Event {
         $events[0]
       );
     }
+
+    /**
+     * @covers Carica\Io\Event\Emitter::once
+     */
+    public function testOnceAddListener() {
+      $event = $this
+        ->getMockBuilder('Carica\Io\Event\Emitter\Listener\Once')
+        ->disableOriginalConstructor()
+        ->getMock();
+      $emitter = new Emitter();
+      $emitter->once('foo', $event);
+      $this->assertEquals(
+        array($event), $emitter->listeners('foo')
+      );
+    }
+
+    /**
+     * @covers Carica\Io\Event\Emitter::once
+     */
+    public function testOnceWrapsFunction() {
+      $emitter = new Emitter();
+      $emitter->once(
+        'foo',
+        function() {}
+      );
+      $events = $emitter->listeners('foo');
+      $this->assertInstanceOf(
+        'Carica\Io\Event\Emitter\Listener\Once',
+        $events[0]
+      );
+    }
   }
 }

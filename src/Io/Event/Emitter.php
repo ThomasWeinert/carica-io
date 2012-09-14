@@ -14,8 +14,8 @@ namespace Carica\Io\Event {
     }
 
     public function once($event, $listener) {
-      $listener = $callback instanceOf Emitter\Listener\Once
-        ? $listener : new EventEmitterListener($this, $event, $listener);
+      $listener = $listener instanceOf Emitter\Listener\Once
+        ? $listener : new Emitter\Listener\Once($this, $event, $listener);
       $this->on($event, $listener);
     }
 
