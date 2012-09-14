@@ -6,6 +6,9 @@ namespace Carica\Io\Event {
 
   class EmitterTest extends \PHPUnit_Framework_TestCase {
 
+    /**
+     * @covers Carica\Io\Event\Emitter::on
+     */
     public function testOnAddListener() {
       $event = $this
         ->getMockBuilder('Carica\Io\Event\Emitter\Listener\On')
@@ -18,5 +21,20 @@ namespace Carica\Io\Event {
       );
     }
 
+    /**
+     * @covers Carica\Io\Event\Emitter::on
+     */
+    public function testOnWrapsFunction() {
+      $emitter = new Emitter();
+      $emitter->on(
+        'foo',
+        function() {}
+      );
+      $events = $emitter->listeners('foo');
+      $this->assertInstanceOf(
+        'Carica\Io\Event\Emitter\Listener\On',
+        $events[0]
+      );
+    }
   }
 }
