@@ -67,5 +67,15 @@ namespace Carica\Io\Event {
         $events[0]
       );
     }
+
+    /**
+     * @covers Carica\Io\Event\Emitter::removeListener
+     */
+    public function testRemoveListener() {
+      $listener = $this->getMock('Carica\Io\Event\Emitter\Listener');
+      $emitter = new Emitter();
+      $emitter->on('foo', $listener);
+      $emitter->removeListener('foo', $listener);
+    }
   }
 }

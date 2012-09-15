@@ -7,7 +7,7 @@ namespace Carica\Io\Event {
     private $_events = array();
 
     public function on($event, $listener) {
-      $listener = $listener instanceOf Emitter\Listener\On
+      $listener = $listener instanceOf Emitter\Listener
         ? $listener : new Emitter\Listener\On($this, $event, $listener);
       $this->_events[$event][] = $listener;
       $this->emit('newListener', $listener);
