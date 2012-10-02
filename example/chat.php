@@ -55,14 +55,17 @@ $server->events()->on(
               foreach ($clients as $user) {
                 $client->connection->write('- '.$user->name."\n");
               }
-              return;
+              break;
             case 'quit' :
               $client->connection->close();
-              return;
+              break;
+            default :
+              $client->connection->write("Unknown command.\n");
             }
+            return;
           }
+          broadcast($clients, $client->name.': '.$data);
         }
-        broadcast($clients, $client->name.': '.$data);
       }
     );
 
