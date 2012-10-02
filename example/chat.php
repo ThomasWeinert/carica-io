@@ -1,4 +1,10 @@
 <?php
+/**
+ * A really simple chat server. Clients can connect to it using netcat
+ *
+ * Basically a php implementation of
+ * http://dhotson.tumblr.com/post/271733389/a-simple-chat-server-in-node-js
+ */
 
 class Client {
   public $connection = NULL;
@@ -71,6 +77,6 @@ $server->events()->on(
   }
 );
 
-$server->listen("tcp://0.0.0.0:8080");
+$server->listen("tcp://0.0.0.0:7000");
 
 $loop->run();
