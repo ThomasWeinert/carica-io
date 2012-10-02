@@ -9,7 +9,7 @@ $loop = Io\Event\Loop\Factory::create();
 $clients = array();
 
 $server = new Io\Network\Server($loop);
-$server->eventEmitter()->on(
+$server->events()->on(
   'connection',
   function ($stream) use ($loop, &$clients) {
     echo "Client connected: $stream\n";

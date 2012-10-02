@@ -17,7 +17,7 @@ namespace Carica\Io\Event\Emitter {
      * @param Carica\Io\Event\Emitter $emitter
      * @return Carica\Io\Event\Emitter
      */
-    public function eventEmitter(Event\Emitter $emitter = NULL) {
+    public function events(Event\Emitter $emitter = NULL) {
       if (NULL !== $emitter) {
         $this->_eventEmitter = $emitter;
       } elseif (NULL === $this->_eventEmitter) {

@@ -46,7 +46,7 @@ namespace Carica\Io\Stream {
         $this->Resource($resource);
         return TRUE;
       } else {
-        $this->eventEmitter()->emit('error', sprintf('Can not open port: "%s".', $this->_address));
+        $this->events()->emit('error', sprintf('Can not open port: "%s".', $this->_address));
         return FALSE;
       }
     }
@@ -62,7 +62,7 @@ namespace Carica\Io\Stream {
       if ($resource = $this->Resource()) {
         $data = fread($resource, $bytes);
         if (is_string($data) && $data !== '') {
-          $this->eventEmitter()->emit('data', $data);
+          $this->events()->emit('data', $data);
           return $data;
         }
       }

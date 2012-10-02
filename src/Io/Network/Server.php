@@ -45,7 +45,7 @@ namespace Carica\Io\Network {
         if ($stream) {
           stream_set_blocking($stream, 0);
           $this->setStream($stream);
-          $this->eventEmitter()->emit('listen', $address);
+          $this->events()->emit('listen', $address);
         }
       }
     }
@@ -59,7 +59,7 @@ namespace Carica\Io\Network {
 
     public function accept() {
       if ($this->isActive() && ($stream = @stream_socket_accept($this->_stream, 1, $peer))) {
-        $this->eventEmitter()->emit('connection', $stream, $peer);
+        $this->events()->emit('connection', $stream, $peer);
       }
     }
   }

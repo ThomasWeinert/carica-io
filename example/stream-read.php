@@ -10,13 +10,13 @@ $loop = Loop\Factory::create();
 $write = fopen('c:/temp/sample.txt', 'w');
 
 $stream = new Stream\FileReader($loop, 'c:/temp/sample.txt');
-$stream->eventEmitter()->on(
+$stream->events()->on(
   'data',
   function($data) {
     echo $data;
   }
 );
-$stream->eventEmitter()->on(
+$stream->events()->on(
   'error',
   function($error) use ($loop) {
     echo $error;

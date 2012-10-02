@@ -42,7 +42,7 @@ namespace Carica\Io\Network {
       if ($this->isActive()) {
         $data = stream_socket_recvfrom($this->_stream, $bytes);
         if (is_string($data) && $data !== '') {
-          $this->eventEmitter()->emit('data', $data);
+          $this->events()->emit('data', $data);
           return $data;
         }
       }
@@ -61,7 +61,7 @@ namespace Carica\Io\Network {
       if ($this->isActive()) {
         stream_socket_shutdown($this->_stream, STREAM_SHUT_RDWR);
         $this->Resource(FALSE);
-        $this->eventEmitter()->emit('close');
+        $this->events()->emit('close');
       }
     }
   }

@@ -22,14 +22,14 @@ $loop = Io\Event\Loop\Factory::create();
 $clients = array();
 
 $server = new Io\Network\Server($loop);
-$server->eventEmitter()->on(
+$server->events()->on(
   'connection',
   function ($stream) use ($loop, &$clients) {
     echo "Client connected: $stream\n";
     $client = new Client();
     $client->connection = new Io\Network\Connection($loop, $stream);
     $client->connection->write("Welcome, enter your username:\n");
-    $client->connection->eventEmitter()->on(
+    $client->connection->events()->on(
       'data',
       function($data) use ($client, &$clients) {
         if (empty($client->name) &&
@@ -60,7 +60,7 @@ $server->eventEmitter()->on(
       }
     );
 
-    $client->connection->eventEmitter()->once(
+    $client->connection->events()->once(
       'close',
       function () use ($client, &$clients) {
         unset($clients[$client->name]);

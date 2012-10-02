@@ -50,8 +50,8 @@ namespace Carica\Io\Firmata {
     }
 
     public function activate($callback) {
-      $this->_serialPort->eventEmitter()->on('error', $callback);
-      $this->_serialPort->eventEmitter()->on('data', array($this, 'onData'));
+      $this->_serialPort->events()->on('error', $callback);
+      $this->_serialPort->events()->on('data', array($this, 'onData'));
       if ($this->_serialPort->open()) {
         $this->_serialPort->write(REPORT_VERSION);
         return TRUE;
