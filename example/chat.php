@@ -80,6 +80,6 @@ $server->events()->on(
   }
 );
 
-$server->listen("tcp://0.0.0.0:7000");
+$server->listen(7000);
 
 $loop->run();
