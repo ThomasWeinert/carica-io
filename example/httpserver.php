@@ -12,24 +12,19 @@ $server = new Io\Network\Server($loop);
 $server->events()->on(
   'connection',
   function ($stream) use ($loop) {
-    $request = new Io\Network\Http\Request($loop, $stream);
+    $request = new Io\Network\Http\Connection($loop, $stream);
     $request->events()->on(
-      'status',
+      'request',
       function ($request) {
         echo $request->method.' '.$request->url."\n";
-      }
-    );
-    $request->events()->on(
-      'headers',
-      function ($request) {
-        $request->write(
-          "HTTP/1.0 200 OK\r\n".
+        $request->Connection()->write(
+          "HTTP/1.1 200 OK\r\n".
           "Connection: close\r\n".
           "Content-Length: 11\r\n".
           "Content-Type: text/plain; charset=UTF-8\r\n\r\n".
           "Hallo Welt!"
         );
-        $request->close();
+        $request->Connection()->close();
       }
     );
   }
