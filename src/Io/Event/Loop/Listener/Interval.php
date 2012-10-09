@@ -18,11 +18,15 @@ namespace Carica\Io\Event\Loop\Listener {
     public function tick() {
       $now = $this->getNow();
       if ($now >= $this->_next) {
-        $this->_next = $now + $this->_interval;
+        $this->reset();
         call_user_func($this->_callback);
         return TRUE;
       }
       return FALSE;
+    }
+
+    public function reset() {
+      $this->_next = $this->getNow() + $this->_interval;
     }
 
     private function getNow() {
