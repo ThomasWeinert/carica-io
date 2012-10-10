@@ -7,6 +7,7 @@ namespace Carica\Io {
     private $_callbacks = array();
     private $_disabled = FALSE;
     private $_locked = FALSE;
+    private $_fired = FALSE;
 
     public function add(Callable $callback) {
       $hash = $this->getCallableHash($callback);
@@ -46,16 +47,21 @@ namespace Carica\Io {
     }
 
     public function disabled() {
-      return $this->_diabled;
+      return $this->_disabled;
     }
 
     public function fire() {
       if (!$this->_disabled) {
+        $this->_fired = TRUE;
         $arguments = func_get_args();
         foreach ($this->_callbacks as $callback) {
           call_user_func_array($callback, $arguments);
         }
       }
+    }
+
+    public function fired() {
+      return $this->_fired;
     }
 
     public function __invoke() {

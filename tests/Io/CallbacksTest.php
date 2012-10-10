@@ -104,6 +104,68 @@ namespace Carica\Io {
     /**
      * @covers Carica\Io\Callbacks
      */
+    public function testLockBlocksAdd() {
+      $callbacks = new Callbacks();
+      $callbacks->lock();
+      $callbacks->add('substr');
+      $this->assertEquals(
+          array(),
+          iterator_to_array($callbacks)
+      );
+    }
+
+    /**
+     * @covers Carica\Io\Callbacks
+     */
+    public function testLockBlocksRemove() {
+      $callbacks = new Callbacks();
+      $callbacks->add('substr');
+      $callbacks->lock();
+      $callbacks->remove('substr');
+      $this->assertEquals(
+          array('substr'),
+          iterator_to_array($callbacks)
+      );
+    }
+
+    /**
+     * @covers Carica\Io\Callbacks
+     */
+    public function testLockBlocksClear() {
+      $callbacks = new Callbacks();
+      $callbacks->add('substr');
+      $callbacks->lock();
+      $callbacks->clear();
+      $this->assertEquals(
+          array('substr'),
+          iterator_to_array($callbacks)
+      );
+    }
+
+    /**
+     * @covers Carica\Io\Callbacks
+     */
+    public function testLockedExpectingTrue() {
+      $callbacks = new Callbacks();
+      $callbacks->lock();
+      $this->assertTrue(
+        $callbacks->locked()
+      );
+    }
+
+    /**
+     * @covers Carica\Io\Callbacks
+     */
+    public function testLockedExpectingFalse() {
+      $callbacks = new Callbacks();
+      $this->assertFalse(
+        $callbacks->locked()
+      );
+    }
+
+    /**
+     * @covers Carica\Io\Callbacks
+     */
     public function testFireWithTwoFunctions() {
       $foo = new \stdClass();
       $foo->literal = '';
@@ -120,6 +182,65 @@ namespace Carica\Io {
       );
       $callbacks();
       $this->assertEquals('Hello World!', $foo->literal);
+    }
+
+    /**
+     * @covers Carica\Io\Callbacks
+     */
+    public function testFiredExpectingTrue() {
+      $callbacks = new Callbacks();
+      $callbacks();
+      $this->assertTrue(
+        $callbacks->fired()
+      );
+    }
+
+    /**
+     * @covers Carica\Io\Callbacks
+     */
+    public function testFiredExpectingFalse() {
+      $callbacks = new Callbacks();
+      $this->assertFalse(
+        $callbacks->fired()
+      );
+    }
+
+    /**
+     * @covers Carica\Io\Callbacks
+     */
+    public function testDisableBlocksExecution() {
+      $foo = new \stdClass();
+      $foo->literal = '';
+      $callbacks = new Callbacks();
+      $callbacks->add(
+        function () use ($foo) {
+          $foo->literal .= 'Hello World!';
+        }
+      );
+      $callbacks->disable();
+      $callbacks();
+      $this->assertEquals('', $foo->literal);
+    }
+
+    /**
+     * @covers Carica\Io\Callbacks
+     */
+    public function testDisabledExpectingTrue() {
+      $callbacks = new Callbacks();
+      $callbacks->disable();
+      $this->assertTrue(
+          $callbacks->disabled()
+      );
+    }
+
+    /**
+     * @covers Carica\Io\Callbacks
+     */
+    public function testDisabledExpectingFalse() {
+      $callbacks = new Callbacks();
+      $this->assertFalse(
+          $callbacks->disabled()
+      );
     }
 
     /**
