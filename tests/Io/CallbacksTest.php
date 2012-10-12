@@ -23,8 +23,9 @@ namespace Carica\Io {
      */
     public function testAddWithTwoCalls() {
       $callbacks = new Callbacks();
-      $callbacks->add('strpos');
-      $callbacks->add('substr');
+      $callbacks
+        ->add('strpos')
+        ->add('substr');
       $this->assertEquals(
         array('strpos', 'substr'),
         iterator_to_array($callbacks)
@@ -70,12 +71,29 @@ namespace Carica\Io {
     /**
      * @covers Carica\Io\Callbacks
      */
+    public function testRemove() {
+      $callbacks = new Callbacks();
+      $callbacks
+        ->add('strpos')
+        ->remove('strpos')
+        ->add('substr');
+      $this->assertEquals(
+        array('substr'),
+        iterator_to_array($callbacks)
+      );
+    }
+
+    /**
+     * @covers Carica\Io\Callbacks
+     */
     public function testClearAfterAddingOneFunction() {
       $callbacks = new Callbacks();
-      $callbacks->add('strpos');
-      $callbacks->clear();
+      $callbacks
+        ->add('strpos')
+        ->clear()
+        ->add('substr');
       $this->assertEquals(
-        array(),
+        array('substr'),
         iterator_to_array($callbacks)
       );
     }
@@ -106,8 +124,9 @@ namespace Carica\Io {
      */
     public function testLockBlocksAdd() {
       $callbacks = new Callbacks();
-      $callbacks->lock();
-      $callbacks->add('substr');
+      $callbacks
+        ->lock()
+        ->add('substr');
       $this->assertEquals(
           array(),
           iterator_to_array($callbacks)
@@ -119,9 +138,10 @@ namespace Carica\Io {
      */
     public function testLockBlocksRemove() {
       $callbacks = new Callbacks();
-      $callbacks->add('substr');
-      $callbacks->lock();
-      $callbacks->remove('substr');
+      $callbacks
+        ->add('substr')
+        ->lock()
+        ->remove('substr');
       $this->assertEquals(
           array('substr'),
           iterator_to_array($callbacks)
@@ -133,12 +153,13 @@ namespace Carica\Io {
      */
     public function testLockBlocksClear() {
       $callbacks = new Callbacks();
-      $callbacks->add('substr');
-      $callbacks->lock();
-      $callbacks->clear();
+      $callbacks
+        ->add('substr')
+        ->lock()
+        ->clear();
       $this->assertEquals(
-          array('substr'),
-          iterator_to_array($callbacks)
+        array('substr'),
+        iterator_to_array($callbacks)
       );
     }
 
@@ -170,16 +191,17 @@ namespace Carica\Io {
       $foo = new \stdClass();
       $foo->literal = '';
       $callbacks = new Callbacks();
-      $callbacks->add(
-        function () use ($foo) {
-          $foo->literal .= 'Hello ';
-        }
-      );
-      $callbacks->add(
-        function () use ($foo) {
-          $foo->literal .= 'World!';
-        }
-      );
+      $callbacks
+        ->add(
+          function () use ($foo) {
+            $foo->literal .= 'Hello ';
+          }
+        )
+        ->add(
+          function () use ($foo) {
+            $foo->literal .= 'World!';
+          }
+        );
       $callbacks();
       $this->assertEquals('Hello World!', $foo->literal);
     }
@@ -248,9 +270,10 @@ namespace Carica\Io {
      */
     public function testCountWithThreeFunctions() {
       $callbacks = new Callbacks();
-      $callbacks->add(function() {});
-      $callbacks->add(function() {});
-      $callbacks->add(function() {});
+      $callbacks
+        ->add(function() {})
+        ->add(function() {})
+        ->add(function() {});
       $this->assertEquals(3, count($callbacks));
     }
 
