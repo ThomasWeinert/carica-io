@@ -7,7 +7,7 @@ namespace Carica\Io {
   class DeferredTest extends \PHPUnit_Framework_TestCase {
 
     /**
-     * @covers Carica\Io\Event\Deferred
+     * @covers Carica\Io\Deferred
      */
     public function testResolve() {
       $literal = '';
@@ -23,7 +23,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Event\Deferred
+     * @covers Carica\Io\Deferred
      */
     public function testReject() {
       $literal = '';
@@ -39,7 +39,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Event\Deferred
+     * @covers Carica\Io\Deferred
      */
     public function testPromise() {
       $defer = new Deferred();
@@ -48,6 +48,26 @@ namespace Carica\Io {
       $this->assertAttributeSame(
         $defer, '_defer', $promise
       );
+    }
+
+    /**
+     * @covers Carica\Io\Deferred
+     */
+    public function testPipeWithDoneFilter() {
+      $defer = new Deferred();
+      $filtered = $defer->pipe(
+        function($value) {
+          return $value * 2;
+        }
+      );
+      $defer->resolve(5);
+      $result = 'fail';
+      $filtered->done(
+        function ($value) use (&$result) {
+          $result = '2 * 5 = '.$value;
+        }
+      );
+      $this->assertEquals('2 * 5 = 10', $result);
     }
   }
 }
