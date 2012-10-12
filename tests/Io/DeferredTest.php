@@ -2,7 +2,7 @@
 
 namespace Carica\Io {
 
-  include_once(__DIR__.'/../Bootstrap.php');
+  include_once(__DIR__.'/Bootstrap.php');
 
   class DeferredTest extends \PHPUnit_Framework_TestCase {
 
@@ -29,7 +29,7 @@ namespace Carica\Io {
       $literal = '';
       $defer = new Deferred();
       $defer
-        ->failed(
+        ->fail(
           function($text) use (&$literal) {
             $literal = $text;
           }
@@ -45,6 +45,9 @@ namespace Carica\Io {
       $defer = new Deferred();
       $promise = $defer->promise();
       $this->assertInstanceOf('Carica\Io\Deferred\Promise', $promise);
+      $this->assertAttributeSame(
+        $defer, '_defer', $promise
+      );
     }
   }
 }

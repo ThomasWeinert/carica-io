@@ -14,9 +14,9 @@ namespace Carica\Io {
     private $_progress = NULL;
 
     public function __construct() {
-      $this->_done = new Io\Callbacks();
-      $this->_failed = new Io\Callbacks();
-      $this->_progress = new Io\Callbacks();
+      $this->_done = new Callbacks();
+      $this->_failed = new Callbacks();
+      $this->_progress = new Callbacks();
     }
 
     public function always(Callable $callback) {
