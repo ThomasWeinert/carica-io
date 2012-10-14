@@ -2,6 +2,9 @@
 
 namespace Carica\Io {
 
+  /**
+   * Manage a list Callables, the Callables can be uses as one callable, too.
+   */
   class Callbacks implements \IteratorAggregate, \Countable {
 
     private $_callbacks = array();
@@ -9,6 +12,12 @@ namespace Carica\Io {
     private $_locked = FALSE;
     private $_fired = FALSE;
 
+    /**
+     * Add a new callable, and return itself for chaining
+     *
+     * @param callable $callback
+     * @return \Carica\Io\Callbacks
+     */
     public function add(Callable $callback) {
       $hash = $this->getCallableHash($callback);
       if (!($this->_locked || isset($this->_callbacks[$hash]))) {
@@ -17,6 +26,12 @@ namespace Carica\Io {
       return $this;
     }
 
+    /**
+     * Remove an callable, and return itself for chaining
+     *
+     * @param callable $callback
+     * @return \Carica\Io\Callbacks
+     */
     public function remove(Callable $callback) {
       $hash = $this->getCallableHash($callback);
       if (!$this->_locked && isset($this->_callbacks[$hash])) {
@@ -25,6 +40,11 @@ namespace Carica\Io {
       return $this;
     }
 
+    /**
+     * Remove all callables
+     *
+     * @return \Carica\Io\Callbacks
+     */
     public function clear() {
       if (!$this->_locked) {
         $this->_callbacks = array();
@@ -32,29 +52,60 @@ namespace Carica\Io {
       return $this;
     }
 
+    /**
+     * Validate if the given callable is ion the list.
+     *
+     * @param callable $callback
+     * @return boolean
+     */
     public function has(Callable $callback) {
       $hash = $this->getCallableHash($callback);
       return isset($this->_callbacks[$hash]);
     }
 
+    /**
+     * Lock the list, do now allow chanes any more.
+     *
+     * @return \Carica\Io\Callbacks
+     */
     public function lock() {
       $this->_locked = TRUE;
       return $this;
     }
 
+    /**
+     * Validate if the list is locked
+     *
+     * @return boolean
+     */
     public function locked() {
       return $this->_locked;
     }
 
+    /**
+     * Disable the execution of the callbacks in the list
+     *
+     * @return \Carica\Io\Callbacks
+     */
     public function disable() {
       $this->_disabled = TRUE;
       return $this;
     }
 
+    /**
+     * Validate if the callbacks are disabled
+     *
+     * @return boolean
+     */
     public function disabled() {
       return $this->_disabled;
     }
 
+    /**
+     * Execute the callbacks
+     *
+     * @param mixed $argument,...
+     */
     public function fire() {
       if (!$this->_disabled) {
         $this->_fired = TRUE;
@@ -65,31 +116,76 @@ namespace Carica\Io {
       }
     }
 
+    /**
+     * Validate if the callbacks were executed at least once
+     *
+     * @return boolean
+     */
     public function fired() {
       return $this->_fired;
     }
 
+    /**
+     * If the object is used as an functor, call fire()
+     *
+     * @param mixed $argument,...
+     */
     public function __invoke() {
       return call_user_func_array(array($this, 'fire'), func_get_args());
     }
 
-    public function __get($functionName) {
-      if (method_exists($this, $functionName)) {
-        $callback = array($this, $functionName);
+    /**
+     * Allow to fetch the methods of this object as anonymus functions
+     *
+     * @throws \LogicException
+     * @param string $name
+     * @return \Callable
+     */
+    public function __get($name) {
+      if (method_exists($this, $name)) {
+        $callback = array($this, $name);
         return function() use ($callback) {
           call_user_func_array($callback, func_get_args());
         };
       }
+      throw new LogicException('Unknown property: '.$name);
     }
 
+    /**
+     * Block changes to the object properties
+     *
+     * @param string $name
+     */
+    public function __set($name, $value) {
+      throw new LogicException('Unknown/Readonly property: '.$name);
+    }
+
+    /**
+     * IteratorAggregate interface for the stored callables
+     *
+     * @see IteratorAggregate::getIterator()
+     * @return \Iterator
+     */
     public function getIterator() {
       return new \ArrayIterator(array_values($this->_callbacks));
     }
 
+    /**
+     * Countable interface, return the number of stored callables
+     *
+     * @see Countable::count()
+     * @return integer
+     */
     public function count() {
       return count($this->_callbacks);
     }
 
+    /**
+     * Get an hash for the provided callable/object
+     *
+     * @param Callable|object $callable
+     * @return string
+     */
     private function getCallableHash($callable) {
       if (is_object($callable)) {
         return spl_object_hash($callable);
