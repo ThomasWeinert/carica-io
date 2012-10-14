@@ -13,9 +13,5 @@ namespace Carica\Io\Network\Http {
     public function getIterator() {
 
     }
-
-    public function setString($headerString) {
-
-    }
   }
 }

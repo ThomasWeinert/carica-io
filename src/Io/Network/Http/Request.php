@@ -33,5 +33,9 @@ namespace Carica\Io\Network\Http {
         $this->version = $matches['version'];
       }
     }
+
+    public function parseHeader($string) {
+      var_dump($string);
+    }
   }
 }
