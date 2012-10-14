@@ -6,7 +6,7 @@ namespace Carica\Io\Event\Loop {
 
   class StreamSelect implements Event\Loop {
 
-    private $_wait = 50;
+    private $_wait = 5;
 
     private $_listeners = array();
     private $_streams = array(
