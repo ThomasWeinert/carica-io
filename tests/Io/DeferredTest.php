@@ -69,5 +69,71 @@ namespace Carica\Io {
       );
       $this->assertEquals('2 * 5 = 10', $result);
     }
+
+    /**
+     * @covers Carica\Io\When
+     */
+    public function testWhenWithOneDeferredArgumentsReturnsThisArgumentsPromise() {
+      $testCase = $this;
+      $promise = Deferred::when(
+        $defer = new Deferred()
+      );
+      $this->assertSame($promise, $defer->promise());
+    }
+
+    /**
+     * @covers Carica\Io\When
+     */
+    public function testWhenWithOneArgumentThatsNotReferredReturnsResolvedPromise() {
+      $result = NULL;
+      $promise = Deferred::when(42)
+        ->then(
+          function ($argument) use (&$result) {
+            $result = $argument;
+          }
+        );
+      $this->assertEquals(42, $result);
+    }
+
+    /**
+     * @covers Carica\Io\When
+     */
+    public function testWhenWithTwoDeferredArguments() {
+      $result = NULL;
+      Deferred::when(
+        $deferOne = new Deferred(),
+        $deferTwo = new Deferred()
+      )->done(
+        function ($one, $two) use (&$result) {
+          $result = array($one, $two);
+        }
+      );
+      $deferOne->resolve('1.1', '1.2');
+      $deferTwo->resolve('2.1');
+      $this->assertEquals(
+        array(array('1.1', '1.2'), array('2.1')),
+        $result
+      );
+    }
+
+    /**
+     * @covers Carica\Io\When
+     */
+    public function testWhenWithTwoArgumentsButOnlyOneDeferred() {
+      $result = NULL;
+      Deferred::when(
+        42,
+        $defer = new Deferred()
+      )->done(
+        function ($one, $two) use (&$result) {
+          $result = array($one, $two);
+        }
+      );
+      $defer->resolve(84);
+      $this->assertEquals(
+        array(array(42), array(84)),
+        $result
+      );
+    }
   }
 }

@@ -9,9 +9,12 @@ namespace Carica\Io {
     const STATE_REJECTED = 'rejected';
 
     private $_state = self::STATE_PENDING;
+    private $_promise = NULL;
+
     private $_done = NULL;
     private $_failed = NULL;
     private $_progress = NULL;
+
     private $_finishArguments = array();
     private $_progressArguments = NULL;
 
@@ -106,7 +109,10 @@ namespace Carica\Io {
     }
 
     public function promise() {
-      return new Deferred\Promise($this);
+      if (NULL === $this->_promise) {
+        $this->_promise = new Deferred\Promise($this);
+      }
+      return $this->_promise;
     }
 
     public function reject() {
@@ -138,33 +144,65 @@ namespace Carica\Io {
     private function addCallbacksIfProvided($add, $callbacks) {
       if (is_callable($callbacks)) {
         $add($callbacks);
-      } elseif (is_array($done)) {
-        foreach ($done as $callback) {
+      } elseif (is_array($callbacks)) {
+        foreach ($callbacks as $callback) {
           $add($callbacks);
         }
       }
     }
-  }
 
-  function Deferred() {
-    return new Deferred();
-  }
+    public static function create() {
+      new Deferred();
+    }
 
-  function when() {
-    $arguments = func_get_args();
-    if (count($arguments)) {
-      $argument = $arguments[1];
-      if ($argument instanceof Deferred) {
-        return $argument;
+    public static function when() {
+      $arguments = func_get_args();
+      $counter = count($arguments);
+      if ($counter == 1) {
+        $argument = $arguments[0];
+        if ($argument instanceOf Deferred) {
+          return $argument->promise();
+        } elseif ($argument instanceOf Deferred\Promise) {
+          return $argument;
+        } else {
+          $defer = new Deferred();
+          $defer->resolve($argument);
+          return $defer->promise();
+        }
+      } elseif ($counter > 0) {
+        $master = new Deferred();
+        $resolveArguments = array();
+        foreach ($arguments as $index => $argument) {
+          if ($argument instanceOf Deferred || $argument instanceOf Deferred\Promise) {
+            $argument
+              ->done(
+                function() use ($master, $index, &$counter, &$resolveArguments) {
+                  $resolveArguments[$index] = func_get_args();
+                  if (--$counter == 0) {
+                    ksort($resolveArguments);
+                    call_user_func_array(array($master, 'resolve'), $resolveArguments);
+                  }
+                }
+              )
+              ->fail(
+                function() use ($master) {
+                  $master->fail();
+                }
+              );
+          } else {
+            $resolveArguments[$index] = array($argument);
+            if (--$counter == 0) {
+              ksort($resolveArguments);
+              call_user_func_array(array($master, 'resolve'), $resolveArguments);
+            }
+          }
+        }
+        return $master->promise();
       } else {
-        $defer = new Deferred();
-        $defer->resolve($argument);
-        return $defer;
+        $master = new Deferred();
+        $defer->resolve();
+        return $defer->promise();
       }
-    } else {
-      $master = new Deferred();
-      /...
-      return $master->promise();
     }
   }
 }
