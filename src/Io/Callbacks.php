@@ -14,6 +14,7 @@ namespace Carica\Io {
       if (!($this->_locked || isset($this->_callbacks[$hash]))) {
         $this->_callbacks[$hash] = $callback;
       }
+      return $this;
     }
 
     public function remove(Callable $callback) {
@@ -21,12 +22,14 @@ namespace Carica\Io {
       if (!$this->_locked && isset($this->_callbacks[$hash])) {
         unset($this->_callbacks[$hash]);
       }
+      return $this;
     }
 
     public function clear() {
       if (!$this->_locked) {
         $this->_callbacks = array();
       }
+      return $this;
     }
 
     public function has(Callable $callback) {
@@ -36,6 +39,7 @@ namespace Carica\Io {
 
     public function lock() {
       $this->_locked = TRUE;
+      return $this;
     }
 
     public function locked() {
@@ -44,6 +48,7 @@ namespace Carica\Io {
 
     public function disable() {
       $this->_disabled = TRUE;
+      return $this;
     }
 
     public function disabled() {
