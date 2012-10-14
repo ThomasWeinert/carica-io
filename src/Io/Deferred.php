@@ -12,7 +12,8 @@ namespace Carica\Io {
     private $_done = NULL;
     private $_failed = NULL;
     private $_progress = NULL;
-    private $_arguments = array();
+    private $_finishArguments = array();
+    private $_progressArguments = NULL;
 
     public function __construct() {
       $this->_done = new Callbacks();
@@ -24,7 +25,7 @@ namespace Carica\Io {
       $this->_done->add($callback);
       $this->_failed->add($callback);
       if ($this->_state != self::STATE_PENDING) {
-        call_user_func_array($callback, $this->_arguments);
+        call_user_func_array($callback, $this->_finishArguments);
       }
       return $this;
     }
@@ -32,7 +33,7 @@ namespace Carica\Io {
     public function done(Callable $callback) {
       $this->_done->add($callback);
       if ($this->_state == self::STATE_RESOLVED) {
-        call_user_func_array($callback, $this->_arguments);
+        call_user_func_array($callback, $this->_finishArguments);
       }
       return $this;
     }
@@ -40,7 +41,7 @@ namespace Carica\Io {
     public function fail(Callable $callback) {
       $this->_failed->add($callback);
       if ($this->_state == self::STATE_REJECTED) {
-        call_user_func_array($callback, $this->_arguments);
+        call_user_func_array($callback, $this->_finishArguments);
       }
       return $this;
     }
@@ -54,7 +55,10 @@ namespace Carica\Io {
     }
 
     public function notify() {
-      call_user_func_array($this->_progress, func_get_args());
+      if ($this->_state == self::STATE_PENDING) {
+        $this->_progressArguments = func_get_args();
+        call_user_func_array($this->_progress, $this->_progressArguments);
+      }
     }
 
     public function pipe(
@@ -95,6 +99,9 @@ namespace Carica\Io {
 
     public function progress(Callable $callback) {
       $this->_progress->add($callback);
+      if (NULL !== $this->_progressArguments) {
+        call_user_func_array($callback, $this->_progressArguments);
+      }
       return $this;
     }
 
@@ -103,15 +110,19 @@ namespace Carica\Io {
     }
 
     public function reject() {
-      $this->_arguments = func_get_args();
-      $this->_state = self::STATE_REJECTED;
-      call_user_func_array($this->_failed, func_get_args());
+      if ($this->_state == self::STATE_PENDING) {
+        $this->_finishArguments = func_get_args();
+        $this->_state = self::STATE_REJECTED;
+        call_user_func_array($this->_failed, $this->_finishArguments);
+      }
     }
 
     public function resolve() {
-      $this->_arguments = func_get_args();
-      $this->_state = self::STATE_RESOLVED;
-      call_user_func_array($this->_done, func_get_args());
+      if ($this->_state == self::STATE_PENDING) {
+        $this->_finishArguments = func_get_args();
+        $this->_state = self::STATE_RESOLVED;
+        call_user_func_array($this->_done, $this->_finishArguments);
+      }
     }
 
     public function state() {
@@ -140,7 +151,20 @@ namespace Carica\Io {
   }
 
   function when() {
-    $promises = func_get_args();
-
+    $arguments = func_get_args();
+    if (count($arguments)) {
+      $argument = $arguments[1];
+      if ($argument instanceof Deferred) {
+        return $argument;
+      } else {
+        $defer = new Deferred();
+        $defer->resolve($argument);
+        return $defer;
+      }
+    } else {
+      $master = new Deferred();
+      /...
+      return $master->promise();
+    }
   }
 }
