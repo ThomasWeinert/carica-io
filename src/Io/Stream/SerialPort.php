@@ -10,11 +10,9 @@ namespace Carica\Io\Stream {
 
     private $_address = '';
     private $_resource = NULL;
-    private $_loop = NULL;
     private $_listener = NULL;
 
-    public function __construct(Event\Loop $loop, $address) {
-      $this->_loop = $loop;
+    public function __construct($address) {
       $this->_address = $address;
     }
 
@@ -22,19 +20,19 @@ namespace Carica\Io\Stream {
       $this->close();
     }
 
-    public function Resource($resource = NULL) {
+    public function resource($resource = NULL) {
       if ($resource === FALSE) {
         $this->_resource = NULL;
       } elseif (isset($resource)) {
         $this->_resource = $resource;
-        $this->_loop->add(
+        $this->loop()->add(
           $this->_listener = new Event\Loop\Listener\StreamReader($this)
         );
       }
       if (is_resource($this->_resource)) {
         return $this->_resource;
       } elseif (isset($this->_listener)) {
-        $this->_loop->remove($this->_listener);
+        $this->loop()->remove($this->_listener);
         $this->_listener = NULL;
       }
       return NULL;
@@ -43,7 +41,7 @@ namespace Carica\Io\Stream {
     public function open() {
       if ($resource = @fopen($this->_address, 'rwb')) {
         stream_set_blocking($resource, 0);
-        $this->Resource($resource);
+        $this->resource($resource);
         return TRUE;
       } else {
         $this->events()->emit('error', sprintf('Can not open port: "%s".', $this->_address));
@@ -52,8 +50,8 @@ namespace Carica\Io\Stream {
     }
 
     public function close() {
-      if ($resource = $this->Resource()) {
-        $this->Resource(FALSE);
+      if ($resource = $this->resource()) {
+        $this->resource(FALSE);
         fclose($resource);
       }
     }

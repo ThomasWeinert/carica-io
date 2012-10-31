@@ -10,7 +10,7 @@ namespace Carica\Io\Event\Loop {
 
     abstract function tick();
 
-    public function Loop(Event\Loop $loop = NULL) {
+    public function loop(Event\Loop $loop = NULL) {
       if (isset($loop)) {
         if (isset($this->_loop)) {
           $this->_loop->remove($this);

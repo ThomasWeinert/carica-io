@@ -7,11 +7,11 @@ use Carica\Io\Event;
 use Carica\Io\Stream;
 use Carica\Io\Firmata;
 
-$loop = Event\Loop\Factory::create();
-
 $board = new Firmata\Board(
-  new Stream\SerialPort($loop, 'COM3')
+  new Stream\SerialPort('COM3')
 );
+
+$loop = Io\Event\Loop\Factory::get();
 
 $active = $board->activate(
   function ($error = NULL) use ($board, $loop) {

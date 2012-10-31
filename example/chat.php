@@ -23,17 +23,15 @@ include('../src/Io/Loader.php');
 Carica\Io\Loader::register();
 use Carica\Io;
 
-$loop = Io\Event\Loop\Factory::create();
-
 $clients = array();
 
-$server = new Io\Network\Server($loop);
+$server = new Io\Network\Server();
 $server->events()->on(
   'connection',
-  function ($stream) use ($loop, &$clients) {
+  function ($stream) use (&$clients) {
     echo "Client connected: $stream\n";
     $client = new Client();
-    $client->connection = new Io\Network\Connection($loop, $stream);
+    $client->connection = new Io\Network\Connection($stream);
     $client->connection->write("Welcome, enter your username:\n");
     $client->connection->events()->on(
       'data',

@@ -7,14 +7,13 @@ namespace Carica\Io\Stream {
   class FileReader implements Readable {
 
     use Event\Emitter\Aggregation;
+    use Event\Loop\Aggregation;
 
     private $_filename = '';
     private $_resource = NULL;
-    private $_loop = NULL;
     private $_listener = NULL;
 
-    public function __construct(Event\Loop $loop, $filename) {
-      $this->_loop = $loop;
+    public function __construct($filename) {
       $this->_filename = $filename;
     }
 
@@ -27,14 +26,14 @@ namespace Carica\Io\Stream {
         $this->_resource = NULL;
       } elseif (isset($resource)) {
         $this->_resource = $resource;
-        $this->_loop->add(
+        $this->loop()->add(
           $this->_listener = new Event\Loop\Listener\StreamReader($this)
         );
       }
       if (is_resource($this->_resource)) {
         return $this->_resource;
       } elseif (isset($this->_listener)) {
-        $this->_loop->remove($this->_listener);
+        $this->loop()->remove($this->_listener);
         $this->_listener = NULL;
       }
       return NULL;
@@ -43,7 +42,7 @@ namespace Carica\Io\Stream {
     public function open() {
       if ($resource = @fopen($this->_filename, 'r')) {
         stream_set_blocking($resource, 0);
-        $this->Resource($resource);
+        $this->resource($resource);
         return TRUE;
       } else {
         $this->events()->emit('error', sprintf('Can not open file: "%s".', $this->_filename));
@@ -53,7 +52,7 @@ namespace Carica\Io\Stream {
 
     public function close() {
       if ($resource = $this->Resource()) {
-        $this->Resource(FALSE);
+        $this->resource(FALSE);
         fclose($resource);
       }
     }
