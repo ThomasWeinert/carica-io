@@ -16,10 +16,10 @@ namespace Carica\Io\Network\Http {
     private $_connection = NULL;
 
     public function __construct(Connection $connection) {
-      $this->Connection($connection);
+      $this->connection($connection);
     }
 
-    public function Connection(Connection $connection = NULL) {
+    public function connection(Connection $connection = NULL) {
       if (isset($connection)) {
         $this->_connection = $connection;
       }
