@@ -19,7 +19,7 @@ namespace Carica\Io\Event\Loop {
     public function add(Listener $listener) {
       $key = spl_object_hash($listener);
       $this->_listeners[$key] = $listener;
-      $listener->Loop($this);
+      $listener->loop($this);
       if ($listener instanceOf Listener\StreamReader) {
         $this->_streams['read'][$key] = $listener->getResource();
       }
@@ -30,7 +30,7 @@ namespace Carica\Io\Event\Loop {
       $key = spl_object_hash($listener);
       if (isset($this->_listeners[$key])) {
         unset($this->_listeners[$key]);
-        if ($listener instanceOf Listener\StreamReader) {
+        if (isset($this->_streams['read'][$key])) {
           unset($this->_streams['read'][$key]);
         }
       }
@@ -62,9 +62,9 @@ namespace Carica\Io\Event\Loop {
     private function schedule() {
       if ($this->_hasStreams) {
         stream_select(
-          $this->_streams['read'],
-          $this->_streams['write'],
-          $this->_streams['except'],
+          $read = $this->_streams['read'],
+          $write = $this->_streams['write'],
+          $except = $this->_streams['except'],
           $this->_wait
         );
       } else {

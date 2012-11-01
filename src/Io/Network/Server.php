@@ -7,16 +7,15 @@ namespace Carica\Io\Network {
   class Server implements Io\Stream\Readable {
 
     use Io\Event\Emitter\Aggregation;
+    use Io\Event\Loop\Aggregation;
 
-    private $_loop = NULL;
     private $_listener = NULL;
 
     private $_stream = FALSE;
 
     private $_address = 'tcp://0.0.0.0';
 
-    public function __construct(Io\Event\Loop $loop, $address = 'tcp://0.0.0.0') {
-      $this->_loop = $loop;
+    public function __construct($address = 'tcp://0.0.0.0') {
       $this->_address = $address;
     }
 
@@ -24,15 +23,16 @@ namespace Carica\Io\Network {
       $this->close();
     }
 
-    public function Resource($stream = NULL) {
+    public function resource($stream = NULL) {
       if (isset($stream)) {
         $this->_stream = $stream;
-        if ($this->isActive() && !isset($this->_listener)) {
-          $this->_loop->add(
+        if (isset($this->_listener)) {
+          $this->loop()->remove($this->_listener);
+        }
+        if ($this->isActive()) {
+          $this->loop()->add(
             $this->_listener = new Io\Event\Loop\Listener\StreamReader($this)
           );
-        } elseif (isset($this->_listener)) {
-          $this->_loop->remove($this->_listener);
         }
       }
       return $this->_stream;
@@ -47,7 +47,7 @@ namespace Carica\Io\Network {
         $stream = stream_socket_server($this->_address.':'.$port, $errorNumber, $errorString);
         if ($stream) {
           stream_set_blocking($stream, 0);
-          $this->Resource($stream);
+          $this->resource($stream);
           $this->events()->emit('listen', $this->_address.':'.$port);
         }
       }
@@ -56,7 +56,7 @@ namespace Carica\Io\Network {
     public function close() {
       if ($this->isActive()) {
         stream_socket_shutdown($this->_stream, STREAM_SHUT_RDWR);
-        $this->Resource(FALSE);
+        $this->resource(FALSE);
       }
     }
 

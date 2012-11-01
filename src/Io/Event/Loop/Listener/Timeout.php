@@ -8,7 +8,7 @@ namespace Carica\Io\Event\Loop\Listener {
 
     public function tick() {
       if (parent::tick()) {
-        if ($loop = $this->Loop()) {
+        if ($loop = $this->loop()) {
           $loop->remove($this);
         }
         return TRUE;

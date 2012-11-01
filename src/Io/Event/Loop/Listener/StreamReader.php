@@ -18,7 +18,7 @@ namespace Carica\Io\Event\Loop\Listener {
     }
 
     public function getResource() {
-      return $this->_stream->Resource();
+      return $this->_stream->resource();
     }
   }
 }

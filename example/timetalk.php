@@ -4,16 +4,16 @@ include('../src/Io/Loader.php');
 Carica\Io\Loader::register();
 use Carica\Io;
 
-$loop = Io\Event\Loop\Factory::create();
+$loop = Io\Event\Loop\Factory::get();
 
 $clients = array();
 
-$server = new Io\Network\Server($loop);
+$server = new Io\Network\Server();
 $server->events()->on(
   'connection',
-  function ($stream) use ($loop, &$clients) {
+  function ($stream) use (&$clients) {
     echo "Client connected: $stream\n";
-    $clients[] = new Io\Network\Connection($loop, $stream);
+    $clients[] = new Io\Network\Connection($stream);
   }
 );
 
@@ -34,6 +34,6 @@ $loop->add(
   )
 );
 
-$server->listen("tcp://0.0.0.0:8080");
+$server->listen(8080);
 
 $loop->run();
