@@ -156,6 +156,14 @@ namespace Carica\Io {
       return $this;
     }
 
+    /**
+     * Utility method to filter and/or chain Deferreds.
+     *
+     * @param Callable $doneFilter
+     * @param Callable $failFilter
+     * @param Callable $progressFilter
+     * @return \Carica\Io\Deferred\Promise
+     */
     public function pipe(
       Callable $doneFilter = NULL,
       Callable $failFilter = NULL,
@@ -258,12 +266,30 @@ namespace Carica\Io {
       return $this->_state;
     }
 
+    /**
+     * Add handlers to be called when the Deferred object is resolved
+     * or rejected or notified about progress. Basically a shortcut for
+     * done(), fail() and progress().
+     *
+     * @param Callable|array(Callable) $done
+     * @param Callable|array(Callable) $fail
+     * @param Callable|array(Callable) $progress
+     */
     public function then($done = NULL, $fail = NULL, $progress = NULL) {
       $this->addCallbacksIfProvided(array($this, 'done'), $done);
       $this->addCallbacksIfProvided(array($this, 'fail'), $fail);
       $this->addCallbacksIfProvided(array($this, 'progress'), $progress);
+      return $this;
     }
 
+    /**
+     * Check if $callbacks is a single callback or an array of callbacks.
+     * The $add parameter is the method used to add the actual callbacks to the
+     * deferred object.
+     *
+     * @param Callable $add
+     * @param Callable|array(Callable) $callbacks
+     */
     private function addCallbacksIfProvided($add, $callbacks) {
       if (is_callable($callbacks)) {
         $add($callbacks);
@@ -274,10 +300,21 @@ namespace Carica\Io {
       }
     }
 
+    /**
+     * Static method to the create a new Deferred object.
+     *
+     * @return \Carica\Io\Deferred
+     */
     public static function create() {
       new Deferred();
     }
 
+    /**
+     * Provides a way to execute callback functions based on one or more
+     * objects, usually Deferred objects that represent asynchronous events.
+     *
+     * @return \Carica\Io\Deferred\Promise
+     */
     public static function when() {
       $arguments = func_get_args();
       $counter = count($arguments);
