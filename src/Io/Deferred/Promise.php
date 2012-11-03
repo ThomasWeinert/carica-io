@@ -32,7 +32,7 @@ namespace Carica\Io\Deferred {
       Callable $failFilter = NULL,
       Callable $progressFilter = NULL
     ) {
-      return $defer->pipe($doneFilter, $failFilter, $progressFilter);
+      return $this->_defer->pipe($doneFilter, $failFilter, $progressFilter);
     }
 
     public function progress(Callable $callback) {

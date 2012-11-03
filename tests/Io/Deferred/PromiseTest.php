@@ -66,5 +66,47 @@ namespace Carica\Io\Deferred {
       $this->assertSame($promise, $promise->fail($function));
     }
 
+    /**
+     * @covers Carica\Io\Deferred\Promise::pipe
+     */
+    public function testPipeWithNullArguments() {
+      $promise = $this
+        ->getMockBuilder('Carica\Io\Deferred\Promise')
+        ->disableOriginalConstructor()
+        ->getMock();
+      $defer = $this->getMock('Carica\Io\Deferred');
+      $defer
+        ->expects($this->once())
+        ->method('pipe')
+        ->with(NULL, NULL, NULL)
+        ->will($this->returnValue($promise));
+
+      $promise = new Promise($defer);
+      $filterPromise = $promise->pipe();
+      $this->assertInstanceOf('Carica\Io\Deferred\Promise', $filterPromise);
+      $this->assertNotSame($filterPromise, $promise);
+    }
+
+    /**
+     * @covers Carica\Io\Deferred\Promise::pipe
+     */
+    public function testPipeWithFunctionArguments() {
+      $promise = $this
+        ->getMockBuilder('Carica\Io\Deferred\Promise')
+        ->disableOriginalConstructor()
+        ->getMock();
+      $function = function() {};
+      $defer = $this->getMock('Carica\Io\Deferred');
+      $defer
+        ->expects($this->once())
+        ->method('pipe')
+        ->with($function, $function, $function)
+        ->will($this->returnValue($promise));
+
+      $promise = new Promise($defer);
+      $filterPromise = $promise->pipe($function, $function, $function);
+      $this->assertInstanceOf('Carica\Io\Deferred\Promise', $filterPromise);
+      $this->assertNotSame($filterPromise, $promise);
+    }
   }
 }
