@@ -274,6 +274,7 @@ namespace Carica\Io {
      * @param Callable|array(Callable) $done
      * @param Callable|array(Callable) $fail
      * @param Callable|array(Callable) $progress
+     * @return \Carica\Io\Deferred
      */
     public function then($done = NULL, $fail = NULL, $progress = NULL) {
       $this->addCallbacksIfProvided(array($this, 'done'), $done);
