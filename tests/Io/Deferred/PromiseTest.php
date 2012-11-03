@@ -138,5 +138,37 @@ namespace Carica\Io\Deferred {
       $promise = new Promise($defer);
       $this->assertEquals(Io\Deferred::STATE_PENDING, $promise->state());
     }
+
+    /**
+     * @covers Carica\Io\Deferred\Promise::then
+     */
+    public function testThenWithNullArguments() {
+      $function = function() {};
+      $defer = $this->getMock('Carica\Io\Deferred');
+      $defer
+        ->expects($this->once())
+        ->method('then')
+        ->with(NULL, NULL, NULL)
+        ->will($this->returnSelf());
+
+      $promise = new Promise($defer);
+      $this->assertSame($promise, $promise->then());
+    }
+
+    /**
+     * @covers Carica\Io\Deferred\Promise::then
+     */
+    public function testThenWithFunctionArguments() {
+      $function = function() {};
+      $defer = $this->getMock('Carica\Io\Deferred');
+      $defer
+        ->expects($this->once())
+        ->method('then')
+        ->with($function, $function, $function)
+        ->will($this->returnSelf());
+
+      $promise = new Promise($defer);
+      $this->assertSame($promise, $promise->then($function, $function, $function));
+    }
   }
 }
