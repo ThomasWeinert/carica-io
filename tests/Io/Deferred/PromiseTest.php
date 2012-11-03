@@ -9,6 +9,15 @@ namespace Carica\Io\Deferred {
   class PromiseTest extends \PHPUnit_Framework_TestCase {
 
     /**
+     * @covers Carica\Io\Deferred\Promise::_construct
+     */
+    public function testConstructor() {
+      $defer = $this->getMock('Carica\Io\Deferred');
+      $promise = new Promise($defer);
+      $this->assertAttributeSame($defer, '_defer', $promise);
+    }
+
+    /**
      * @covers Carica\Io\Deferred\Promise::always
      */
     public function testAlways() {
