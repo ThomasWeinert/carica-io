@@ -108,5 +108,21 @@ namespace Carica\Io\Deferred {
       $this->assertInstanceOf('Carica\Io\Deferred\Promise', $filterPromise);
       $this->assertNotSame($filterPromise, $promise);
     }
+
+    /**
+     * @covers Carica\Io\Deferred\Promise::progress
+     */
+    public function testProgress() {
+      $function = function() {};
+      $defer = $this->getMock('Carica\Io\Deferred');
+      $defer
+        ->expects($this->once())
+        ->method('progress')
+        ->with($function)
+        ->will($this->returnSelf());
+
+      $promise = new Promise($defer);
+      $this->assertSame($promise, $promise->progress($function));
+    }
   }
 }
