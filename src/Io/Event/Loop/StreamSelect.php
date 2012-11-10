@@ -61,12 +61,10 @@ namespace Carica\Io\Event\Loop {
 
     private function schedule() {
       if ($this->_hasStreams) {
-        stream_select(
-          $read = $this->_streams['read'],
-          $write = $this->_streams['write'],
-          $except = $this->_streams['except'],
-          $this->_wait
-        );
+        $read = $this->_streams['read'];
+        $write = $this->_streams['write'];
+        $except = $this->_streams['except'];
+        stream_select($read, $write, $except, $this->_wait);
       } else {
         usleep($this->_wait);
       }

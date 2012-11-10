@@ -79,5 +79,4 @@ $server->events()->on(
 );
 
 $server->listen(7000);
-
-$loop->run();
+Io\Event\Loop\Factory::run();

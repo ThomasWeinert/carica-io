@@ -35,7 +35,7 @@ namespace Carica\Io\Network\Http {
     }
 
     public function parseHeader($string) {
-      var_dump($string);
+      //var_dump($string);
     }
   }
 }
