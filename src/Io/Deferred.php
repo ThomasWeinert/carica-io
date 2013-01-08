@@ -3,7 +3,7 @@
 namespace Carica\Io {
 
   /**
-  * A deffered object implementation, allows to schedule callbacks for
+  * A deferred object implementation, allows to schedule callbacks for
   * execution after a condition is meet or not.
   *
   */
