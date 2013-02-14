@@ -29,7 +29,7 @@ namespace Carica\Io\Stream {
       } elseif (isset($resource)) {
         $this->_resource = $resource;
         $this->loop()->add(
-          $this->_listener = new Event\Loop\Listener\StreamReader($this)
+          $this->_listener = new Event\Loop\Listener\Interval(100, array($this, 'read'))
         );
       }
       if (is_resource($this->_resource)) {
@@ -46,6 +46,7 @@ namespace Carica\Io\Stream {
         stream_set_blocking($resource, 0);
         stream_set_read_buffer($resource, 0);
         stream_set_write_buffer($resource, 0);
+        stream_set_timeout($resource, 10000);
         $this->resource($resource);
         return TRUE;
       } else {
@@ -68,7 +69,7 @@ namespace Carica\Io\Stream {
 
     public function read($bytes = 1024) {
       if ($resource = $this->resource()) {
-        $data = stream_socket_recvfrom($resource, 1);
+        $data = stream_socket_recvfrom($resource, $bytes);
         if (is_string($data) && $data !== '') {
           $this->events()->emit('read', $data);
           $this->events()->emit('data', $data);
