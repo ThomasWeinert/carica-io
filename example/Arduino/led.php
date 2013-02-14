@@ -1,13 +1,13 @@
 <?php
 
-include('../src/Io/Loader.php');
+include('../../src/Io/Loader.php');
 Carica\Io\Loader::register();
 
 use Carica\Io;
 use Carica\Io\Firmata;
 
-$board = new Firmata\Board(
-  new Stream\SerialPort(3)
+$board = new Io\Firmata\Board(
+  $stream = new Io\Stream\SerialPort(3)
 );
 
 $loop = Io\Event\Loop\Factory::get();
@@ -18,16 +18,18 @@ $active = $board->activate(
       echo $error."\n";
       return;
     }
-    echo "activated\n";
+    echo "Firmata ".implode('.', $board->getVersion())." active\n";
 
     $led = 13;
     $board->pinMode($led, Firmata\PIN_STATE_OUTPUT);
+    echo "PIN: $led\n";
 
     $loop->add(
-      new Event\Loop\Listener\Interval(
+      new Io\Event\Loop\Listener\Interval(
         1000,
-        function () use ($led) {
+        function () use ($board, $led) {
           static $ledOn = FALSE;
+          echo 'LED: '.($ledOn ? 'off' : 'on')."\n";
           $board->digitalWrite($led, $ledOn ? Firmata\DIGITAL_LOW : Firmata\DIGITAL_HIGH);
           $ledOn = !$ledOn;
         }
@@ -35,6 +37,7 @@ $active = $board->activate(
     );
   }
 );
+
 
 if ($active) {
   $loop->run();

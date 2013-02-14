@@ -3,7 +3,7 @@
 namespace Carica\Io\Firmata {
 
   use Carica\Io\Event;
-  use Carica\Io\Stream;
+  use Carica\Io;
 
   const COMMAND_PIN_MODE = 0xF4;
   const COMMAND_REPORT_DIGITAL = 0xD0;
@@ -49,7 +49,9 @@ namespace Carica\Io\Firmata {
       'minor' => 0
     );
 
-    public function __construct(Stream\SerialPort $port) {
+    private $_activationCallback = FALSE;
+
+    public function __construct(Io\Stream $port) {
       $this->_serialPort = $port;
     }
 
@@ -66,16 +68,21 @@ namespace Carica\Io\Firmata {
       return $this->_serialPort;
     }
 
-    public function activate($callback) {
+    public function activate(Callable $callback) {
       $this->port()->events()->on('error', $callback);
-      $this->port()->events()->on('data', array($this->_buffer, 'addData'));
+      $this->port()->events()->on('data', array($this->buffer(), 'addData'));
       $this->buffer()->events()->on('response', array($this, 'onResponse'));
+      $this->_activationCallback = $callback;
       if ($this->port()->open()) {
-        $this->port()->write([COMMAND_REPORT_VERSION, 0, 0]);
+        $this->port()->write([COMMAND_REPORT_VERSION]);
         return TRUE;
       } else {
         return FALSE;
       }
+    }
+
+    public function getVersion() {
+      return $this->_version;
     }
 
     public function onResponse(Response $response) {
@@ -84,6 +91,10 @@ namespace Carica\Io\Firmata {
         $this->_version['major'] = $response->major;
         $this->_version['minor'] = $response->minor;
         $this->events()->emit('reportversion', $this->_version);
+        if ($this->_activationCallback) {
+          call_user_func($this->_activationCallback);
+          $this->port()->write([COMMAND_START_SYSEX, COMMAND_QUERY_FIRMWARE, COMMAND_END_SYSEX]);
+        }
         break;
       }
     }

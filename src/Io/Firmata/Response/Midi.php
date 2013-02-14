@@ -6,5 +6,11 @@ namespace Carica\Io\Firmata\Response {
 
   class Midi extends Firmata\Response {
 
+    protected $_command = 0x00;
+
+    public function command() {
+      return $this->_command;
+    }
+
   }
 }
