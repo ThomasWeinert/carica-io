@@ -7,7 +7,8 @@ use Carica\Io;
 use Carica\Io\Firmata;
 
 $board = new Io\Firmata\Board(
-  $stream = new Io\Stream\SerialPort(3)
+  //new Io\Stream\SerialPort(3)
+  new Io\Stream\Tcp('127.0.0.1', 5333)
 );
 
 $loop = Io\Event\Loop\Factory::get();
@@ -21,7 +22,7 @@ $active = $board->activate(
     echo "Firmata ".implode('.', $board->getVersion())." active\n";
 
     $led = 13;
-    $board->pinMode($led, Firmata\PIN_STATE_OUTPUT);
+    $board->pinMode($led, Io\Firmata\PIN_STATE_OUTPUT);
     echo "PIN: $led\n";
 
     $loop->add(
@@ -30,7 +31,7 @@ $active = $board->activate(
         function () use ($board, $led) {
           static $ledOn = FALSE;
           echo 'LED: '.($ledOn ? 'off' : 'on')."\n";
-          $board->digitalWrite($led, $ledOn ? Firmata\DIGITAL_LOW : Firmata\DIGITAL_HIGH);
+          $board->digitalWrite($led, $ledOn ? Io\Firmata\DIGITAL_LOW : Io\Firmata\DIGITAL_HIGH);
           $ledOn = !$ledOn;
         }
       )
