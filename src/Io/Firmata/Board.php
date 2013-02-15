@@ -35,26 +35,64 @@ namespace Carica\Io\Firmata {
   const DIGITAL_LOW = 0;
   const DIGITAL_HIGH = 1;
 
+  /**
+   * This class represents an Arduino board running firmata.
+   */
   class Board {
 
     use Event\Emitter\Aggregation;
 
     private $_pins = array();
-    private $_serialPort = NULL;
+    private $_channels = array();
 
+    private $_stream = NULL;
     private $_buffer = NULL;
 
     private $_version = array(
       'major' => 0,
       'minor' => 0
     );
+    private $_firmware = array(
+      'name' => '',
+      'version' => array(
+        'major' => 0,
+        'minor' => 0
+      )
+    );
 
-    private $_activationCallback = FALSE;
+    private $_responseHandler = array(
+      COMMAND_REPORT_VERSION => 'onReportVersion',
+      COMMAND_ANALOG_MESSAGE => 'onAnalogMessage',
+      COMMAND_DIGITAL_MESSAGE => 'onDigitalMessage',
+      COMMAND_QUERY_FIRMWARE => 'onQueryFirmware',
+      COMMAND_CAPABILITY_RESPONSE => 'onCapabilityResponse',
+      COMMAND_PIN_STATE_RESPONSE => 'onPinStateResponse',
+      COMMAND_ANALOG_MAPPING_RESPONSE => 'onAnalogMappingResponse'
+    );
 
-    public function __construct(Io\Stream $port) {
-      $this->_serialPort = $port;
+    /**
+     * Create board and assign stream object
+     *
+     * @param Io\Stream $port
+     */
+    public function __construct(Io\Stream $stream) {
+      $this->_stream = $stream;
     }
 
+    /**
+     * Getter for the port/stream object
+     *
+     * @return Io\Stream
+     */
+    public function port() {
+      return $this->_stream;
+    }
+
+    /**
+     * Buffer for recieved data
+     *
+     * @param Buffer $buffer
+     */
     public function buffer(Buffer $buffer = NULL) {
       if (isset($buffer)) {
         $this->_buffer = $buffer;
@@ -64,47 +102,175 @@ namespace Carica\Io\Firmata {
       return $this->_buffer;
     }
 
-    public function port() {
-      return $this->_serialPort;
-    }
-
+    /**
+     * Activate the board, assign the needed callbacks
+     *
+     * @param callable $callback
+     * @return boolean
+     */
     public function activate(Callable $callback) {
       $this->port()->events()->on('error', $callback);
       $this->port()->events()->on('data', array($this->buffer(), 'addData'));
       $this->buffer()->events()->on('response', array($this, 'onResponse'));
-      $this->_activationCallback = $callback;
       if ($this->port()->open()) {
-        $this->port()->write([COMMAND_REPORT_VERSION]);
+        $board = $this;
+        $board->reportVersion(
+          function() use ($board, $callback) {
+            $board->queryFirmware(
+              function() use ($board, $callback) {
+                $board->queryCapabilities(
+                  function() use ($board, $callback) {
+                    $board->queryAnalogMapping(
+                      function() use ($callback) {
+                        $callback();
+                      }
+                    );
+                 }
+                );
+              }
+            );
+          }
+        );
         return TRUE;
       } else {
         return FALSE;
       }
     }
 
-    public function getVersion() {
-      return $this->_version;
+    public function __get($name) {
+      switch ($name) {
+      case 'version' :
+        return $this->_version;
+      case 'firmware' :
+        return $this->_firmware;
+      case 'pins' :
+        return $this->_pins;
+      }
+      throw new \LogicException(sprintf('Unknown property %s::$%s', __CLASS__, $name));
     }
 
+    /**
+     * Callback for the buffer, recieved a response from the board.
+     *
+     * @param Response $response
+     */
     public function onResponse(Response $response) {
-      switch ($response->command()) {
-      case COMMAND_REPORT_VERSION :
-        $this->_version['major'] = $response->major;
-        $this->_version['minor'] = $response->minor;
-        $this->events()->emit('reportversion', $this->_version);
-        if ($this->_activationCallback) {
-          call_user_func($this->_activationCallback);
-          $this->port()->write([COMMAND_START_SYSEX, COMMAND_QUERY_FIRMWARE, COMMAND_END_SYSEX]);
-        }
-        break;
+      $that = $this;
+      if (isset($this->_responseHandler[$response->command()])) {
+        $callback = array($this, $this->_responseHandler[$response->command()]);
+        return $callback($response);
       }
     }
 
+    private function onReportVersion(Response\Midi\ReportVersion $response) {
+      $this->_version['major'] = $response->major;
+      $this->_version['minor'] = $response->minor;
+      for ($i = 0; $i < 16; $i++) {
+        $this->port()->write([COMMAND_REPORT_DIGITAL | $i, 1]);
+        $this->port()->write([COMMAND_REPORT_ANALOG | $i, 1]);
+      }
+      $this->events()->emit('reportversion');
+    }
 
+    private function onAnalogMessage(Response\Midi\AnalogMessage $response) {
+      if (isset($this->_channels[$response->pin]) &&
+          $this->_pins[$this->_channels[$response->pin]]) {
+        $this->_pins[$this->_channels[$response->pin]]['value'] = $response->value;
+      }
+      $this->events()->emit('analog-read-' + $response->pin, $response->value);
+      $this->events()->emit('analog-read', ['pin' => $response->pin, 'value' => $response->value]);
+    }
+
+    private function onDigitalMessage(Response\Midi\DigitalMessage $response) {
+      for ($i = 0; $i < 8; $i++) {
+        if (isset($this->_pins[8 * $response->pin + $i])) {
+          $pinNumber = 8 * $response->pin + $i;
+          $pin =& $this->_pins[$pinNumber];
+          if ($pin['mode'] == PIN_STATE_INPUT) {
+            $pin['value'] = ($response->value >> ($i & 0x07)) & 0x01;
+          }
+          $this->events()->emit('digital-read-' + $pinNumber, $pin['value']);
+          $this->events()->emit('digital-read', ['pin' => $pinNumber, 'value' => $pin['value']]);
+        }
+      }
+    }
+
+    private function onQueryFirmware(Response\Sysex\QueryFirmware $response) {
+      $this->_firmware['name'] = $response->name;
+      $this->_firmware['version']['major'] = $response->major;
+      $this->_firmware['version']['minor'] = $response->minor;
+      $this->events()->emit('queryfirmware');
+    }
+
+    private function onCapabilityResponse(Response\Sysex\CapabilityResponse $response) {
+      $this->_pins = $response->pins;
+      var_dump('Capability');
+      $this->events()->emit('capability-query');
+    }
+
+    private function onPinStateResponse(Response\Sysex\PinStateResponse $response) {
+      $this->_pins[$response->pin]['mode'] = $response->mode;
+      $this->_pins[$response->pin]['value'] = $response->value;
+      $this->events()->emit('pin-state-'.$response->pin);
+    }
+
+    private function onAnalogMappingResponse(Response\Sysex\AnalogMappingResponse $response) {
+      $this->_channels = $response->channels;
+      $this->events()->emit('analog-mapping-query');
+    }
+
+
+    public function reset() {
+      $this->port()->write([COMMAND_SYSTEM_RESET]);
+    }
+
+    public function reportVersion(Callable $callback) {
+      $this->events()->once('reportversion', $callback);
+      $this->port()->write([COMMAND_REPORT_VERSION]);
+    }
+
+    public function queryFirmware(Callable $callback) {
+      $this->events()->once('queryfirmware', $callback);
+      $this->port()->write([COMMAND_START_SYSEX, COMMAND_QUERY_FIRMWARE, COMMAND_END_SYSEX]);
+    }
+
+    public function queryCapabilities(Callable $callback) {
+      $this->events()->once('capability-query', $callback);
+      $this->port()->write([COMMAND_START_SYSEX, COMMAND_CAPABILITY_QUERY, COMMAND_END_SYSEX]);
+    }
+
+    public function queryAnalogMapping(Callable $callback) {
+      $this->events()->once('analog-mapping-query', $callback);
+      $this->port()->write([COMMAND_START_SYSEX, COMMAND_ANALOG_MAPPING_QUERY, COMMAND_END_SYSEX]);
+    }
+
+    public function queryPinState($pin, Callable $callback) {
+      $this->events()->once('pin-state-'.$pin, $callback);
+      $this->port()->write([COMMAND_START_SYSEX, COMMAND_PIN_STATE_QUERY, pin, COMMAND_END_SYSEX]);
+    }
+
+    /**
+     * Set the mode of a pin:
+     *   PIN_STATE_INPUT,
+     *   PIN_STATE_OUTPUT,
+     *   PIN_STATE_ANALOG,
+     *   PIN_STATE_PWM,
+     *   PIN_STATE_SERVO
+     *
+     * @param integer $pin 0-16
+     * @param integer $mode
+     */
     public function pinMode($pin, $mode) {
       $this->_pins[$pin]['mode'] = $mode;
       $this->port()->write([COMMAND_PIN_MODE, $pin, $mode]);
     }
 
+    /**
+     * Write a digital value for a pin (on/off, DIGITAL_LOW/DIGITAL_HIGH)
+     *
+     * @param integer $pin 0-16
+     * @param integer $value 0-1
+     */
     public function digitalWrite($pin, $value) {
       $port = floor($pin / 8);
       $portValue = 0;
@@ -114,8 +280,21 @@ namespace Carica\Io\Firmata {
           $portValue |= (1 << $i);
         }
       }
-      $this->_serialPort->write(
+      $this->port()->write(
         [COMMAND_DIGITAL_MESSAGE | $port, $portValue & 0x7F, ($portValue >> 7) & 0x7F]
+      );
+    }
+
+    /**
+     * Write an analog value for a pin
+     *
+     * @param integer $pin 0-16
+     * @param integer $value 0-255
+     */
+    public function analogWrite($pin, $value) {
+      $this->_pins[$pin]['value'] = $value;
+      $this->port()->write(
+        [COMMAND_ANALOG_MESSAGE | $pin, $value & 0x7F, ($value >> 7) & 0x7F]
       );
     }
   }

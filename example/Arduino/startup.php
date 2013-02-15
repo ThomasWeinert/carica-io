@@ -26,14 +26,21 @@ $loop = Io\Event\Loop\Factory::get();
 
 $board->events()->on(
   'reportversion',
-  function ($version) {
-    echo 'Firmata version: '.implode('.', $version)."\n";
+  function () use ($board) {
+    echo 'Firmata version: '.implode('.', $board->version)."\n";
+  }
+);
+$board->events()->on(
+  'queryfirmware',
+  function () use ($board) {
+    echo 'Firmware version: '.$board->firmware['name'].' '.implode('.', $board->firmware['version'])."\n";
   }
 );
 
 $active = $board->activate(
   function ($error = NULL) {
     if (isset($error)) {
+      var_dump($error);
       echo $error."\n";
       return;
     }

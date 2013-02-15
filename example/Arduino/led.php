@@ -13,15 +13,16 @@ $board = new Io\Firmata\Board(
 
 $loop = Io\Event\Loop\Factory::get();
 
+
 $active = $board->activate(
   function ($error = NULL) use ($board, $loop) {
     if (isset($error)) {
       echo $error."\n";
       return;
     }
-    echo "Firmata ".implode('.', $board->getVersion())." active\n";
+    echo "Firmata ".implode('.', $board->version)." active\n";
 
-    $led = 13;
+    $led = 9;
     $board->pinMode($led, Io\Firmata\PIN_STATE_OUTPUT);
     echo "PIN: $led\n";
 

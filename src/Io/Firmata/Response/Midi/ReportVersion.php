@@ -1,12 +1,10 @@
 <?php
 
-namespace Carica\Io\Firmata\Response {
+namespace Carica\Io\Firmata\Response\Midi {
 
   use Carica\Io\Firmata;
 
-  class ReportVersion extends Midi {
-
-    protected $_command = Firmata\COMMAND_REPORT_VERSION;
+  class ReportVersion extends Firmata\Response\Midi {
 
     private $_major = 0;
     private $_minor = 0;
@@ -24,7 +22,7 @@ namespace Carica\Io\Firmata\Response {
       case 'minor' :
         return $this->_minor;
       }
-      throw new LogicException(sprintf('Unknown property %s::$%s', __CLASS__, $name));
+      throw new \LogicException(sprintf('Unknown property %s::$%s', __CLASS__, $name));
     }
   }
 }

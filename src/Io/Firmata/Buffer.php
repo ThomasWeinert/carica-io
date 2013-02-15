@@ -41,40 +41,31 @@ namespace Carica\Io\Firmata {
         $last = end($this->_bytes);
         if ($first === COMMAND_START_SYSEX &&
             $last === COMMAND_END_SYSEX) {
-          $this->handleSysexResponse($this->_bytes);
+          $this->handleResponse(array_slice($this->_bytes, 1, -1));
           $this->_bytes = array();
         } elseif ($byteCount == 3 && $first !== COMMAND_START_SYSEX) {
           $command = ($first < 240) ? $first & 0xF0 : $first;
-          $this->handleMidiResponse(array($command, $this->_bytes[1], $this->_bytes[2]));
+          $this->handleResponse(array($command, $this->_bytes[1], $this->_bytes[2]));
           $this->_bytes = array();
         }
       }
     }
 
-    private function handleSysexResponse($bytes) {
-      array_shift($bytes);
-      array_pop($bytes);
-      $command = array_shift($bytes);
-      $response = NULL;
-      switch ($command) {
-      case COMMAND_QUERY_FIRMWARE :
-        break;
-      }
-      if ($response) {
-        $this->events()->emit('response', $response);
-      }
-    }
-
-    private function handleMidiResponse($bytes) {
+    private function handleResponse($bytes) {
       $command = $bytes[0];
       $response = NULL;
-      switch ($command) {
-      case COMMAND_REPORT_VERSION :
-        $response = new Response\ReportVersion($bytes);
-        break;
-      case COMMAND_PIN_MODE :
-
-        break;
+      $classes = array(
+        COMMAND_REPORT_VERSION => 'Midi\ReportVersion',
+        COMMAND_ANALOG_MESSAGE => 'Midi\AnalogMessage',
+        COMMAND_DIGITAL_MESSAGE => 'Midi\DigitalMessage',
+        COMMAND_QUERY_FIRMWARE => 'Sysex\QueryFirmware',
+        COMMAND_CAPABILITY_RESPONSE => 'Sysex\CapabilityResponse',
+        COMMAND_PIN_STATE_RESPONSE => 'Sysex\PinStateResponse',
+        COMMAND_ANALOG_MAPPING_RESPONSE => 'Sysex\AnalogMappingResponse'
+      );
+      if (isset($classes[$command])) {
+        $className = __NAMESPACE__.'\\Response\\'.$classes[$command];
+        $response = new $className($bytes);
       }
       if ($response) {
         $this->events()->emit('response', $response);
