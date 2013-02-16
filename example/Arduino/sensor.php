@@ -22,14 +22,14 @@ $active = $board->activate(
     }
     echo "Firmata ".implode('.', $board->version)." active\n";
 
-    $pin = 14;
+    $pin = 16;
     $board->pinMode($pin, Io\Firmata\PIN_STATE_ANALOG);
     echo "PIN: $pin\n";
 
     $board->analogRead(
       $pin,
       function($value) {
-        $barLength = round($value * 0.08);
+        $barLength = round($value * 0.07);
         echo str_pad($value, 4, 0, STR_PAD_LEFT), ' ';
         echo str_repeat('=', $barLength), "\n";
       }

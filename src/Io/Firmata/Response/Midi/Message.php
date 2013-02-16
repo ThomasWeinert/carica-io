@@ -9,8 +9,8 @@ namespace Carica\Io\Firmata\Response\Midi {
     private $_port = 0;
     private $_value = 0;
 
-    public function __construct(array $bytes) {
-      parent::__construct($bytes);
+    public function __construct($command, array $bytes) {
+      parent::__construct($command, $bytes);
       $this->_port = $bytes[0] & 0x0F;
       $this->_value = $bytes[1] | ($bytes[2] << 7);
     }

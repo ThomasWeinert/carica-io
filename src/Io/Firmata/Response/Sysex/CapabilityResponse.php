@@ -16,8 +16,8 @@ namespace Carica\Io\Firmata\Response\Sysex {
 
     private $_pins = array();
 
-    public function __construct($bytes) {
-      parent::__construct($bytes);
+    public function __construct($command, array $bytes) {
+      parent::__construct($command, $bytes);
       $length = count($bytes);
       $supported = 0;
       $byteIndex = 0;

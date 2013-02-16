@@ -18,8 +18,8 @@ namespace Carica\Io\Firmata\Response\Sysex {
     private $_mode = 0;
     private $_value = 0;
 
-    public function __construct($bytes) {
-      parent::__construct($bytes);
+    public function __construct($command, array $bytes) {
+      parent::__construct($command, $bytes);
       $length = count($bytes);
       $this->_pin = $bytes[1];
       $this->_mode = $bytes[2];

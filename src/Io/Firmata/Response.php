@@ -6,8 +6,8 @@ namespace Carica\Io\Firmata {
 
     private $_command = 0x00;
 
-    public function __construct(array $bytes) {
-      $this->_command = array_shift($bytes);
+    public function __construct($command, array $bytes) {
+      $this->_command = $command;
     }
 
     public function command() {

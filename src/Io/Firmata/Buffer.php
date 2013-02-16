@@ -41,18 +41,19 @@ namespace Carica\Io\Firmata {
         $last = end($this->_bytes);
         if ($first === COMMAND_START_SYSEX &&
             $last === COMMAND_END_SYSEX) {
-          $this->handleResponse(array_slice($this->_bytes, 1, -1));
+          if ($byteCount > 2) {
+            $this->handleResponse($this->_bytes[1], array_slice($this->_bytes, 1, -1));
+          }
           $this->_bytes = array();
         } elseif ($byteCount == 3 && $first !== COMMAND_START_SYSEX) {
-          $command = ($first < 240) ? $first & 0xF0 : $first;
-          $this->handleResponse(array($command, $this->_bytes[1], $this->_bytes[2]));
+          $command = ($first < 240) ? ($first & 0xF0) : $first;
+          $this->handleResponse($command, $this->_bytes);
           $this->_bytes = array();
         }
       }
     }
 
-    private function handleResponse($bytes) {
-      $command = $bytes[0];
+    private function handleResponse($command, array $bytes) {
       $response = NULL;
       $classes = array(
         COMMAND_REPORT_VERSION => 'Midi\ReportVersion',
@@ -65,7 +66,7 @@ namespace Carica\Io\Firmata {
       );
       if (isset($classes[$command])) {
         $className = __NAMESPACE__.'\\Response\\'.$classes[$command];
-        $response = new $className($bytes);
+        $response = new $className($command, $bytes);
       }
       if ($response) {
         $this->events()->emit('response', $response);

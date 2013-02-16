@@ -9,8 +9,8 @@ namespace Carica\Io\Firmata\Response\Midi {
     private $_major = 0;
     private $_minor = 0;
 
-    public function __construct(array $bytes) {
-      parent::__construct($bytes);
+    public function __construct($command, array $bytes) {
+      parent::__construct($command, $bytes);
       $this->_major = $bytes[1];
       $this->_minor = $bytes[2];
     }

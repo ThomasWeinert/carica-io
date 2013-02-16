@@ -193,7 +193,6 @@ namespace Carica\Io\Firmata {
      * @param Carica\Io\Firmata\Response $response
      */
     public function onResponse(Response $response) {
-      $that = $this;
       if (isset($this->_responseHandler[$response->command()])) {
         $callback = array($this, $this->_responseHandler[$response->command()]);
         return $callback($response);

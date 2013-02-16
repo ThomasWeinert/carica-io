@@ -9,8 +9,8 @@ namespace Carica\Io\Firmata\Response\Sysex {
     private $_pins = array();
     private $_channels = array();
 
-    public function __construct($bytes) {
-      parent::__construct($bytes);
+    public function __construct($command, array $bytes) {
+      parent::__construct($command, $bytes);
       $length = count($bytes);
       for ($i = 1, $pin = 0; $i < $length; ++$i, ++$pin) {
         $channel = $bytes[$i];
