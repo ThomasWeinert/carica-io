@@ -67,24 +67,15 @@ namespace Carica\Io\Firmata {
 
     /**
      * Firmata version information
-     * @var unknown_type
+     * @var Carica\Io\Firmata\Version
      */
-    private $_version = array(
-      'major' => 0,
-      'minor' => 0
-    );
+    private $_version = NULL;
 
     /**
-     * firmware version information
-     * @var array
+     * Firmware version information
+     * @var Carica\Io\Firmata\Version
      */
-    private $_firmware = array(
-      'name' => '',
-      'version' => array(
-        'major' => 0,
-        'minor' => 0
-      )
-    );
+    private $_firmware= NULL;
 
     /**
      * Map command responses to private event handlers
@@ -177,9 +168,9 @@ namespace Carica\Io\Firmata {
     public function __get($name) {
       switch ($name) {
       case 'version' :
-        return $this->_version;
+        return isset($this->_version) ? $this->_version : new Version(0,0);
       case 'firmware' :
-        return $this->_firmware;
+        return isset($this->_firmware) ? $this->_firmware : new Version(0,0);
       case 'pins' :
         return $this->_pins;
       }
@@ -205,8 +196,7 @@ namespace Carica\Io\Firmata {
      * @param Carica\Io\Firmata\Response\Midi\ReportVersion $response
      */
     private function onReportVersion(Response\Midi\ReportVersion $response) {
-      $this->_version['major'] = $response->major;
-      $this->_version['minor'] = $response->minor;
+      $this->_version = new Version($response->major, $response->minor);
       for ($i = 0; $i < 16; $i++) {
         $this->port()->write([COMMAND_REPORT_DIGITAL | $i, 1]);
         $this->port()->write([COMMAND_REPORT_ANALOG | $i, 1]);
@@ -220,9 +210,7 @@ namespace Carica\Io\Firmata {
      * @param Response\Sysex\QueryFirmware $response
      */
     private function onQueryFirmware(Response\Sysex\QueryFirmware $response) {
-      $this->_firmware['name'] = $response->name;
-      $this->_firmware['version']['major'] = $response->major;
-      $this->_firmware['version']['minor'] = $response->minor;
+      $this->_firmware = new Version($response->major, $response->minor, $response->name);
       $this->events()->emit('queryfirmware');
     }
 

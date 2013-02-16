@@ -12,35 +12,24 @@ $board = new Firmata\Board(
   $stream = new Io\Stream\SerialPort(3)
 );
 
-$debug = function ($data) {
-  if (!empty($data)) {
-    $list = new \Carica\Io\ByteArray(1);
-    $list->fromString($data, TRUE);
-    var_dump($list->asHex());
-  }
-};
-$stream->events()->on('read', $debug);
-$stream->events()->on('write', $debug);
-
 $loop = Io\Event\Loop\Factory::get();
 
 $board->events()->on(
   'reportversion',
   function () use ($board) {
-    echo 'Firmata version: '.implode('.', $board->version)."\n";
+    echo 'Firmata version: '.$board->version."\n";
   }
 );
 $board->events()->on(
   'queryfirmware',
   function () use ($board) {
-    echo 'Firmware version: '.$board->firmware['name'].' '.implode('.', $board->firmware['version'])."\n";
+    echo 'Firmware version: '.$board->firmware."\n";
   }
 );
 
 $active = $board->activate(
   function ($error = NULL) {
     if (isset($error)) {
-      var_dump($error);
       echo $error."\n";
       return;
     }

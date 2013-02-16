@@ -20,7 +20,7 @@ $active = $board->activate(
       echo $error."\n";
       return;
     }
-    echo "Firmata ".implode('.', $board->version)." active\n";
+    echo "Firmata ".$board->version." active\n";
 
     $pin = 16;
     $board->pinMode($pin, Io\Firmata\PIN_STATE_ANALOG);
