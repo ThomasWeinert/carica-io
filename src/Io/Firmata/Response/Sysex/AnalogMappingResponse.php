@@ -15,7 +15,6 @@ namespace Carica\Io\Firmata\Response\Sysex {
       for ($i = 1, $pin = 0; $i < $length; ++$i, ++$pin) {
         $channel = $bytes[$i];
         if ($channel !== 127) {
-          var_dump($channel, $pin);
           $this->_channels[$channel] = $pin;
           $this->_pins[$pin] = $channel;
         }
