@@ -22,7 +22,7 @@ $active = $board->activate(
     }
     echo "Firmata ".implode('.', $board->version)." active\n";
 
-    $led = 9;
+    $led = 13;
     $board->pinMode($led, Io\Firmata\PIN_STATE_OUTPUT);
     echo "PIN: $led\n";
 
