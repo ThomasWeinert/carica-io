@@ -49,7 +49,7 @@ namespace Carica\Io\Firmata {
     /**
      * @var array
      */
-    private $_pins = array();
+    private $_pins = NULL;
 
     /**
      * @var array
@@ -98,6 +98,7 @@ namespace Carica\Io\Firmata {
      */
     public function __construct(Io\Stream $stream) {
       $this->_stream = $stream;
+      $this->_pins = new \ArrayObject();
     }
 
     /**
@@ -221,7 +222,10 @@ namespace Carica\Io\Firmata {
      * @param Response\Sysex\CapabilityResponse $response
      */
     private function onCapabilityResponse(Response\Sysex\CapabilityResponse $response) {
-      $this->_pins = $response->pins;
+      $this->_pins = new \ArrayObject();
+      foreach ($response->pins as $pin => $modes) {
+        $this->_pins[$pin] = new Pin($this, $pin, $modes);
+      }
       $this->events()->emit('capability-query');
     }
 
@@ -232,9 +236,6 @@ namespace Carica\Io\Firmata {
      */
     private function onAnalogMappingResponse(Response\Sysex\AnalogMappingResponse $response) {
       $this->_channels = $response->channels;
-      foreach ($response->pins as $pin => $channel) {
-        $this->_pins[$pin]['channel'] = $channel;
-      }
       $this->events()->emit('analog-mapping-query');
     }
 
@@ -246,9 +247,8 @@ namespace Carica\Io\Firmata {
      */
     private function onAnalogMessage(Response\Midi\AnalogMessage $response) {
       if (isset($this->_channels[$response->port]) &&
-          $this->_pins[$this->_channels[$response->port]]) {
+          isset($this->_pins[$this->_channels[$response->port]])) {
         $pin = $this->_channels[$response->port];
-        $this->_pins[$pin]['value'] = $response->value;
         $this->events()->emit('analog-read-'.$pin, $response->value);
         $this->events()->emit('analog-read', ['pin' => $pin, 'value' => $response->value]);
       }
@@ -263,12 +263,14 @@ namespace Carica\Io\Firmata {
       for ($i = 0; $i < 8; $i++) {
         if (isset($this->_pins[8 * $response->port + $i])) {
           $pinNumber = 8 * $response->port + $i;
-          $pin =& $this->_pins[$pinNumber];
-          if ($pin['mode'] == PIN_STATE_INPUT) {
-            $pin['value'] = ($response->value >> ($i & 0x07)) & 0x01;
+          $pin = $this->_pins[$pinNumber];
+          if ($pin->mode == PIN_STATE_INPUT) {
+            $value = ($response->value >> ($i & 0x07)) & 0x01;
+          } else {
+            $value = $pin->value;
           }
-          $this->events()->emit('digital-read-'.$pinNumber, $pin['value']);
-          $this->events()->emit('digital-read', ['pin' => $pinNumber, 'value' => $pin['value']]);
+          $this->events()->emit('digital-read-'.$pinNumber, $value);
+          $this->events()->emit('digital-read', ['pin' => $pinNumber, 'value' => $value]);
         }
       }
     }
@@ -279,8 +281,8 @@ namespace Carica\Io\Firmata {
      * @param Response\Sysex\PinStateResponse $response
      */
     private function onPinStateResponse(Response\Sysex\PinStateResponse $response) {
-      $this->_pins[$response->pin]['mode'] = $response->mode;
-      $this->_pins[$response->pin]['value'] = $response->value;
+      $this->_pins[$response->pin]->setMode($response->mode);
+      $this->_pins[$response->pin]->setAnalog($response->value);
       $this->events()->emit('pin-state-'.$response->pin, $response->value);
     }
 
@@ -357,7 +359,7 @@ namespace Carica\Io\Firmata {
      * @param integer $value 0-255
      */
     public function analogWrite($pin, $value) {
-      $this->_pins[$pin]['value'] = $value;
+      $this->_pins[$pin]->setAnalog($value);
       $this->port()->write(
         [COMMAND_ANALOG_MESSAGE | $pin, $value & 0x7F, ($value >> 7) & 0x7F]
       );
@@ -388,11 +390,11 @@ namespace Carica\Io\Firmata {
      * @param integer $value 0-1
      */
     public function digitalWrite($pin, $value) {
+      $this->_pins[$pin]->setDigital($value == DIGITAL_HIGH);
       $port = floor($pin / 8);
       $portValue = 0;
-      $this->_pins[$pin]['value'] = $value;
       for ($i = 0; $i < 8; $i++) {
-        if (!empty($this->_pins[8 * $port + $i]['value'])) {
+        if ($this->_pins[8 * $port + $i]->digital) {
           $portValue |= (1 << $i);
         }
       }
@@ -413,8 +415,7 @@ namespace Carica\Io\Firmata {
      * @param integer $mode
      */
     public function pinMode($pin, $mode) {
-      $this->_pins[$pin]['mode'] = $mode;
-      $this->port()->write([COMMAND_PIN_MODE, $pin, $mode]);
+      $this->_pins[$pin]->setMode($mode);
     }
   }
 }

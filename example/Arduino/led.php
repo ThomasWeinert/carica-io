@@ -30,9 +30,9 @@ $active = $board->activate(
       new Io\Event\Loop\Listener\Interval(
         1000,
         function () use ($board, $led) {
-          static $ledOn = FALSE;
-          echo 'LED: '.($ledOn ? 'off' : 'on')."\n";
-          $board->digitalWrite($led, $ledOn ? Io\Firmata\DIGITAL_LOW : Io\Firmata\DIGITAL_HIGH);
+          static $ledOn = TRUE;
+          echo 'LED: '.($ledOn ? 'on' : 'off')."\n";
+          $board->digitalWrite($led, $ledOn ? Io\Firmata\DIGITAL_HIGH : Io\Firmata\DIGITAL_LOW);
           $ledOn = !$ledOn;
         }
       )
