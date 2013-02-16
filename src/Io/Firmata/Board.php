@@ -37,21 +37,47 @@ namespace Carica\Io\Firmata {
 
   /**
    * This class represents an Arduino board running firmata.
+   *
+   * @property-read array $version
+   * @property-read array $firmware
+   * @property-read array $pins
    */
   class Board {
 
     use Event\Emitter\Aggregation;
 
+    /**
+     * @var array
+     */
     private $_pins = array();
+
+    /**
+     * @var array
+     */
     private $_channels = array();
 
+    /**
+     * @var Carica\Io\Stream
+     */
     private $_stream = NULL;
+    /**
+     * @var Buffer
+     */
     private $_buffer = NULL;
 
+    /**
+     * Firmata version information
+     * @var unknown_type
+     */
     private $_version = array(
       'major' => 0,
       'minor' => 0
     );
+
+    /**
+     * firmware version information
+     * @var array
+     */
     private $_firmware = array(
       'name' => '',
       'version' => array(
@@ -60,6 +86,10 @@ namespace Carica\Io\Firmata {
       )
     );
 
+    /**
+     * Map command responses to private event handlers
+     * @var array(integer=>string)
+     */
     private $_responseHandler = array(
       COMMAND_REPORT_VERSION => 'onReportVersion',
       COMMAND_ANALOG_MESSAGE => 'onAnalogMessage',
@@ -73,7 +103,7 @@ namespace Carica\Io\Firmata {
     /**
      * Create board and assign stream object
      *
-     * @param Io\Stream $port
+     * @param Carica\Io\Stream $port
      */
     public function __construct(Io\Stream $stream) {
       $this->_stream = $stream;
@@ -82,7 +112,7 @@ namespace Carica\Io\Firmata {
     /**
      * Getter for the port/stream object
      *
-     * @return Io\Stream
+     * @return Carica\Io\Stream
      */
     public function port() {
       return $this->_stream;
@@ -137,6 +167,13 @@ namespace Carica\Io\Firmata {
       }
     }
 
+    /**
+     * Provide some read only properties
+     *
+     * @param string $name
+     * @throws LogicException
+     * @return mixed
+     */
     public function __get($name) {
       switch ($name) {
       case 'version' :
@@ -150,9 +187,10 @@ namespace Carica\Io\Firmata {
     }
 
     /**
-     * Callback for the buffer, recieved a response from the board.
+     * Callback for the buffer, received a response from the board. Call a more specific
+     * private event handler based on the $_responseHandler mapping array
      *
-     * @param Response $response
+     * @param Carica\Io\Firmata\Response $response
      */
     public function onResponse(Response $response) {
       $that = $this;
@@ -162,6 +200,11 @@ namespace Carica\Io\Firmata {
       }
     }
 
+    /**
+     * A version was reported, store it and request value reading
+     *
+     * @param Carica\Io\Firmata\Response\Midi\ReportVersion $response
+     */
     private function onReportVersion(Response\Midi\ReportVersion $response) {
       $this->_version['major'] = $response->major;
       $this->_version['minor'] = $response->minor;
@@ -172,29 +215,11 @@ namespace Carica\Io\Firmata {
       $this->events()->emit('reportversion');
     }
 
-    private function onAnalogMessage(Response\Midi\AnalogMessage $response) {
-      if (isset($this->_channels[$response->pin]) &&
-          $this->_pins[$this->_channels[$response->pin]]) {
-        $this->_pins[$this->_channels[$response->pin]]['value'] = $response->value;
-      }
-      $this->events()->emit('analog-read-' + $response->pin, $response->value);
-      $this->events()->emit('analog-read', ['pin' => $response->pin, 'value' => $response->value]);
-    }
-
-    private function onDigitalMessage(Response\Midi\DigitalMessage $response) {
-      for ($i = 0; $i < 8; $i++) {
-        if (isset($this->_pins[8 * $response->pin + $i])) {
-          $pinNumber = 8 * $response->pin + $i;
-          $pin =& $this->_pins[$pinNumber];
-          if ($pin['mode'] == PIN_STATE_INPUT) {
-            $pin['value'] = ($response->value >> ($i & 0x07)) & 0x01;
-          }
-          $this->events()->emit('digital-read-' + $pinNumber, $pin['value']);
-          $this->events()->emit('digital-read', ['pin' => $pinNumber, 'value' => $pin['value']]);
-        }
-      }
-    }
-
+    /**
+     * Firmware was reported, store it and emit event
+     *
+     * @param Response\Sysex\QueryFirmware $response
+     */
     private function onQueryFirmware(Response\Sysex\QueryFirmware $response) {
       $this->_firmware['name'] = $response->name;
       $this->_firmware['version']['major'] = $response->major;
@@ -202,67 +227,171 @@ namespace Carica\Io\Firmata {
       $this->events()->emit('queryfirmware');
     }
 
+
+    /**
+     * Capabilities for all pins were reported, store pin status and emit event
+     *
+     * @param Response\Sysex\CapabilityResponse $response
+     */
     private function onCapabilityResponse(Response\Sysex\CapabilityResponse $response) {
       $this->_pins = $response->pins;
-      var_dump('Capability');
       $this->events()->emit('capability-query');
     }
 
-    private function onPinStateResponse(Response\Sysex\PinStateResponse $response) {
-      $this->_pins[$response->pin]['mode'] = $response->mode;
-      $this->_pins[$response->pin]['value'] = $response->value;
-      $this->events()->emit('pin-state-'.$response->pin);
-    }
-
+    /**
+     * Analog mapping data was reported, store it and report event
+     *
+     * @param Response\Sysex\AnalogMappingResponse $response
+     */
     private function onAnalogMappingResponse(Response\Sysex\AnalogMappingResponse $response) {
       $this->_channels = $response->channels;
+      foreach ($response->pins as $pin => $channel) {
+        $this->_pins[$pin]['channel'] = $channel;
+      }
       $this->events()->emit('analog-mapping-query');
     }
 
 
+    /**
+     * Got an analog message, change pin value and emit events
+     *
+     * @param Response\Midi\AnalogMessage $response
+     */
+    private function onAnalogMessage(Response\Midi\AnalogMessage $response) {
+      if (isset($this->_channels[$response->port]) &&
+          $this->_pins[$this->_channels[$response->port]]) {
+        $pin = $this->_channels[$response->port];
+        $this->_pins[$pin]['value'] = $response->value;
+        $this->events()->emit('analog-read-'.$pin, $response->value);
+        $this->events()->emit('analog-read', ['pin' => $pin, 'value' => $response->value]);
+      }
+    }
+
+    /**
+     * Got a digital message, change pin value and emit events
+     *
+     * @param Response\Midi\DigitalMessage $response
+     */
+    private function onDigitalMessage(Response\Midi\DigitalMessage $response) {
+      for ($i = 0; $i < 8; $i++) {
+        if (isset($this->_pins[8 * $response->port + $i])) {
+          $pinNumber = 8 * $response->port + $i;
+          $pin =& $this->_pins[$pinNumber];
+          if ($pin['mode'] == PIN_STATE_INPUT) {
+            $pin['value'] = ($response->value >> ($i & 0x07)) & 0x01;
+          }
+          $this->events()->emit('digital-read-'.$pinNumber, $pin['value']);
+          $this->events()->emit('digital-read', ['pin' => $pinNumber, 'value' => $pin['value']]);
+        }
+      }
+    }
+
+    /**
+     * Pin status was reported, store it and emit event
+     *
+     * @param Response\Sysex\PinStateResponse $response
+     */
+    private function onPinStateResponse(Response\Sysex\PinStateResponse $response) {
+      $this->_pins[$response->pin]['mode'] = $response->mode;
+      $this->_pins[$response->pin]['value'] = $response->value;
+      $this->events()->emit('pin-state-'.$response->pin, $response->value);
+    }
+
+    /**
+     * Reset board
+     */
     public function reset() {
       $this->port()->write([COMMAND_SYSTEM_RESET]);
     }
 
+    /**
+     * Request version from board and execute callback after it is recieved.
+     *
+     * @param callable $callback
+     */
     public function reportVersion(Callable $callback) {
       $this->events()->once('reportversion', $callback);
       $this->port()->write([COMMAND_REPORT_VERSION]);
     }
 
+    /**
+     * Request firmware from board and execute callback after it is recieved.
+     *
+     * @param callable $callback
+     */
     public function queryFirmware(Callable $callback) {
       $this->events()->once('queryfirmware', $callback);
       $this->port()->write([COMMAND_START_SYSEX, COMMAND_QUERY_FIRMWARE, COMMAND_END_SYSEX]);
     }
 
+    /**
+     * Query pin capabilities and execute callback after they are recieved
+     *
+     * @param callable $callback
+     */
     public function queryCapabilities(Callable $callback) {
       $this->events()->once('capability-query', $callback);
       $this->port()->write([COMMAND_START_SYSEX, COMMAND_CAPABILITY_QUERY, COMMAND_END_SYSEX]);
     }
 
+    /**
+     * Request the analog mapping data and execute callback after it is recieved
+     *
+     * @param callable $callback
+     */
     public function queryAnalogMapping(Callable $callback) {
       $this->events()->once('analog-mapping-query', $callback);
       $this->port()->write([COMMAND_START_SYSEX, COMMAND_ANALOG_MAPPING_QUERY, COMMAND_END_SYSEX]);
     }
 
+    /**
+     * Query pin status (mode and value), and execute callback after it recieved
+     *
+     * @param integer $pin 0-16
+     * @param callable $callback
+     */
     public function queryPinState($pin, Callable $callback) {
       $this->events()->once('pin-state-'.$pin, $callback);
-      $this->port()->write([COMMAND_START_SYSEX, COMMAND_PIN_STATE_QUERY, pin, COMMAND_END_SYSEX]);
+      $this->port()->write([COMMAND_START_SYSEX, COMMAND_PIN_STATE_QUERY, $pin, COMMAND_END_SYSEX]);
+    }
+    /**
+     * Add a callback for analog read events on a pin
+     *
+     * @param integer $pin 0-16
+     */
+    public function analogRead($pin, $callback) {
+      $this->events()->on('analog-read-'.$pin, $callback);
     }
 
     /**
-     * Set the mode of a pin:
-     *   PIN_STATE_INPUT,
-     *   PIN_STATE_OUTPUT,
-     *   PIN_STATE_ANALOG,
-     *   PIN_STATE_PWM,
-     *   PIN_STATE_SERVO
+     * Write an analog value for a pin
      *
      * @param integer $pin 0-16
-     * @param integer $mode
+     * @param integer $value 0-255
      */
-    public function pinMode($pin, $mode) {
-      $this->_pins[$pin]['mode'] = $mode;
-      $this->port()->write([COMMAND_PIN_MODE, $pin, $mode]);
+    public function analogWrite($pin, $value) {
+      $this->_pins[$pin]['value'] = $value;
+      $this->port()->write(
+        [COMMAND_ANALOG_MESSAGE | $pin, $value & 0x7F, ($value >> 7) & 0x7F]
+      );
+    }
+
+    /**
+     * Add a callback for diagital read events on a pin
+     * @param integer $pin 0-16
+     */
+    public function digitalRead($pin) {
+      $this->events()->on('digital-read-'.$pin, $callback);
+    }
+
+    /**
+     * Move a servo - an alias for analogWrite()
+     *
+     * @param integer $pin 0-16
+     * @param integer $value 0-255
+     */
+    public function servoWrite($pin, $value) {
+      $this->analogWrite($pin, $value);
     }
 
     /**
@@ -286,16 +415,19 @@ namespace Carica\Io\Firmata {
     }
 
     /**
-     * Write an analog value for a pin
+     * Set the mode of a pin:
+     *   PIN_STATE_INPUT,
+     *   PIN_STATE_OUTPUT,
+     *   PIN_STATE_ANALOG,
+     *   PIN_STATE_PWM,
+     *   PIN_STATE_SERVO
      *
      * @param integer $pin 0-16
-     * @param integer $value 0-255
+     * @param integer $mode
      */
-    public function analogWrite($pin, $value) {
-      $this->_pins[$pin]['value'] = $value;
-      $this->port()->write(
-        [COMMAND_ANALOG_MESSAGE | $pin, $value & 0x7F, ($value >> 7) & 0x7F]
-      );
+    public function pinMode($pin, $mode) {
+      $this->_pins[$pin]['mode'] = $mode;
+      $this->port()->write([COMMAND_PIN_MODE, $pin, $mode]);
     }
   }
 }

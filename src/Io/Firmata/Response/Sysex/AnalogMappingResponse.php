@@ -6,14 +6,19 @@ namespace Carica\Io\Firmata\Response\Sysex {
 
   class AnalogMappingResponse extends Firmata\Response\Sysex {
 
+    private $_pins = array();
     private $_channels = array();
 
     public function __construct($bytes) {
       parent::__construct($bytes);
       $length = count($bytes);
       for ($i = 1, $pin = 0; $i < $length; ++$i, ++$pin) {
-        $current = $bytes[$i];
-        $this->_channels[$pin] = ($current == 127) ? NULL : $current;
+        $channel = $bytes[$i];
+        if ($channel !== 127) {
+          var_dump($channel, $pin);
+          $this->_channels[$channel] = $pin;
+          $this->_pins[$pin] = $channel;
+        }
       }
     }
 
@@ -21,6 +26,8 @@ namespace Carica\Io\Firmata\Response\Sysex {
       switch ($name) {
       case 'channels' :
         return $this->_channels;
+      case 'pins' :
+        return $this->_pins;
       }
       throw new \LogicException(sprintf('Unknown property %s::$%s', __CLASS__, $name));
     }

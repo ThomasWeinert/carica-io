@@ -32,7 +32,8 @@ namespace Carica\Io\Firmata\Response\Sysex {
           $this->_pins[] = array(
             'supports' => $modes,
             'mode' => Firmata\PIN_STATE_OUTPUT,
-            'value' => 0
+            'value' => 0,
+            'channel' => NULL
           );
           $supported = 0;
           $byteIndex = 0;
