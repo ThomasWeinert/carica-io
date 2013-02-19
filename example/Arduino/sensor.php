@@ -4,7 +4,6 @@ include('../../src/Io/Loader.php');
 Carica\Io\Loader::register();
 
 use Carica\Io;
-use Carica\Io\Firmata;
 
 $board = new Io\Firmata\Board(
   //new Io\Stream\SerialPort(3)
