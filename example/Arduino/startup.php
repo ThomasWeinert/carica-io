@@ -37,7 +37,7 @@ $active = $board->activate(
   }
 );
 
-if ($active) {
+if ($board->isActive()) {
   $loop->run();
 }
 

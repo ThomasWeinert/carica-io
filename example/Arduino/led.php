@@ -14,34 +14,37 @@ $board = new Io\Firmata\Board(
 $loop = Io\Event\Loop\Factory::get();
 
 
-$active = $board->activate(
-  function ($error = NULL) use ($board, $loop) {
-    if (isset($error)) {
-      echo $error."\n";
-      return;
+$board
+  ->activate()
+  ->done(
+    function () use ($board, $loop) {
+      echo "Firmata ".$board->version." active\n";
+
+      $led = 13;
+      $board->pinMode($led, Io\Firmata\PIN_STATE_OUTPUT);
+      echo "PIN: $led\n";
+
+      $loop->add(
+        new Io\Event\Loop\Listener\Interval(
+          1000,
+          function () use ($board, $led) {
+            static $ledOn = TRUE;
+            echo 'LED: '.($ledOn ? 'on' : 'off')."\n";
+            $board->digitalWrite($led, $ledOn ? Io\Firmata\DIGITAL_HIGH : Io\Firmata\DIGITAL_LOW);
+            $ledOn = !$ledOn;
+          }
+        )
+      );
     }
-    echo "Firmata ".$board->version." active\n";
-
-    $led = 13;
-    $board->pinMode($led, Io\Firmata\PIN_STATE_OUTPUT);
-    echo "PIN: $led\n";
-
-    $loop->add(
-      new Io\Event\Loop\Listener\Interval(
-        1000,
-        function () use ($board, $led) {
-          static $ledOn = TRUE;
-          echo 'LED: '.($ledOn ? 'on' : 'off')."\n";
-          $board->digitalWrite($led, $ledOn ? Io\Firmata\DIGITAL_HIGH : Io\Firmata\DIGITAL_LOW);
-          $ledOn = !$ledOn;
-        }
-      )
-    );
-  }
-);
+  )
+  ->fail(
+    function ($error) {
+      echo $error."\n";
+    }
+  );
 
 
-if ($active) {
+if ($board->isActive()) {
   $loop->run();
 }
 

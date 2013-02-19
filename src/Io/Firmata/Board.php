@@ -102,6 +102,15 @@ namespace Carica\Io\Firmata {
     }
 
     /**
+     * Validate if the board ist still active (the port/stream contains a valid resource)
+     *
+     * @return boolean
+     */
+    public function isActive() {
+      return is_resource($this->port()->resource());
+    }
+
+    /**
      * Getter for the port/stream object
      *
      * @return Carica\Io\Stream
@@ -127,36 +136,43 @@ namespace Carica\Io\Firmata {
     /**
      * Activate the board, assign the needed callbacks
      *
-     * @param callable $callback
-     * @return boolean
+     * @param Callable|NULL $callback
+     * @return Carica\Io\Deferred\Promise
      */
-    public function activate(Callable $callback) {
-      $this->port()->events()->on('error', $callback);
+    public function activate(Callable $callback = NULL) {
+      $defer = new \Carica\Io\Deferred();
+      if (isset($callback)) {
+        $defer->always($callback);
+      }
+      $this->port()->events()->on(
+        'error',
+        function($message) use ($defer) {
+          $defer->reject($message);
+        }
+      );
       $this->port()->events()->on('data', array($this->buffer(), 'addData'));
       $this->buffer()->events()->on('response', array($this, 'onResponse'));
       if ($this->port()->open()) {
         $board = $this;
         $board->reportVersion(
-          function() use ($board, $callback) {
+          function() use ($board, $defer) {
             $board->queryFirmware(
-              function() use ($board, $callback) {
+              function() use ($board, $defer) {
                 $board->queryCapabilities(
-                  function() use ($board, $callback) {
+                  function() use ($board, $defer) {
                     $board->queryAnalogMapping(
-                      function() use ($callback) {
-                        $callback();
+                      function() use ($defer) {
+                        $defer->resolve();
                       }
                     );
-                 }
+                  }
                 );
               }
             );
           }
         );
-        return TRUE;
-      } else {
-        return FALSE;
       }
+      return $defer->promise();
     }
 
     /**
