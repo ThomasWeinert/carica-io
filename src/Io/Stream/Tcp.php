@@ -42,7 +42,8 @@ namespace Carica\Io\Stream {
     }
 
     public function open() {
-      if ($resource = stream_socket_client('tcp://'.$this->_host.':'.$this->_port)) {
+      $resource = @stream_socket_client('tcp://'.$this->_host.':'.$this->_port, $no, $string, 2);
+      if ($resource) {
         stream_set_blocking($resource, 0);
         stream_set_read_buffer($resource, 0);
         stream_set_write_buffer($resource, 0);
