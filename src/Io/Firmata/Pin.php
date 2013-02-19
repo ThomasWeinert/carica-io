@@ -26,19 +26,19 @@ namespace Carica\Io\Firmata {
       $this->_board = $board;
       $that = $this;
       $this->_board->events()->on(
-        'pin-state',
+        'pin-state-'.$pin,
         function ($mode, $value) use ($that) {
           $that->onUpdatePinState($mode, $value);
         }
       );
       $this->_board->events()->on(
-        'analog-read',
+        'analog-read-'.$pin,
         function ($value) use ($that) {
           $that->onUpdateValue($value);
         }
       );
       $this->_board->events()->on(
-        'digital-read',
+        'digital-read-'.$pin,
         function ($value) use ($that) {
           $that->onUpdateValue($value);
         }

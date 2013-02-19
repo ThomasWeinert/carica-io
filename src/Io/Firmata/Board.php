@@ -297,8 +297,6 @@ namespace Carica\Io\Firmata {
      * @param Response\Sysex\PinStateResponse $response
      */
     private function onPinStateResponse(Response\Sysex\PinStateResponse $response) {
-      $this->_pins[$response->pin]->setMode($response->mode);
-      $this->_pins[$response->pin]->setAnalog($response->value);
       $this->events()->emit('pin-state-'.$response->pin, $response->value);
     }
 
