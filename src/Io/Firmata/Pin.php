@@ -3,13 +3,14 @@
 namespace Carica\Io\Firmata {
 
   /**
+   * Represents a single pin on the board.
    *
    * @property-read Carica\Io\Firmata\Board $board
    * @property-read integer $pin
    * @property-read array $supports
    * @property-read integer $value
-   * @property integer $analog
-   * @property boolean $digital
+   * @property integer $analog Get/set the pin value using an analog integer value
+   * @property boolean $digital Get/set the pin value using an boolean value
    */
   class Pin {
 
@@ -17,11 +18,42 @@ namespace Carica\Io\Firmata {
      * @var Carica\Io\Firmata\Board
      */
     private $_board = NULL;
+    /**
+     * @var integer
+     */
     private $_pin = 0;
+    /**
+     * @var array(integer)
+     */
     private $_supports = array();
+    /**
+     * @var integer
+     */
     private $_mode = PIN_STATE_OUTPUT;
+    /**
+     * @var integer
+     */
     private $_value = 0;
 
+    /**
+     * Was the mode sent at least once to sync it with the board.
+     * @var boolean
+     */
+    private $_modeInitialized = FALSE;
+    /**
+     * Was the value sent at least once to sync it with the board.
+     * @var boolean
+     */
+    private $_valueInitialized = FALSE;
+
+    /**
+     * Create a pin object for the specified board and pin id. Provide informations
+     * about the supported modes.
+     * 
+     * @param Board $board
+     * @param integer $pin
+     * @param array $supports
+     */
     public function __construct(Board $board, $pin, array $supports) {
       $this->_board = $board;
       $that = $this;
@@ -47,15 +79,32 @@ namespace Carica\Io\Firmata {
       $this->_supports = $supports;
     }
 
+    /**
+     * Callback function for pin state updates from the board.
+     * 
+     * @param integer $mode
+     * @param integer $value
+     */
     private function onUpdatePinState($mode, $value) {
       $this->_mode = $mode;
       $this->_value = $value;
     }
 
+    /**
+     * Callback function for pin value changes sent from the board.
+     * 
+     * @param integer $value
+     */
     private function onUpdateValue($value) {
       $this->_value = $value;
     }
 
+    /**
+     * Define usable properties
+     * 
+     * @param string $name
+     * @return boolean
+     */
     public function __isset($name) {
       switch ($name) {
       case 'board' :
@@ -70,6 +119,13 @@ namespace Carica\Io\Firmata {
       return FALSE;
     }
 
+    /**
+     * Getter mapping for the object properties
+     * 
+     * @param string $name
+     * @throws \LogicException
+     * @return mixed
+     */
     public function __get($name) {
       switch ($name) {
       case 'board' :
@@ -90,6 +146,13 @@ namespace Carica\Io\Firmata {
       throw new \LogicException(sprintf('Unknown property %s::$%s', get_class($this), $name));
     }
 
+    /**
+     * Setter for the writeable properties
+     * 
+     * @param string $name
+     * @param mixed $value
+     * @throws \LogicException
+     */
     public function __set($name, $value) {
       switch ($name) {
       case 'mode' :
@@ -107,6 +170,12 @@ namespace Carica\Io\Firmata {
       );
     }
 
+    /**
+     * Setter method for the mode property.
+     * 
+     * @param integer $mode
+     * @throws \OutOfBoundsException
+     */
     public function setMode($mode) {
       $mode = (int)$mode;
       if (!in_array($mode, $this->_supports)) {
@@ -114,26 +183,39 @@ namespace Carica\Io\Firmata {
           sprintf('Invalid mode %d for pin #%d.', $mode, $this->_pin)
         );
       }
-      if ($this->_mode != $mode) {
-        $this->_mode = $mode;
-        $this->_board->pinMode($this->_pin, $mode);
+      if ($this->_modeInitialized && $this->_mode == $mode) {
+      	return;
       }
+      $this->_mode = $mode;
+      $this->_board->pinMode($this->_pin, $mode);
     }
 
+    /**
+     * Setter method for the digital property. Allows to change the value between low and high
+     * using boolean values
+     * 
+     * @param boolean $isActive
+     */
     public function setDigital($isActive) {
       $value = (boolean)$isActive ? DIGITAL_HIGH : DIGITAL_LOW;
-      if ($this->_value != $value) {
-        $this->_value = $value;
-        $this->_board->digitalWrite($this->_pin, $value);
+      if ($this->_valueInitialized && $this->_value == $value) {
+      	return;
       }
+      $this->_value = $value;
+      $this->_board->digitalWrite($this->_pin, $value);
     }
 
+    /**
+     * Setter method for the analog property. Allows to set change the value on the pin.
+     * @param unknown $value
+     */
     public function setAnalog($value) {
       $value = (int)$value;
-      if ($this->_value != $value) {
-        $this->_value = $value;
-        $this->_board->analogWrite($this->_pin, $value);
+      if ($this->_valueInitialized && $this->_value == $value) {
+      	return;
       }
+      $this->_value = $value;
+      $this->_board->analogWrite($this->_pin, $value);
     }
   }
 }
