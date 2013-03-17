@@ -4,10 +4,10 @@ namespace Carica\Io {
 
   include_once(__DIR__.'/Bootstrap.php');
 
-  class BytesTest extends \PHPUnit_Framework_TestCase {
+  class ByteArrayTest extends \PHPUnit_Framework_TestCase {
 
     /**
-     * @covers Carica\Io\Firmata\ByteArray::__construct
+     * @covers Carica\Io\ByteArray::__construct
      */
     public function testConstructor() {
       $bytes = new ByteArray(3);
@@ -16,7 +16,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Firmata\ByteArray::__construct
+     * @covers Carica\Io\ByteArray::__construct
      */
     public function testConstructorWithInvalidLengthExpectingException() {
       $this->setExpectedException(
@@ -26,7 +26,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Firmata\ByteArray::setLength
+     * @covers Carica\Io\ByteArray::setLength
      */
     public function testSetLengthIncreaseFrom3To6() {
       $bytes = new ByteArray(3);
@@ -36,7 +36,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Firmata\ByteArray::setLength
+     * @covers Carica\Io\ByteArray::setLength
      */
     public function testSetLengthDecreaseFrom6To3() {
       $bytes = new ByteArray(6);
@@ -46,8 +46,8 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Firmata\ByteArray::__toString
-     * @covers Carica\Io\Firmata\ByteArray::fromString
+     * @covers Carica\Io\ByteArray::__toString
+     * @covers Carica\Io\ByteArray::fromString
      * @dataProvider provideBinarySamples
      */
     public function testStringInOut($binary) {
@@ -57,8 +57,8 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Firmata\ByteArray::__toString
-     * @covers Carica\Io\Firmata\ByteArray::fromString
+     * @covers Carica\Io\ByteArray::__toString
+     * @covers Carica\Io\ByteArray::fromString
      */
     public function testFromStringWithAutomaticLengthIncrease() {
       $bytes = new ByteArray(1);
@@ -67,8 +67,8 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Firmata\ByteArray::__toString
-     * @covers Carica\Io\Firmata\ByteArray::fromString
+     * @covers Carica\Io\ByteArray::__toString
+     * @covers Carica\Io\ByteArray::fromString
      */
     public function testFromStringWithAutomaticLengthDecrease() {
       $bytes = new ByteArray(10);
@@ -78,7 +78,7 @@ namespace Carica\Io {
 
 
     /**
-     * @covers Carica\Io\Firmata\ByteArray::asHex
+     * @covers Carica\Io\ByteArray::asHex
      * @dataProvider provideHexSamples
      */
     public function testAsHex($expected, $binaryString, $length) {
@@ -88,7 +88,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Firmata\ByteArray::asHex
+     * @covers Carica\Io\ByteArray::asHex
      * @dataProvider provideBitStringSamples
      */
     public function testAsBitString($expected, $binaryString, $length) {
@@ -98,7 +98,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Firmata\ByteArray::offsetSet
+     * @covers Carica\Io\ByteArray::offsetSet
      */
     public function testSetLowestBit() {
       $bytes = new ByteArray(1);
@@ -107,7 +107,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Firmata\ByteArray::offsetSet
+     * @covers Carica\Io\ByteArray::offsetSet
      */
     public function testDisableLowestBit() {
       $bytes = new ByteArray(1);
@@ -117,7 +117,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Firmata\ByteArray::offsetSet
+     * @covers Carica\Io\ByteArray::offsetSet
      */
     public function testSetHighestBit() {
       $bytes = new ByteArray(1);
@@ -126,7 +126,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Firmata\ByteArray::offsetSet
+     * @covers Carica\Io\ByteArray::offsetSet
      */
     public function testDisableHighestBit() {
       $bytes = new ByteArray(1);
@@ -136,7 +136,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Firmata\ByteArray::offsetUnset
+     * @covers Carica\Io\ByteArray::offsetUnset
      */
     public function testUnsetLowestBit() {
       $bytes = new ByteArray(1);
@@ -155,8 +155,8 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Firmata\ByteArray::offsetSet
-     * @covers Carica\Io\Firmata\ByteArray::offsetGet
+     * @covers Carica\Io\ByteArray::offsetSet
+     * @covers Carica\Io\ByteArray::offsetGet
      * @dataProvider provideBitOffsetSamples
      */
     public function testBitGetAfterSet($expected, $byte, $bit, $status) {
@@ -168,8 +168,8 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Firmata\ByteArray::offsetSet
-     * @covers Carica\Io\Firmata\ByteArray::offsetGet
+     * @covers Carica\Io\ByteArray::offsetSet
+     * @covers Carica\Io\ByteArray::offsetGet
      * @dataProvider provideByteOffsetSamples
      */
     public function testByteGetAfterSet($expected, $byte, $value) {
@@ -181,8 +181,8 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Firmata\ByteArray::validateOffset
-     * @covers Carica\Io\Firmata\ByteArray::validateBitOffset
+     * @covers Carica\Io\ByteArray::validateOffset
+     * @covers Carica\Io\ByteArray::validateBitOffset
      * @dataProvider provideInvalidOffsets
      */
     public function testValidateIndexExpectingException($position) {
@@ -192,7 +192,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Firmata\ByteArray::validateValue
+     * @covers Carica\Io\ByteArray::validateValue
      * @dataProvider provideInvalidValues
      */
     public function testValidateValueExpectingException($value) {
