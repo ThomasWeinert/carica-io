@@ -35,6 +35,24 @@ namespace Carica\Io\Firmata {
     }
 
     /*
+     * @covers Carica\Io\Firmata\Pin::__set
+     */
+    public function testSetInvalidPropertyExpectingException() {
+      $pin = new Pin($this->getBoardFixture(), 12, array(PIN_STATE_OUTPUT));
+      $this->setExpectedException('LogicException');
+      $pin->INVALID_PROPERTY = 'trigger';
+    }
+
+    /*
+     * @covers Carica\Io\Firmata\Pin::__get
+     */
+    public function testGetInvalidPropertyExpectingException() {
+      $pin = new Pin($this->getBoardFixture(), 12, array(PIN_STATE_OUTPUT));
+      $this->setExpectedException('LogicException');
+      $dummy = $pin->INVALID_PROPERTY;
+    }
+
+    /*
      * @covers Carica\Io\Firmata\Pin::__get
      */
     public function testGetBoard() {
@@ -143,6 +161,42 @@ namespace Carica\Io\Firmata {
       $pin = new Pin($board, 12, array(PIN_STATE_OUTPUT));
       $this->setExpectedException('OutOfBoundsException');
       $pin->mode = PIN_STATE_ANALOG;
+    }
+
+    /*
+     * @covers Carica\Io\Firmata\Pin::__set
+     * @covers Carica\Io\Firmata\Pin::setDigital
+     */
+    public function testSetAnalogValue() {
+      $board = $this->getBoardFixture();
+      $board
+        ->expects($this->once())
+        ->method('analogWrite')
+        ->with(12, 128);
+
+      $pin = new Pin($board, 12, array(PIN_STATE_OUTPUT, PIN_STATE_ANALOG));
+      $pin->analog = 128;
+      $pin->analog = 128;
+      $this->assertEquals(128, $pin->analog);
+      $this->assertEquals(128, $pin->value);
+    }
+
+    /*
+     * @covers Carica\Io\Firmata\Pin::__set
+     * @covers Carica\Io\Firmata\Pin::setDigital
+     */
+    public function testSetDigitalValue() {
+      $board = $this->getBoardFixture();
+      $board
+        ->expects($this->once())
+        ->method('digitalWrite')
+        ->with(12, DIGITAL_HIGH);
+
+      $pin = new Pin($board, 12, array(PIN_STATE_OUTPUT, PIN_STATE_ANALOG));
+      $pin->digital = TRUE;
+      $pin->digital = TRUE;
+      $this->assertTrue($pin->digital);
+      $this->assertEquals(DIGITAL_HIGH, $pin->value);
     }
 
     /*****************
