@@ -6,6 +6,8 @@ namespace Carica\Io\Event {
 
   class EmitterTest extends \PHPUnit_Framework_TestCase {
 
+    public $emittedEvents = array();
+
     /**
      * @covers Carica\Io\Event\Emitter::on
      */
@@ -106,6 +108,66 @@ namespace Carica\Io\Event {
       $emitter->on('foo', $this->getMock('Carica\Io\Event\Emitter\Listener'));
       $emitter->on('bar', $this->getMock('Carica\Io\Event\Emitter\Listener'));
       $this->assertCount(1, $emitter->listeners('bar'));
+    }
+
+    /**
+     * @covers Carica\Io\Event\Emitter::emit
+     */
+    public function testEmitWithOneListener() {
+      $that = $this;
+      $emitter = new Emitter();
+      $emitter->on(
+        'foo',
+        function($value) use ($that) {
+          $that->emittedEvents[] = $value;
+        }
+      );
+      $emitter->emit('foo', 'success');
+      $this->assertEquals(array('success'), $that->emittedEvents);
+    }
+
+    /**
+     * @covers Carica\Io\Event\Emitter::emit
+     */
+    public function testEmitWithTwoListeners() {
+      $that = $this;
+      $emitter = new Emitter();
+      $emitter->on(
+        'foo',
+        function() use ($that) {
+          $that->emittedEvents[] = 'one';
+        }
+      );
+      $emitter->on(
+        'foo',
+        function () use ($that) {
+          $that->emittedEvents[] = 'two';
+        }
+      );
+      $emitter->emit('foo');
+      $this->assertEquals(array('one', 'two'), $that->emittedEvents);
+    }
+
+    /**
+     * @covers Carica\Io\Event\Emitter::emit
+     */
+    public function testEmitWithTwoListenersfordifferentEvents() {
+      $that = $this;
+      $emitter = new Emitter();
+      $emitter->on(
+        'foo',
+        function() use ($that) {
+          $that->emittedEvents[] = 'fail';
+        }
+      );
+      $emitter->on(
+        'bar',
+        function () use ($that) {
+          $that->emittedEvents[] = 'success';
+        }
+      );
+      $emitter->emit('bar');
+      $this->assertEquals(array('success'), $that->emittedEvents);
     }
   }
 }
