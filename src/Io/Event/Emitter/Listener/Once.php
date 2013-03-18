@@ -7,7 +7,7 @@ namespace Carica\Io\Event\Emitter\Listener {
   class Once extends On {
 
     public function __invoke() {
-      $this->_emitter->removeListener($this->_event, $callback = $this->getCallback());
+      $this->emitter->removeListener($this->event, $callback = $this->callback);
       call_user_func_array($callback, func_get_args());
     }
   }
