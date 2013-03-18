@@ -89,5 +89,23 @@ namespace Carica\Io\Event {
       $emitter->removeAllListeners('foo');
       $this->assertCount(0, $emitter->listeners('foo'));
     }
+
+    /**
+     * @covers Carica\Io\Event\Emitter::listeners
+     */
+    public function testListernersReturnsEmptyArrayByDefault() {
+      $emitter = new Emitter();
+      $this->assertSame(array(), $emitter->listeners('foo'));
+    }
+
+    /**
+     * @covers Carica\Io\Event\Emitter::listeners
+     */
+    public function testListernersReturnsListenersForSpecifiedEvent() {
+      $emitter = new Emitter();
+      $emitter->on('foo', $this->getMock('Carica\Io\Event\Emitter\Listener'));
+      $emitter->on('bar', $this->getMock('Carica\Io\Event\Emitter\Listener'));
+      $this->assertCount(1, $emitter->listeners('bar'));
+    }
   }
 }
