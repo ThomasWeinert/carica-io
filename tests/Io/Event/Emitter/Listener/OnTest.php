@@ -6,6 +6,8 @@ namespace Carica\Io\Event\Emitter\Listener {
 
   class OnTest extends \PHPUnit_Framework_TestCase {
 
+    public $calledCallback = FALSE;
+
     /**
      * @covers Carica\Io\Event\Emitter\Listener\On::__construct
      */
@@ -60,12 +62,54 @@ namespace Carica\Io\Event\Emitter\Listener {
     }
 
     /**
+     * @covers Carica\Io\Event\Emitter\Listener\On::getCallback
+     */
+    public function testGetCallback() {
+      $event = new On($this->getMock('Carica\Io\Event\Emitter'), 'foo', $callback = function() {});
+      $this->assertSame($callback, $event->getCallback());
+    }
+
+    /**
      * @covers Carica\Io\Event\Emitter\Listener\On::__get
      */
     public function testGetInvalidPropertyExpectingException() {
       $event = new On($this->getMock('Carica\Io\Event\Emitter'), 'foo', function() {});
       $this->setExpectedException('LogicException');
       $dummy = $event->INVALID_PROPERTY;
+    }
+
+    /**
+     * @covers Carica\Io\Event\Emitter\Listener\On::__set
+     */
+    public function testSetIsBlockedExpectingException() {
+      $event = new On($this->getMock('Carica\Io\Event\Emitter'), 'foo', function() {});
+      $this->setExpectedException('LogicException');
+      $event->emitter = $this->getMock('Carica\Io\Event\Emitter');
+    }
+
+    /**
+     * @covers Carica\Io\Event\Emitter\Listener\On::__unset
+     */
+    public function testUnsetIsBlockedExpectingException() {
+      $event = new On($this->getMock('Carica\Io\Event\Emitter'), 'foo', function() {});
+      $this->setExpectedException('LogicException');
+      unset($event->emitter);
+    }
+
+    /**
+     * @covers Carica\Io\Event\Emitter\Listener\On::__invoke
+     */
+    public function testInvokeCallsCallback() {
+      $that = $this;
+      $event = new On(
+        $this->getMock('Carica\Io\Event\Emitter'),
+        'foo',
+        function() use ($that) {
+          $that->calledCallback = TRUE;
+        }
+      );
+      $event();
+      $this->assertTrue($this->calledCallback);
     }
 
     /**************************
