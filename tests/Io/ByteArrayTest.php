@@ -116,7 +116,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::asHex
+     * @covers Carica\Io\ByteArray::asBitString
      * @dataProvider provideBitStringSamples
      */
     public function testAsBitString($expected, $binaryString, $length) {
