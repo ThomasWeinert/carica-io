@@ -76,6 +76,15 @@ namespace Carica\Io {
     }
 
     /**
+     * @covers Carica\Io\ByteArray::fromString
+     */
+    public function testFromStringWithInvalidLengthExpectingException() {
+      $bytes = new ByteArray(42);
+      $this->setExpectedException('OutOfBoundsException');
+      $bytes->fromString(pack('C*', 255, 255, 255));
+    }
+
+    /**
      * @covers Carica\Io\ByteArray::__toString
      * @covers Carica\Io\ByteArray::fromString
      */
