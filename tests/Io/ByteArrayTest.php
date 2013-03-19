@@ -126,6 +126,55 @@ namespace Carica\Io {
     }
 
     /**
+     * @covers Carica\Io\ByteArray::offsetExists
+     * @covers Carica\Io\ByteArray::validateOffset
+     * @covers Carica\Io\ByteArray::validateBitOffset
+     */
+    public function testBitExistsExpectingTrue() {
+      $bytes = new ByteArray(3);
+      $this->assertTrue(isset($bytes[[2, 4]]));
+    }
+
+    /**
+     * @covers Carica\Io\ByteArray::offsetExists
+     * @covers Carica\Io\ByteArray::validateOffset
+     * @covers Carica\Io\ByteArray::validateBitOffset
+     */
+    public function testBitExistsExpectingFalse() {
+      $bytes = new ByteArray(3);
+      $this->assertFalse(isset($bytes[[2, 42]]));
+    }
+
+    /**
+     * @covers Carica\Io\ByteArray::offsetExists
+     * @covers Carica\Io\ByteArray::validateOffset
+     * @covers Carica\Io\ByteArray::validateBitOffset
+     */
+    public function testBitExistsWithInvalidOffsetExpectingException() {
+      $bytes = new ByteArray(3);
+      $this->setExpectedException('OutOfBoundsException');
+      $dummy = $bytes[[23, 23, 23]];
+    }
+
+    /**
+     * @covers Carica\Io\ByteArray::offsetExists
+     * @covers Carica\Io\ByteArray::validateOffset
+     */
+    public function testByteExistsExpectingTrue() {
+      $bytes = new ByteArray(3);
+      $this->assertTrue(isset($bytes[2]));
+    }
+
+    /**
+     * @covers Carica\Io\ByteArray::offsetExists
+     * @covers Carica\Io\ByteArray::validateOffset
+     */
+    public function testByteExistsExpectingFalse() {
+      $bytes = new ByteArray(3);
+      $this->assertFalse(isset($bytes[23]));
+    }
+
+    /**
      * @covers Carica\Io\ByteArray::offsetSet
      */
     public function testSetLowestBit() {
@@ -173,15 +222,6 @@ namespace Carica\Io {
       $this->assertSame('11111110', $bytes->asBitString());
     }
 
-    public static function provideBinarySamples() {
-      return array(
-        array(pack('C*', 0)),
-        array(pack('C*', 1)),
-        array(pack('C*', 0, 1, 0)),
-        array(pack('C*', 255, 255, 255)),
-      );
-    }
-
     /**
      * @covers Carica\Io\ByteArray::offsetSet
      * @covers Carica\Io\ByteArray::offsetGet
@@ -198,6 +238,7 @@ namespace Carica\Io {
     /**
      * @covers Carica\Io\ByteArray::offsetSet
      * @covers Carica\Io\ByteArray::offsetGet
+     * @covers Carica\Io\ByteArray::validateValue
      * @dataProvider provideByteOffsetSamples
      */
     public function testByteGetAfterSet($expected, $byte, $value) {
@@ -232,6 +273,15 @@ namespace Carica\Io {
     /**************************
      * Data Provider
      *************************/
+
+    public static function provideBinarySamples() {
+      return array(
+        array(pack('C*', 0)),
+        array(pack('C*', 1)),
+        array(pack('C*', 0, 1, 0)),
+        array(pack('C*', 255, 255, 255)),
+      );
+    }
 
     public static function provideHexSamples() {
       return array(
