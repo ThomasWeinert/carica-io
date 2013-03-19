@@ -286,5 +286,23 @@ namespace Carica\Io {
       $add(function() {});
       $this->assertEquals(1, count($callbacks));
     }
+
+    /**
+     * @covers Carica\Io\Callbacks
+     */
+    public function testMagicGetWithInvalidPropertyExpectingException() {
+      $callbacks = new Callbacks();
+      $this->setExpectedException('LogicException');
+      $dummy = $callbacks->invalidProperty;
+    }
+
+    /**
+     * @covers Carica\Io\Callbacks
+     */
+    public function testMagicSetExpectingException() {
+      $callbacks = new Callbacks();
+      $this->setExpectedException('LogicException');
+      $callbacks->add = 'fail';
+    }
   }
 }

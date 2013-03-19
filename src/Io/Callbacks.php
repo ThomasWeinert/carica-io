@@ -148,7 +148,7 @@ namespace Carica\Io {
           call_user_func_array($callback, func_get_args());
         };
       }
-      throw new LogicException('Unknown property: '.$name);
+      throw new \LogicException('Unknown property: '.$name);
     }
 
     /**
@@ -157,7 +157,7 @@ namespace Carica\Io {
      * @param string $name
      */
     public function __set($name, $value) {
-      throw new LogicException('Unknown/Readonly property: '.$name);
+      throw new \LogicException('Unknown/Readonly property: '.$name);
     }
 
     /**
