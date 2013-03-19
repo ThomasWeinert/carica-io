@@ -46,6 +46,17 @@ namespace Carica\Io {
     }
 
     /**
+     * @covers Carica\Io\ByteArray::setLength
+     */
+    public function testSetLengthWithInvalidLengthExpectingException() {
+      $bytes = new ByteArray(6);
+      $this->setExpectedException(
+        'OutOfRangeException', 'Zero or negative length is not possible'
+      );
+      $bytes->setLength(-23);
+    }
+
+    /**
      * @covers Carica\Io\ByteArray::__toString
      * @covers Carica\Io\ByteArray::fromString
      * @dataProvider provideBinarySamples
