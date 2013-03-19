@@ -57,6 +57,14 @@ namespace Carica\Io {
     }
 
     /**
+     * @covers Carica\Io\ByteArray::getLength
+     */
+    public function testGetLength() {
+      $bytes = new ByteArray(6);
+      $this->assertEquals(6, $bytes->getLength());
+    }
+
+    /**
      * @covers Carica\Io\ByteArray::__toString
      * @covers Carica\Io\ByteArray::fromString
      * @dataProvider provideBinarySamples
