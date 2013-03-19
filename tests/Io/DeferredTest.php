@@ -120,7 +120,7 @@ namespace Carica\Io {
     /**
      * @covers Carica\Io\Deferred
      */
-    public function testisResolvedExpectingTrue() {
+    public function testIsResolvedExpectingTrue() {
       $defer = new Deferred();
       $defer->resolve();
       $this->assertTrue($defer->isResolved());
@@ -129,7 +129,7 @@ namespace Carica\Io {
     /**
      * @covers Carica\Io\Deferred
      */
-    public function testisResolvedExpectingFalse() {
+    public function testIsResolvedExpectingFalse() {
       $defer = new Deferred();
       $defer->reject();
       $this->assertFalse($defer->isResolved());
@@ -138,7 +138,7 @@ namespace Carica\Io {
     /**
      * @covers Carica\Io\Deferred
      */
-    public function testisRejectedExpectingTrue() {
+    public function testIsRejectedExpectingTrue() {
       $defer = new Deferred();
       $defer->reject();
       $this->assertTrue($defer->isRejected());
@@ -147,10 +147,36 @@ namespace Carica\Io {
     /**
      * @covers Carica\Io\Deferred
      */
-    public function testisRejectedExpectingFalse() {
+    public function testIsRejectedExpectingFalse() {
       $defer = new Deferred();
       $defer->resolve();
       $this->assertFalse($defer->isRejected());
+    }
+
+    /**
+     * @covers Carica\Io\Deferred
+     */
+    public function testStateExpectingPending() {
+      $defer = new Deferred();
+      $this->assertEquals(Deferred::STATE_PENDING, $defer->state());
+    }
+
+    /**
+     * @covers Carica\Io\Deferred
+     */
+    public function testStateExpectingResolved() {
+      $defer = new Deferred();
+      $defer->resolve();
+      $this->assertEquals(Deferred::STATE_RESOLVED, $defer->state());
+    }
+
+    /**
+     * @covers Carica\Io\Deferred
+     */
+    public function testStateExpectingRejected() {
+      $defer = new Deferred();
+      $defer->reject();
+      $this->assertEquals(Deferred::STATE_REJECTED, $defer->state());
     }
 
     /**
