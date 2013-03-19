@@ -133,7 +133,7 @@ namespace Carica\Io {
      * @return string
      */
     public function isRejected() {
-      return $this->_state = self::STATE_REJECTED;
+      return $this->_state == self::STATE_REJECTED;
     }
 
     /**
@@ -142,7 +142,7 @@ namespace Carica\Io {
      * @return string
      */
     public function isResolved() {
-      return $this->_state = self::STATE_RESOLVED;
+      return $this->_state == self::STATE_RESOLVED;
     }
 
     /**

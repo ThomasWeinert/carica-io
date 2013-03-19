@@ -120,6 +120,42 @@ namespace Carica\Io {
     /**
      * @covers Carica\Io\Deferred
      */
+    public function testisResolvedExpectingTrue() {
+      $defer = new Deferred();
+      $defer->resolve();
+      $this->assertTrue($defer->isResolved());
+    }
+
+    /**
+     * @covers Carica\Io\Deferred
+     */
+    public function testisResolvedExpectingFalse() {
+      $defer = new Deferred();
+      $defer->reject();
+      $this->assertFalse($defer->isResolved());
+    }
+
+    /**
+     * @covers Carica\Io\Deferred
+     */
+    public function testisRejectedExpectingTrue() {
+      $defer = new Deferred();
+      $defer->reject();
+      $this->assertTrue($defer->isRejected());
+    }
+
+    /**
+     * @covers Carica\Io\Deferred
+     */
+    public function testisRejectedExpectingFalse() {
+      $defer = new Deferred();
+      $defer->resolve();
+      $this->assertFalse($defer->isRejected());
+    }
+
+    /**
+     * @covers Carica\Io\Deferred
+     */
     public function testPromise() {
       $defer = new Deferred();
       $promise = $defer->promise();
