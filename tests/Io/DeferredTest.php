@@ -25,11 +25,43 @@ namespace Carica\Io {
     /**
      * @covers Carica\Io\Deferred
      */
+    public function testResolveCallsAlwaysCallbacks() {
+      $literal = '';
+      $defer = new Deferred();
+      $defer
+        ->always(
+          function($text) use (&$literal) {
+            $literal = $text;
+          }
+        )
+        ->resolve('success');
+      $this->assertEquals('success', $literal);
+    }
+
+    /**
+     * @covers Carica\Io\Deferred
+     */
     public function testReject() {
       $literal = '';
       $defer = new Deferred();
       $defer
         ->fail(
+          function($text) use (&$literal) {
+            $literal = $text;
+          }
+        )
+        ->reject('got error');
+      $this->assertEquals('got error', $literal);
+    }
+
+    /**
+     * @covers Carica\Io\Deferred
+     */
+    public function testRejectCallsAlwaysCallbacks() {
+      $literal = '';
+      $defer = new Deferred();
+      $defer
+        ->always(
           function($text) use (&$literal) {
             $literal = $text;
           }
