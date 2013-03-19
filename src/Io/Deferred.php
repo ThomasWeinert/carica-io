@@ -307,7 +307,7 @@ namespace Carica\Io {
      * @return \Carica\Io\Deferred
      */
     public static function create() {
-      new Deferred();
+      return new Deferred();
     }
 
     /**

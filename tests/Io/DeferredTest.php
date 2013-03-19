@@ -9,6 +9,14 @@ namespace Carica\Io {
     /**
      * @covers Carica\Io\Deferred
      */
+    public function testStaticFunctionCreate() {
+      $defer = Deferred::create();
+      $this->assertInstanceOf('Carica\Io\Deferred', $defer);
+    }
+
+    /**
+     * @covers Carica\Io\Deferred
+     */
     public function testResolve() {
       $literal = '';
       $defer = new Deferred();
