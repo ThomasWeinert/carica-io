@@ -21,6 +21,21 @@ namespace Carica\Io {
         ->resolve('success');
       $this->assertEquals('success', $literal);
     }
+    /**
+     * @covers Carica\Io\Deferred
+     */
+    public function testResolveTriggersDoneCallbacksOnAppend() {
+      $literal = '';
+      $defer = new Deferred();
+      $defer
+        ->resolve('success')
+        ->done(
+          function($text) use (&$literal) {
+            $literal = $text;
+          }
+        );
+      $this->assertEquals('success', $literal);
+    }
 
     /**
      * @covers Carica\Io\Deferred
@@ -57,6 +72,22 @@ namespace Carica\Io {
     /**
      * @covers Carica\Io\Deferred
      */
+    public function testRejectTriggersFailCallbacksOnAppend() {
+      $literal = '';
+      $defer = new Deferred();
+      $defer
+        ->reject('got error')
+        ->fail(
+          function($text) use (&$literal) {
+            $literal = $text;
+          }
+        );
+      $this->assertEquals('got error', $literal);
+    }
+
+    /**
+     * @covers Carica\Io\Deferred
+     */
     public function testRejectCallsAlwaysCallbacks() {
       $literal = '';
       $defer = new Deferred();
@@ -67,6 +98,22 @@ namespace Carica\Io {
           }
         )
         ->reject('got error');
+      $this->assertEquals('got error', $literal);
+    }
+
+    /**
+     * @covers Carica\Io\Deferred
+     */
+    public function testRejectTriggersAlwaysCallbackOnRejectedObject() {
+      $literal = '';
+      $defer = new Deferred();
+      $defer
+        ->reject('got error')
+        ->always(
+          function($text) use (&$literal) {
+            $literal = $text;
+          }
+        );
       $this->assertEquals('got error', $literal);
     }
 
