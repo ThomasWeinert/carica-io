@@ -33,15 +33,15 @@ namespace Carica\Io\Event\Emitter\Listener  {
       case 'callback' :
         return $this->{'_'.$name};
       }
-      throw new \LogicError(sprintf('Property %s::$%s does not exists.', get_class($this), $name));
+      throw new \LogicException(sprintf('Property %s::$%s does not exists.', get_class($this), $name));
     }
 
     public function __set($name, $value) {
-      throw new \LogicError(sprintf('%s is immutable.', get_class($this)));
+      throw new \LogicException(sprintf('%s is immutable.', get_class($this)));
     }
 
     public function __unset($name) {
-      throw new \LogicError(sprintf('%s is immutable.', get_class($this)));
+      throw new \LogicException(sprintf('%s is immutable.', get_class($this)));
     }
 
     public function __invoke() {

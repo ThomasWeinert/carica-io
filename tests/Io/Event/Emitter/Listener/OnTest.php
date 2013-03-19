@@ -59,6 +59,15 @@ namespace Carica\Io\Event\Emitter\Listener {
       $this->assertSame($callback, $event->callback);
     }
 
+    /**
+     * @covers Carica\Io\Event\Emitter\Listener\On::__get
+     */
+    public function testGetInvalidPropertyExpectingException() {
+      $event = new On($this->getMock('Carica\Io\Event\Emitter'), 'foo', function() {});
+      $this->setExpectedException('LogicException');
+      $dummy = $event->INVALID_PROPERTY;
+    }
+
     /**************************
      * Data Provider
      *************************/
