@@ -367,8 +367,18 @@ namespace Carica\Io {
     /**
      * @covers Carica\Io\Deferred
      */
+    public function testWhenWithOnePromiseReturnsThisArgument() {
+      $defer = new Deferred();
+      $promise = $defer->promise();
+      $this->assertSame(
+        $promise, Deferred::when($promise)
+      );
+    }
+
+    /**
+     * @covers Carica\Io\Deferred
+     */
     public function testWhenWithOneDeferredArgumentsReturnsThisArgumentsPromise() {
-      $testCase = $this;
       $promise = Deferred::when(
         $defer = new Deferred()
       );
@@ -449,6 +459,60 @@ namespace Carica\Io {
       $this->assertEquals(
         array(array(42), array(84)),
         $result
+      );
+    }
+
+    /**
+     * @covers Carica\Io\Deferred
+     */
+    public function testWhenWithRejectedDefer() {
+      $calls = array();
+      $defer = new Deferred();
+      $defer->reject(42, 'rejected');
+      Deferred::when(
+        42,
+        $defer
+      )->fail(
+        function () use (&$calls) {
+          $calls[] = func_get_args();
+        }
+      );
+      $this->assertEquals(
+        array(
+          array(42, 'rejected')
+        ),
+        $calls
+      );
+    }
+
+    /**
+     * @covers Carica\Io\Deferred
+     */
+    public function testWhenWihtoutArgumentsReturnsResolvedPromise() {
+      $promise = Deferred::when();
+      $this->assertInstanceOf('Carica\Io\Deferred\Promise', $promise);
+      $this->assertEquals(Deferred::STATE_RESOLVED, $promise->state());
+    }
+
+    /**
+     * @covers Carica\Io\Deferred
+     */
+    public function testWhenWithSeveralScalarArgumentsReturnsResolvedPromise() {
+      $calls = array();
+      $promise = Deferred::when('foo', 'bar', '42');
+      $promise
+        ->done(
+          function() use (&$calls) {
+            $calls[] = func_get_args();
+          }
+        );
+      $this->assertInstanceOf('Carica\Io\Deferred\Promise', $promise);
+      $this->assertEquals(Deferred::STATE_RESOLVED, $promise->state());
+      $this->assertEquals(
+        array(
+          array(array('foo'), array('bar'), array('42'))
+        ),
+        $calls
       );
     }
   }

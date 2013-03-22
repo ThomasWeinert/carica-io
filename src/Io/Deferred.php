@@ -347,7 +347,7 @@ namespace Carica\Io {
               )
               ->fail(
                 function() use ($master) {
-                  $master->fail();
+                  call_user_func_array(array($master, 'reject'), func_get_args());
                 }
               );
           } else {
@@ -360,7 +360,7 @@ namespace Carica\Io {
         }
         return $master->promise();
       } else {
-        $master = new Deferred();
+        $defer = new Deferred();
         $defer->resolve();
         return $defer->promise();
       }
