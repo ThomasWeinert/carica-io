@@ -296,7 +296,7 @@ namespace Carica\Io {
         $add($callbacks);
       } elseif (is_array($callbacks)) {
         foreach ($callbacks as $callback) {
-          $add($callbacks);
+          $add($callback);
         }
       }
     }

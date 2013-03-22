@@ -128,6 +128,52 @@ namespace Carica\Io {
     /**
      * @covers Carica\Io\Deferred
      */
+    public function testNotifyTriggersProgressCallback() {
+      $calls = array();
+      $defer = new Deferred();
+      $defer
+        ->progress(
+          function() use (&$calls) {
+            $calls[] = func_get_args();
+          }
+        )
+        ->notify(1)
+        ->notify(2, 3);
+      $this->assertEquals(
+        array(
+          array(1),
+          array(2, 3),
+        ),
+        $calls
+      );
+    }
+
+    /**
+     * @covers Carica\Io\Deferred
+     */
+    public function testProgressCallbackIsCalledWithStoredNotify() {
+      $calls = array();
+      $defer = new Deferred();
+      $defer
+        ->notify(1)
+        ->progress(
+          function() use (&$calls) {
+            $calls[] = func_get_args();
+          }
+        )
+        ->notify(2, 3);
+      $this->assertEquals(
+        array(
+          array(1),
+          array(2, 3),
+        ),
+        $calls
+      );
+    }
+
+    /**
+     * @covers Carica\Io\Deferred
+     */
     public function testIsResolvedExpectingTrue() {
       $defer = new Deferred();
       $defer->resolve();
@@ -219,6 +265,108 @@ namespace Carica\Io {
       $this->assertEquals('2 * 5 = 10', $result);
     }
 
+    /**
+     * @covers Carica\Io\Deferred
+     */
+    public function testPipeWithoutDoneFilter() {
+      $defer = new Deferred();
+      $filtered = $defer->pipe();
+      $calls = array();
+      $filtered->done(
+        function ($value) use (&$calls) {
+          $calls[] = $value;
+        }
+      );
+      $defer->resolve(5);
+      $this->assertEquals(array(5), $calls);
+    }
+
+    /**
+     * @covers Carica\Io\Deferred
+     */
+    public function testPipeWithFailFilter() {
+      $defer = new Deferred();
+      $filtered = $defer->pipe(
+        NULL,
+        function($value) {
+          return $value * 2;
+        }
+      );
+      $defer->reject(5);
+      $result = 'fail';
+      $filtered->fail(
+        function ($value) use (&$result) {
+          $result = '2 * 5 = '.$value;
+        }
+      );
+      $this->assertEquals('2 * 5 = 10', $result);
+    }
+
+    /**
+     * @covers Carica\Io\Deferred
+     */
+    public function testPipeWithoutFailFilter() {
+      $defer = new Deferred();
+      $filtered = $defer->pipe();
+      $calls = array();
+      $filtered->fail(
+          function ($value) use (&$calls) {
+            $calls[] = $value;
+          }
+      );
+      $defer->reject(5);
+      $this->assertEquals(array(5), $calls);
+    }
+
+    /**
+     * @covers Carica\Io\Deferred
+     */
+    public function testPipeWithNotifyFilter() {
+      $calls = array();
+      $defer = new Deferred();
+      $defer
+        ->pipe(
+          NULL,
+          NULL,
+          function() {
+            return array_sum(func_get_args());
+          }
+        )
+        ->progress(
+          function($sum) use (&$calls) {
+            $calls[] = $sum;
+          }
+        );
+      $defer->notify(1, 2, 4);
+      $this->assertSame(
+        array(7),
+        $calls
+      );
+    }
+
+    /**
+     * @covers Carica\Io\Deferred
+     */
+    public function testPipeWithoutNotifyFilter() {
+      $calls = array();
+      $defer = new Deferred();
+      $defer
+        ->pipe()
+        ->progress(
+          function() use (&$calls) {
+            $calls[] = func_get_args();
+          }
+        );
+      $defer->notify(1, 2, 4);
+      $this->assertSame(
+        array(array(1, 2, 4)),
+        $calls
+      );
+    }
+
+    /**
+     * @covers Carica\Io\Deferred
+     */
     public function testWhenWithOneDeferredArgumentsReturnsThisArgumentsPromise() {
       $testCase = $this;
       $promise = Deferred::when(
@@ -227,6 +375,9 @@ namespace Carica\Io {
       $this->assertSame($promise, $defer->promise());
     }
 
+    /**
+     * @covers Carica\Io\Deferred
+     */
     public function testWhenWithOneArgumentThatsNotReferredReturnsResolvedPromise() {
       $result = NULL;
       $promise = Deferred::when(42)
@@ -238,6 +389,31 @@ namespace Carica\Io {
       $this->assertEquals(42, $result);
     }
 
+    /**
+     * @covers Carica\Io\Deferred
+     */
+    public function testWhenWithOneArgumentThatsAnArrayOfCallbacks() {
+      $result = array();
+      $promise = Deferred::when(42)
+        ->then(
+          array(
+            function ($argument) use (&$result) {
+              $result['first'] = $argument;
+            },
+            function ($argument) use (&$result) {
+              $result['second'] = $argument;
+            }
+          )
+        );
+      $this->assertEquals(
+        array('first' => 42, 'second' => 42),
+        $result
+      );
+    }
+
+    /**
+     * @covers Carica\Io\Deferred
+     */
     public function testWhenWithTwoDeferredArguments() {
       $result = NULL;
       Deferred::when(
@@ -256,6 +432,9 @@ namespace Carica\Io {
       );
     }
 
+    /**
+     * @covers Carica\Io\Deferred
+     */
     public function testWhenWithTwoArgumentsButOnlyOneDeferred() {
       $result = NULL;
       Deferred::when(
