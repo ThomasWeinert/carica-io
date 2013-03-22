@@ -22,7 +22,7 @@ namespace Carica\Io {
       if ($file = self::getFilename($class)) {
         $file = __DIR__.$file;
         if (file_exists($file) && is_readable($file)) {
-          include($file);
+          include_once($file);
           return TRUE;
         }
       }
@@ -50,6 +50,8 @@ namespace Carica\Io {
 
     /**
      * Register the autoloader function using SPL.
+     *
+     * @codeCoverageIgnore
      */
     public static function register() {
       spl_autoload_register(array(__CLASS__, 'load'));
