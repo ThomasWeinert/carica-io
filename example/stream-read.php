@@ -25,13 +25,11 @@ $stream->events()->on(
 );
 
 if ($stream->open()) {
-  $loop->add(
-    new Loop\Listener\Interval(
-      1000,
-      function () use ($write) {
-        fwrite($write, microtime(TRUE)."\n");
-      }
-    )
+  $loop->setInterval(
+    function () use ($write) {
+      fwrite($write, microtime(TRUE)."\n");
+    },
+    1000
   );
 
   $loop->run();

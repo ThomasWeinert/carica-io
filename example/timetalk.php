@@ -17,21 +17,19 @@ $server->events()->on(
   }
 );
 
-$loop->add(
-  new Io\Event\Loop\Listener\Interval(
-    1000,
-    function () use (&$clients) {
-      echo "Send time to ".count($clients)." clients\n";
-      foreach ($clients as $index => $client) {
-        if ($client->isActive()) {
-          $client->write(date(DATE_ATOM)."\n");
-        } else {
-          echo "Removing inactive client\n";
-          unset($clients[$index]);
-        }
+$loop->setInterval(
+  function () use (&$clients) {
+    echo "Send time to ".count($clients)." clients\n";
+    foreach ($clients as $index => $client) {
+      if ($client->isActive()) {
+        $client->write(date(DATE_ATOM)."\n");
+      } else {
+        echo "Removing inactive client\n";
+        unset($clients[$index]);
       }
     }
-  )
+  },
+  1000
 );
 
 $server->listen(8080);

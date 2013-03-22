@@ -16,22 +16,39 @@ namespace Carica\Io\Event\Loop {
     );
     private $_hasStreams = FALSE;
 
-    public function add(Listener $listener) {
-      $key = spl_object_hash($listener);
-      $this->_listeners[$key] = $listener;
-      $listener->loop($this);
-      if ($listener instanceOf Listener\StreamReader) {
-        $this->_streams['read'][$key] = $listener->getResource();
-      }
-      $this->updateStreamStatus();
+    public function setTimeout(Callable $callback, $milliseconds) {
+      return $this->add(
+        new Listener\Timeout($this, $callback, $milliseconds)
+      );
     }
 
-    public function remove(Listener $listener) {
-      $key = spl_object_hash($listener);
-      if (isset($this->_listeners[$key])) {
-        unset($this->_listeners[$key]);
-        if (isset($this->_streams['read'][$key])) {
-          unset($this->_streams['read'][$key]);
+    public function setInterval(Callable $callback, $milliseconds) {
+      return $this->add(
+        new Listener\Interval($this, $callback, $milliseconds)
+      );
+    }
+
+    public function setStreamReader(Callable $callback, $stream) {
+      $listener = $this->add(
+        new Listener\StreamReader($this, $callback, $stream)
+      );
+      $this->_streams['read'][spl_object_hash($listener)] = $stream;
+      $this->updateStreamStatus();
+      return $listener;
+    }
+
+    private function add(Listener $listener) {
+      return $this->_listeners[spl_object_hash($listener)] = $listener;
+    }
+
+    public function remove($listener) {
+      if (!is_object($listener)) {
+        $key = spl_object_hash($listener);
+        if (isset($this->_listeners[$key])) {
+          unset($this->_listeners[$key]);
+          if (isset($this->_streams['read'][$key])) {
+            unset($this->_streams['read'][$key]);
+          }
         }
       }
       $this->updateStreamStatus();

@@ -4,7 +4,7 @@ namespace Carica\Io\Stream {
 
   use Carica\Io\Event;
 
-  class SerialPort implements Readable, Writeable {
+  class SerialPort {
 
     use Event\Emitter\Aggregation;
     use Event\Loop\Aggregation;
@@ -28,8 +28,12 @@ namespace Carica\Io\Stream {
         $this->_resource = NULL;
       } elseif (isset($resource)) {
         $this->_resource = $resource;
-        $this->loop()->add(
-          $this->_listener = new Event\Loop\Listener\StreamReader($this)
+        $that = $this;
+        $this->_listener = $this->loop()->setStreamReader(
+          function() use ($that) {
+            $that->read();
+          },
+          $resource
         );
       }
       if (is_resource($this->_resource)) {

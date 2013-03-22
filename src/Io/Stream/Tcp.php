@@ -4,7 +4,7 @@ namespace Carica\Io\Stream {
 
   use Carica\Io\Event;
 
-  class Tcp implements Readable, Writeable {
+  class Tcp {
 
     use Event\Emitter\Aggregation;
     use Event\Loop\Aggregation;
@@ -28,8 +28,9 @@ namespace Carica\Io\Stream {
         $this->_resource = NULL;
       } elseif (isset($resource)) {
         $this->_resource = $resource;
-        $this->loop()->add(
-          $this->_listener = new Event\Loop\Listener\Interval(100, array($this, 'read'))
+        $this->loop()->setInterval(
+          array($this, 'read'),
+          100
         );
       }
       if (is_resource($this->_resource)) {

@@ -4,9 +4,13 @@ namespace Carica\Io\Event {
 
   interface Loop {
 
-    function add(Loop\Listener $listener);
+    function setTimeout(Callable $callback, $milliseconds);
 
-    function remove(Loop\Listener $listener);
+    function setInterval(Callable $callback, $milliseconds);
+
+    function setStreamReader(Callable $callback, $stream);
+
+    function remove($listener);
 
     function run();
 

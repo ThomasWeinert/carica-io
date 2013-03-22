@@ -8,21 +8,17 @@ $loop = Loop\Factory::get();
 
 $i = 0;
 
-$loop->add(
-  new Loop\Listener\Interval(
-    1000,
-    function () use (&$i) {
-      echo $i++;
-    }
-  )
+$loop->setInterval(
+  function () use (&$i) {
+    echo $i++;
+  },
+  1000
 );
-$loop->add(
-  new Loop\Listener\Timeout(
-    10000,
-    function () use ($loop) {
-      $loop->stop();
-    }
-  )
+$loop->setTimeout(
+  function () use ($loop) {
+    $loop->stop();
+  },
+  10000
 );
 
 $loop->run();

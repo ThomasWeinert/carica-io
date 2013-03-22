@@ -9,7 +9,8 @@ namespace Carica\Io\Event\Loop\Listener {
     private $_interval = 0;
     private $_next = 0;
 
-    public function __construct($milliseconds, $callback) {
+    public function __construct(Event\Loop $loop, Callable $callback, $milliseconds) {
+      parent::__construct($loop);
       $this->_interval = $milliseconds;
       $this->_callback = $callback;
       $this->_next = $this->getNow() + $milliseconds;

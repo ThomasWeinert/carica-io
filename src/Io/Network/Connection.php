@@ -4,7 +4,7 @@ namespace Carica\Io\Network {
 
   use Carica\Io;
 
-  class Connection implements Io\Stream\Readable {
+  class Connection {
 
     use Io\Event\Emitter\Aggregation;
     use Io\Event\Loop\Aggregation;
@@ -25,8 +25,12 @@ namespace Carica\Io\Network {
         $this->_stream = $stream;
         if ($this->isActive()) {
           stream_set_blocking($stream, 0);
-          $this->loop()->add(
-            $this->_listener = new Io\Event\Loop\Listener\StreamReader($this)
+          $that = $this;
+          $this->loop()->setStreamReader(
+            function() use ($that) {
+              $that->read();
+            },
+            $stream
           );
         }
       }

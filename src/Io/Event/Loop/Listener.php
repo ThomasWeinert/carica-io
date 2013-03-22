@@ -10,13 +10,11 @@ namespace Carica\Io\Event\Loop {
 
     abstract function tick();
 
-    public function loop(Event\Loop $loop = NULL) {
-      if (isset($loop)) {
-        if (isset($this->_loop)) {
-          $this->_loop->remove($this);
-        }
-        $this->_loop = $loop;
-      }
+    public function __construct(Event\Loop $loop) {
+      $this->_loop = $loop;
+    }
+
+    public function getLoop() {
       return $this->_loop;
     }
   }

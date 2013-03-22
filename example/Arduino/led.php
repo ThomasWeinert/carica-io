@@ -24,16 +24,14 @@ $board
       $board->pinMode($led, Io\Firmata\PIN_STATE_OUTPUT);
       echo "PIN: $led\n";
 
-      $loop->add(
-        new Io\Event\Loop\Listener\Interval(
-          1000,
-          function () use ($board, $led) {
-            static $ledOn = TRUE;
-            echo 'LED: '.($ledOn ? 'on' : 'off')."\n";
-            $board->digitalWrite($led, $ledOn ? Io\Firmata\DIGITAL_HIGH : Io\Firmata\DIGITAL_LOW);
-            $ledOn = !$ledOn;
-          }
-        )
+      $loop->setInterval(
+        function () use ($board, $led) {
+          static $ledOn = TRUE;
+          echo 'LED: '.($ledOn ? 'on' : 'off')."\n";
+          $board->digitalWrite($led, $ledOn ? Io\Firmata\DIGITAL_HIGH : Io\Firmata\DIGITAL_LOW);
+          $ledOn = !$ledOn;
+        },
+        1000
       );
     }
   )
