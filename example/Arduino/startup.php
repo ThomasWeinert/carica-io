@@ -9,7 +9,7 @@ use Carica\Io;
 use Carica\Io\Firmata;
 
 $board = new Firmata\Board(
-  $stream = new Io\Stream\SerialPort(3)
+  $stream = new Io\Stream\Serial('COM3')
 );
 
 $loop = Io\Event\Loop\Factory::get();

@@ -150,7 +150,7 @@ namespace Carica\Io\Firmata {
           $defer->reject($message);
         }
       );
-      $this->port()->events()->on('data', array($this->buffer(), 'addData'));
+      $this->port()->events()->on('read-data', array($this->buffer(), 'addData'));
       $this->buffer()->events()->on('response', array($this, 'onResponse'));
       if ($this->port()->open()) {
         $board = $this;

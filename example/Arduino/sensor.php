@@ -6,7 +6,7 @@ Carica\Io\Loader::register();
 use Carica\Io;
 
 $board = new Io\Firmata\Board(
-  //new Io\Stream\SerialPort(3)
+  //new Io\Stream\Serial('COM3')
   new Io\Stream\Tcp('127.0.0.1', 5333)
 );
 

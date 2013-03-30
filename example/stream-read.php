@@ -9,9 +9,9 @@ use Carica\Io\Stream;
 $loop = Loop\Factory::get();
 $write = fopen('c:/temp/sample.txt', 'w');
 
-$stream = new Stream\FileReader('c:/temp/sample.txt');
+$stream = new Stream\File('c:/temp/sample.txt');
 $stream->events()->on(
-  'data',
+  'read-data',
   function($data) {
     echo $data;
   }

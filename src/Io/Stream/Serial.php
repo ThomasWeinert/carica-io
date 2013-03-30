@@ -4,19 +4,20 @@ namespace Carica\Io\Stream {
 
   use Carica\Io\Event;
 
-  class SerialPort {
+  class Serial {
 
     use Event\Emitter\Aggregation;
     use Event\Loop\Aggregation;
 
-    private $_number = 0;
+    private $_device = 0;
+    private $_command = '';
     private $_resource = NULL;
     private $_listener = NULL;
 
     private $_reading = FALSE;
 
-    public function __construct($number) {
-      $this->_number = $number;
+    public function __construct($device) {
+      $this->_device = new Serial\Device($device);
     }
 
     public function __destruct() {
@@ -46,20 +47,7 @@ namespace Carica\Io\Stream {
     }
 
     public function open() {
-      if (substr(PHP_OS, 0, 3) === "WIN") {
-        $device = 'COM'.((int)$this->_number).':';
-        $prepare = sprintf('mode com%d: BAUD=57600 PARITY=N data=8 stop=1 xon=off', $this->_number);
-      } elseif (substr(PHP_OS, 0, 6) === "Darwin") {
-        $device = 'COM'.((int)$this->_number).':';
-        $prepare = sprintf('stty -F %s', $device);
-      } elseif (substr(PHP_OS, 0, 5) === "Linux") {
-        $device = '/dev/ttyS'.((int)$this->_number);
-        $prepare = sprintf('stty -F %s', $device);
-      } else {
-        $this->events()->emit('error', sprintf('Unsupport OS: "%s".', PHP_OS));
-        return FALSE;
-      }
-      exec($prepare);
+      exec($this->_command);
       if ($resource = @fopen($device, 'rb+')) {
         stream_set_blocking($resource, 0);
         stream_set_timeout($resource, 1);
@@ -82,8 +70,7 @@ namespace Carica\Io\Stream {
       if ($this->_reading && ($resource = $this->resource())) {
         $data = fread($resource, $bytes);
         if (is_string($data) && $data !== '') {
-          $this->events()->emit('read', $data);
-          $this->events()->emit('data', $data);
+          $this->events()->emit('read-data', $data);
           return $data;
         }
       }
@@ -92,14 +79,11 @@ namespace Carica\Io\Stream {
 
     public function write($data) {
       if ($resource = $this->resource()) {
-        if (is_array($data)) {
-          array_unshift($data, 'C*');
-          fwrite($resource, $binary = call_user_func_array('pack', $data));
-          $this->events()->emit('write', $binary);
-        } else {
-          fwrite($resource, $data);
-          $this->events()->emit('write', $data);
-        }
+        fwrite(
+          $resource, 
+          $writtenData = is_array($data) ? Carica\Io\encodeBinaryFromArray($data) : $data
+        );
+        $this->events()->emit('write-data', $writtenData);
         // according to a php bug report, reading is only possible after writing some stuff
         if (!$this->_reading) {
           usleep(1000);

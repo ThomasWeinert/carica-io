@@ -45,7 +45,7 @@ namespace Carica\Io\Network {
       if ($this->isActive()) {
         $data = stream_socket_recvfrom($this->_stream, $bytes);
         if (is_string($data) && $data !== '') {
-          $this->events()->emit('data', $data);
+          $this->events()->emit('read-data', $data);
           return $data;
         }
       }

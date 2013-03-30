@@ -34,7 +34,7 @@ $server->events()->on(
     $client->connection = new Io\Network\Connection($stream);
     $client->connection->write("Welcome, enter your username:\n");
     $client->connection->events()->on(
-      'data',
+      'read-data',
       function($data) use ($client, &$clients) {
         if (empty($client->name) &&
             preg_match("(\S+)", $data, $matches) &&

@@ -4,24 +4,26 @@ namespace Carica\Io\Stream {
 
   use Carica\Io\Event;
 
-  class FileReader {
+  class Serial {
 
     use Event\Emitter\Aggregation;
     use Event\Loop\Aggregation;
 
-    private $_filename = '';
+    private $_device = 0;
+    private $_command = '';
     private $_resource = NULL;
     private $_listener = NULL;
 
-    public function __construct($filename) {
-      $this->_filename = $filename;
-    }
+    private $_reading = FALSE;
 
+    public function __construct($device) {
+      $this->_device = new Device($device);
+    }
     public function __destruct() {
       $this->close();
     }
 
-    public function Resource($resource = NULL) {
+    public function resource($resource = NULL) {
       if ($resource === FALSE) {
         $this->_resource = NULL;
       } elseif (isset($resource)) {
@@ -44,32 +46,41 @@ namespace Carica\Io\Stream {
     }
 
     public function open() {
-      if ($resource = @fopen($this->_filename, 'r')) {
-        stream_set_blocking($resource, 0);
+      if ($resource = @dio_open($device, O_RDWR | O_NOCTTY | O_NONBLOCK)) {
         $this->resource($resource);
         return TRUE;
       } else {
-        $this->events()->emit('error', sprintf('Can not open file: "%s".', $this->_filename));
+        $this->events()->emit('error', sprintf('Can not open serial port: "%d".', $this->_number));
         return FALSE;
       }
     }
 
     public function close() {
-      if ($resource = $this->Resource()) {
+      if ($resource = $this->resource()) {
         $this->resource(FALSE);
-        fclose($resource);
+        dio_close($resource);
       }
     }
 
     public function read($bytes = 1024) {
-      if ($resource = $this->Resource()) {
-        $data = fread($resource, $bytes);
+      if ($resource = $this->resource()) {
+        $data = dio_read($resource, $bytes);
         if (is_string($data) && $data !== '') {
-          $this->events()->emit('data', $data);
+          $this->events()->emit('read-data', $data);
           return $data;
         }
       }
       return NULL;
+    }
+
+    public function write($data) {
+      if ($resource = $this->resource()) {
+        dio_write(
+          $resource, 
+          $writtenData = is_array($data) ? Carica\Io\encodeBinaryFromArray($data) : $data
+        );
+        $this->events()->emit('write-data', $writtenData);
+      }
     }
   }
 }
