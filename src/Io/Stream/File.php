@@ -11,7 +11,7 @@ namespace Carica\Io\Stream {
 
     private $_filename = '';
     private $_mode = '';
-    
+
     private $_resource = NULL;
     private $_listener = NULL;
 
@@ -74,12 +74,12 @@ namespace Carica\Io\Stream {
       }
       return NULL;
     }
-    
+
     public function write($data) {
       if ($resource = $this->resource()) {
         fwrite(
           $resource,
-          $writtenData = is_array($data) ? Carica\Io\encodeBinaryFromArray($data) : $data
+          $writtenData = is_array($data) ? \Carica\Io\encodeBinaryFromArray($data) : $data
         );
         $this->events()->emit('write-data', $writtenData);
       }

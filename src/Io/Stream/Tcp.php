@@ -4,7 +4,7 @@ namespace Carica\Io\Stream {
 
   use Carica\Io\Event;
 
-  class Tcp {
+  class Tcp implements \Carica\Io\Stream {
 
     use Event\Emitter\Aggregation;
     use Event\Loop\Aggregation;
@@ -86,8 +86,8 @@ namespace Carica\Io\Stream {
     public function write($data) {
       if ($resource = $this->resource()) {
         stream_socket_sendto(
-          $resource, 
-          $writtenData = is_array($data) ? Carica\Io\encodeBinaryFromArray($data) : $data
+          $resource,
+          $writtenData = is_array($data) ? \Carica\Io\encodeBinaryFromArray($data) : $data
         );
         $this->events()->emit('write-data', $writtenData);
       }

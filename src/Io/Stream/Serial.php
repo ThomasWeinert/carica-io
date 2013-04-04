@@ -4,7 +4,7 @@ namespace Carica\Io\Stream {
 
   use Carica\Io\Event;
 
-  class Serial {
+  class Serial implements \Carica\Io\Stream {
 
     use Event\Emitter\Aggregation;
     use Event\Loop\Aggregation;
@@ -80,8 +80,8 @@ namespace Carica\Io\Stream {
     public function write($data) {
       if ($resource = $this->resource()) {
         fwrite(
-          $resource, 
-          $writtenData = is_array($data) ? Carica\Io\encodeBinaryFromArray($data) : $data
+          $resource,
+          $writtenData = is_array($data) ? \Carica\Io\encodeBinaryFromArray($data) : $data
         );
         $this->events()->emit('write-data', $writtenData);
         // according to a php bug report, reading is only possible after writing some stuff
