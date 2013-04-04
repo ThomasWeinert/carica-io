@@ -187,9 +187,9 @@ namespace Carica\Io\Firmata {
       if ($this->_modeInitialized && $this->_mode == $mode) {
         return;
       }
+      $this->_board->port()->write([COMMAND_PIN_MODE, $this->_pin, $mode]);
       $this->_mode = $mode;
       $this->_modeInitialized = TRUE;
-      $this->_board->pinMode($this->_pin, $mode);
     }
 
     /**
