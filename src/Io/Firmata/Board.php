@@ -367,6 +367,15 @@ namespace Carica\Io\Firmata {
     }
 
     /**
+     * Add a callback for diagital read events on a pin
+     * @param integer $pin 0-16
+     */
+    public function digitalRead($pin, $callback) {
+      $this->events()->on('digital-read-'.$pin, $callback);
+    }
+
+
+    /**
      * Write an analog value for a pin
      *
      * @param integer $pin 0-16
@@ -377,14 +386,6 @@ namespace Carica\Io\Firmata {
       $this->port()->write(
         [COMMAND_ANALOG_MESSAGE | $pin, $value & 0x7F, ($value >> 7) & 0x7F]
       );
-    }
-
-    /**
-     * Add a callback for diagital read events on a pin
-     * @param integer $pin 0-16
-     */
-    public function digitalRead($pin) {
-      $this->events()->on('digital-read-'.$pin, $callback);
     }
 
     /**
