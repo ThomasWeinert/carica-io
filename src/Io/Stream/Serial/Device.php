@@ -1,12 +1,12 @@
 <?php
 
-namespace Carica\Io\Stream {
+namespace Carica\Io\Stream\Serial {
 
   class Device {
-    
+
     private $_device = 0;
     private $_command = '';
-    
+
     public function __construct($device) {
       if (substr(PHP_OS, 0, 3) === "WIN") {
         $pattern = '(^COM\d+:$)';
@@ -20,19 +20,19 @@ namespace Carica\Io\Stream {
         $pattern = '(^/dev/tty\w+\d+$)';
         $prepare = sprintf('stty -F %s', $device);
       } else {
-        throw new LogicException(sprintf('Unsupport OS: "%s".', PHP_OS));
+        throw new \LogicException(sprintf('Unsupport OS: "%s".', PHP_OS));
       }
       if (!preg_match($pattern, $device)) {
-        throw new LogicException(sprintf('Invalid serial port: "%s".', $device));
+        throw new \LogicException(sprintf('Invalid serial port: "%s".', $device));
       }
       $this->_device = $device;
       $this->_command = $command;
     }
-    
+
     public function setUp() {
       exec($this->_command);
     }
-    
+
     public function __toString() {
       return $this->_device;
     }

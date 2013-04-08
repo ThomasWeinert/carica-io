@@ -47,14 +47,15 @@ namespace Carica\Io\Stream {
     }
 
     public function open() {
-      exec($this->_command);
+      $this->_device->setUp();
+      $device = (string)$this->_device;
       if ($resource = @fopen($device, 'rb+')) {
         stream_set_blocking($resource, 0);
         stream_set_timeout($resource, 1);
         $this->resource($resource);
         return TRUE;
       } else {
-        $this->events()->emit('error', sprintf('Can not open serial port: "%d".', $this->_number));
+        $this->events()->emit('error', sprintf('Can not open serial port: "%s".', $device));
         return FALSE;
       }
     }
