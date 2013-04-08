@@ -11,13 +11,36 @@ namespace Carica\Io\Event\Loop {
      */
     private static $_globalLoop = NULL;
 
+    private static $_useLibevent = FALSE;
+
     /**
      * Create a event loop
      *
      * @return Carica\Io\Event\Loop
      */
     public static function create() {
-      return new StreamSelect();
+      if (self::useLibevent()) {
+        return new Libevent(event_base_new());
+      } else {
+        return new StreamSelect();
+      }
+    }
+
+    /**
+     * Getter/Setter for libevent usage, if TRUE is provided as an argument it will
+     * only activate the use if the extension is installed.
+     *
+     * @param string $use
+     * @return boolean
+     */
+    public static function useLibevent($use = NULL) {
+      if (isset($use)) {
+        self::$_useLibevent = $use ? NULL : FALSE;
+      }
+      if (NULL === self::$_useLibevent) {
+        self::$_useLibevent = extension_loaded('libevent');
+      }
+      return self::$_useLibevent;
     }
 
     /**
