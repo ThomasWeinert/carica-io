@@ -9,7 +9,7 @@ use Carica\Io;
 use Carica\Io\Firmata;
 
 $board = new Firmata\Board(
-  $stream = new Io\Stream\Serial('COM3')
+  $stream = new Io\Stream\Serial\Dio('COM7:')
 );
 
 $loop = Io\Event\Loop\Factory::get();
@@ -27,15 +27,18 @@ $board->events()->on(
   }
 );
 
-$active = $board->activate(
-  function ($error = NULL) {
-    if (isset($error)) {
-      echo $error."\n";
-      return;
+$active = $board
+  ->activate()
+  ->done(
+    function () {
+      echo "activated\n";
     }
-    echo "activated\n";
-  }
-);
+  )
+  ->fail(
+    function ($error) {
+      echo $error."\n";
+    }
+  );
 
 if ($board->isActive()) {
   $loop->run();

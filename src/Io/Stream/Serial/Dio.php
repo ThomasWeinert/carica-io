@@ -1,10 +1,11 @@
 <?php
 
-namespace Carica\Io\Stream {
+namespace Carica\Io\Stream\Serial {
 
+  use Carica\Io;
   use Carica\Io\Event;
 
-  class Serial {
+  class Dio implements Io\Stream {
 
     use Event\Emitter\Aggregation;
     use Event\Loop\Aggregation;
@@ -29,11 +30,11 @@ namespace Carica\Io\Stream {
       } elseif (isset($resource)) {
         $this->_resource = $resource;
         $that = $this;
-        $this->_listener = $this->loop()->setStreamReader(
+        $this->_listener = $this->loop()->setInterval(
           function() use ($that) {
             $that->read();
           },
-          $resource
+          50
         );
       }
       if (is_resource($this->_resource)) {
@@ -46,11 +47,13 @@ namespace Carica\Io\Stream {
     }
 
     public function open() {
+      $this->_device->setUp();
+      $device = (string)$this->_device;
       if ($resource = @dio_open($device, O_RDWR | O_NOCTTY | O_NONBLOCK)) {
         $this->resource($resource);
         return TRUE;
       } else {
-        $this->events()->emit('error', sprintf('Can not open serial port: "%d".', $this->_number));
+        $this->events()->emit('error', sprintf('Can not open serial port: "%s".', $device));
         return FALSE;
       }
     }
@@ -76,8 +79,8 @@ namespace Carica\Io\Stream {
     public function write($data) {
       if ($resource = $this->resource()) {
         dio_write(
-          $resource, 
-          $writtenData = is_array($data) ? Carica\Io\encodeBinaryFromArray($data) : $data
+          $resource,
+          $writtenData = is_array($data) ? Io\encodeBinaryFromArray($data) : $data
         );
         $this->events()->emit('write-data', $writtenData);
       }
