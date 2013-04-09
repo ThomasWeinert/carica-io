@@ -12,6 +12,7 @@ namespace Carica\Io\Network\Http {
     public $method = 'GET';
     public $version = '1.0';
     public $url = '/';
+    public $path = '/';
 
     private $_connection = NULL;
 
@@ -30,6 +31,8 @@ namespace Carica\Io\Network\Http {
       if (preg_match($this->_patternStatus, $line, $matches)) {
         $this->method = $matches['method'];
         $this->url = $matches['url'];
+        $parsedUrl = parse_url($matches['url']);
+        $this->path = empty($parsedUrl['path']) ? '' : $parsedUrl['path'];
         $this->version = $matches['version'];
       }
     }
