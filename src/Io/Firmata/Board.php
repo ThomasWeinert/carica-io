@@ -431,6 +431,7 @@ namespace Carica\Io\Firmata {
      */
     public function pinMode($pin, $mode) {
       $this->_pins[$pin]->setMode($mode);
+      $this->port()->write([COMMAND_PIN_MODE, $this->_pin, $mode]);
     }
   }
 }
