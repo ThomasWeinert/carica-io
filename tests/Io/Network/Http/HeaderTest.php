@@ -19,13 +19,17 @@ namespace Carica\Io\Network\Http {
      */
     public function testConstructorWithListData() {
       $header = new Header('Content-Type', ['text/plain', 'foo/bar']);
-      $this->assertEquals('text/plain', (string)$header);
+      $this->assertEquals('foo/bar', (string)$header);
     }
     
+    /**
+     * @covers Carica\Io\Network\Http\Header
+     */
     public function testHeaderAsIterator() {
       $header = new Header('Content-Type', ['text/plain', 'foo/bar']);
       $this->assertEquals(
-        array('text/plain', 'foo/bar')
+        array('text/plain', 'foo/bar'),
+        iterator_to_array($header)
       );
     }
   }
