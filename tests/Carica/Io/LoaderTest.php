@@ -2,7 +2,7 @@
 
 namespace Carica\Io {
 
-  include_once(__DIR__.'/../../src/Io/Loader.php');
+  include_once(__DIR__.'/../../../src/Carica/Io/Loader.php');
 
   class LoaderTest extends \PHPUnit_Framework_TestCase {
 

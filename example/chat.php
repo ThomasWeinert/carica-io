@@ -19,7 +19,7 @@ function broadcast($clients, $data) {
   }
 }
 
-include('../src/Io/Loader.php');
+include('../src/Carica/Io/Loader.php');
 Carica\Io\Loader::register();
 use Carica\Io;
 

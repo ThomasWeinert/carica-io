@@ -1,5 +1,5 @@
 <?php
-include('../../src/Io/Loader.php');
+include('../../src/Carica/Io/Loader.php');
 Carica\Io\Loader::register();
 
 $server = new Carica\Io\Network\Server();
