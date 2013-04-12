@@ -42,7 +42,7 @@ namespace Carica\Io\Network\Http {
      */
     public function setName($name) {
       if (trim($name) == '') {
-        throw \UnexpectedValueException(
+        throw new \UnexpectedValueException(
           sprintf('Property %s::$name can not be empty', __CLASS__)
         );
       }
@@ -61,7 +61,7 @@ namespace Carica\Io\Network\Http {
           $this->_values[] = (string)$value;
         }
       } else {
-        $this->values[] = (string)$data;
+        $this->_values[] = (string)$data;
       }
     }
 
@@ -155,7 +155,7 @@ namespace Carica\Io\Network\Http {
      * @param integer $offset
      */
     public function offsetUnset($offset) {
-      $this->_values->offsetUnset($offset, (string)$value);
+      $this->_values->offsetUnset($offset);
     }
 
     public function getIterator() {
