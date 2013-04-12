@@ -70,7 +70,7 @@ namespace Carica\Io\Network\Http {
      * @return string
      */
     public function __toString() {
-      return (string)reset($this->_values);
+      return (string)end($this->_values);
     }
 
     /**
@@ -97,7 +97,7 @@ namespace Carica\Io\Network\Http {
       case 'name' :
         return $this->_name;
       case 'value' :
-        return reset($this->_values);
+        return end($this->_values);
       case 'values' :
         return $this->_values;
       }
