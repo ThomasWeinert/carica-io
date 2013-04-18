@@ -16,6 +16,7 @@ namespace Carica\Io\Firmata {
       COMMAND_ANALOG_MESSAGE => 'Midi\Message',
       COMMAND_DIGITAL_MESSAGE => 'Midi\Message',
       COMMAND_STRING_DATA => 'Sysex\String',
+      COMMAND_PULSE_IN => 'Sysex\PulseIn',
       COMMAND_QUERY_FIRMWARE => 'Sysex\QueryFirmware',
       COMMAND_CAPABILITY_RESPONSE => 'Sysex\CapabilityResponse',
       COMMAND_PIN_STATE_RESPONSE => 'Sysex\PinStateResponse',

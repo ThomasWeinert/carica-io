@@ -4,7 +4,7 @@ namespace Carica\Io\Firmata\Response\Sysex {
 
   use Carica\Io\Firmata;
 
-  class QueryFirmware extends Firmata\Response\Sysex {
+  class String extends Firmata\Response\Sysex {
 
     private $_text = '';
 

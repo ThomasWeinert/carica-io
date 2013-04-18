@@ -4,6 +4,18 @@ namespace Carica\Io\Firmata {
 
   abstract class Request {
 
+    private $_board = NULL;
+
+    public function __construct(Board $board) {
+      $this->_board = $board;
+    }
+
+    public function board() {
+      return $this->_board;
+    }
+
+    abstract public function send();
+
     /**
      * Split a string with 8 bit bytes into 2 7bit bytes.
      *

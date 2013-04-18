@@ -87,6 +87,7 @@ namespace Carica\Io\Firmata {
       COMMAND_ANALOG_MESSAGE => 'onAnalogMessage',
       COMMAND_DIGITAL_MESSAGE => 'onDigitalMessage',
       COMMAND_STRING_DATA => 'onStringData',
+      COMMAND_PULSE_IN => 'onPulseIn',
       COMMAND_QUERY_FIRMWARE => 'onQueryFirmware',
       COMMAND_CAPABILITY_RESPONSE => 'onCapabilityResponse',
       COMMAND_PIN_STATE_RESPONSE => 'onPinStateResponse',
@@ -297,6 +298,11 @@ namespace Carica\Io\Firmata {
       $this->events()->emit('string', $response->text);
     }
 
+    private function onPulseIn(Response\SysEx\PulseIn $response) {
+      $this->events()->emit('pulse-in-'.$response->pin, $response->duration);
+      $this->events()->emit('pulse-in', $response->pin, $response->duration);
+    }
+
     /**
      * Pin status was reported, store it and emit event
      *
@@ -440,8 +446,10 @@ namespace Carica\Io\Firmata {
       $this->port()->write([COMMAND_PIN_MODE, $pin, $mode]);
     }
 
-    public function pulseIn() {
-
+    public function pulseIn($pin, $callback, $value = DIGITAL_HIGH, $pulseOut = 5, $timeout = 1000000) {
+      $this->events()->once('pulse-in-'.$pin, $callback);
+      $request = new Request\PulseIn($this, $pin, $value, $pulseOut, $timeout);
+      $request->send();
     }
   }
 }
