@@ -11,6 +11,17 @@ namespace Carica\Io\Firmata {
     private $_bytes = array();
     private $_versionReceived = FALSE;
 
+    private $_classes = array(
+      COMMAND_REPORT_VERSION => 'Midi\ReportVersion',
+      COMMAND_ANALOG_MESSAGE => 'Midi\Message',
+      COMMAND_DIGITAL_MESSAGE => 'Midi\Message',
+      COMMAND_STRING_DATA => 'Sysex\String',
+      COMMAND_QUERY_FIRMWARE => 'Sysex\QueryFirmware',
+      COMMAND_CAPABILITY_RESPONSE => 'Sysex\CapabilityResponse',
+      COMMAND_PIN_STATE_RESPONSE => 'Sysex\PinStateResponse',
+      COMMAND_ANALOG_MAPPING_RESPONSE => 'Sysex\AnalogMappingResponse'
+    );
+
     public function addData($data) {
       if (count($this->_bytes) == 0) {
         $data = ltrim($data, pack('C', 0));
@@ -55,17 +66,8 @@ namespace Carica\Io\Firmata {
 
     private function handleResponse($command, array $bytes) {
       $response = NULL;
-      $classes = array(
-        COMMAND_REPORT_VERSION => 'Midi\ReportVersion',
-        COMMAND_ANALOG_MESSAGE => 'Midi\AnalogMessage',
-        COMMAND_DIGITAL_MESSAGE => 'Midi\DigitalMessage',
-        COMMAND_QUERY_FIRMWARE => 'Sysex\QueryFirmware',
-        COMMAND_CAPABILITY_RESPONSE => 'Sysex\CapabilityResponse',
-        COMMAND_PIN_STATE_RESPONSE => 'Sysex\PinStateResponse',
-        COMMAND_ANALOG_MAPPING_RESPONSE => 'Sysex\AnalogMappingResponse'
-      );
-      if (isset($classes[$command])) {
-        $className = __NAMESPACE__.'\\Response\\'.$classes[$command];
+      if (isset($this->_classes[$command])) {
+        $className = __NAMESPACE__.'\\Response\\'.$this->_classes[$command];
         $response = new $className($command, $bytes);
       }
       if ($response) {

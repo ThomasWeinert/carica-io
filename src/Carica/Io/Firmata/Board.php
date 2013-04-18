@@ -24,6 +24,7 @@ namespace Carica\Io\Firmata {
   const COMMAND_I2C_REPLY = 0x77;
   const COMMAND_I2C_CONFIG = 0x78;
   const COMMAND_STRING_DATA = 0x71;
+  const COMMAND_PULSE_IN = 0x74;
   const COMMAND_SYSTEM_RESET = 0xFF;
 
   const PIN_STATE_INPUT = 0x00;
@@ -85,6 +86,7 @@ namespace Carica\Io\Firmata {
       COMMAND_REPORT_VERSION => 'onReportVersion',
       COMMAND_ANALOG_MESSAGE => 'onAnalogMessage',
       COMMAND_DIGITAL_MESSAGE => 'onDigitalMessage',
+      COMMAND_STRING_DATA => 'onStringData',
       COMMAND_QUERY_FIRMWARE => 'onQueryFirmware',
       COMMAND_CAPABILITY_RESPONSE => 'onCapabilityResponse',
       COMMAND_PIN_STATE_RESPONSE => 'onPinStateResponse',
@@ -261,7 +263,7 @@ namespace Carica\Io\Firmata {
      *
      * @param Response\Midi\AnalogMessage $response
      */
-    private function onAnalogMessage(Response\Midi\AnalogMessage $response) {
+    private function onAnalogMessage(Response\Midi\Message $response) {
       if (isset($this->_channels[$response->port]) &&
           isset($this->_pins[$this->_channels[$response->port]])) {
         $pin = $this->_channels[$response->port];
@@ -275,7 +277,7 @@ namespace Carica\Io\Firmata {
      *
      * @param Response\Midi\DigitalMessage $response
      */
-    private function onDigitalMessage(Response\Midi\DigitalMessage $response) {
+    private function onDigitalMessage(Response\Midi\Message $response) {
       for ($i = 0; $i < 8; $i++) {
         if (isset($this->_pins[8 * $response->port + $i])) {
           $pinNumber = 8 * $response->port + $i;
@@ -289,6 +291,10 @@ namespace Carica\Io\Firmata {
           $this->events()->emit('digital-read', ['pin' => $pinNumber, 'value' => $value]);
         }
       }
+    }
+
+    private function onStringData(Response\SysEx\String $response) {
+      $this->events()->emit('string', $response->text);
     }
 
     /**
@@ -432,6 +438,10 @@ namespace Carica\Io\Firmata {
     public function pinMode($pin, $mode) {
       $this->pins[$pin]->setMode($mode);
       $this->port()->write([COMMAND_PIN_MODE, $pin, $mode]);
+    }
+
+    public function pulseIn() {
+
     }
   }
 }

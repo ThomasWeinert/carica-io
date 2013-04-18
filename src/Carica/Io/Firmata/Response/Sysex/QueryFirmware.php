@@ -26,7 +26,7 @@ namespace Carica\Io\Firmata\Response\Sysex {
       case 'minor' :
         return $this->_minor;
       }
-      throw new \LogicException(sprintf('Unknown property %s::$%s', __CLASS__, $name));
+      parent::__get($name);
     }
   }
 }

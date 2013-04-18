@@ -4,7 +4,7 @@ namespace Carica\Io\Firmata\Response\Midi {
 
   use Carica\Io\Firmata;
 
-  abstract class Message extends Firmata\Response\Midi {
+  class Message extends Firmata\Response\Midi {
 
     private $_port = 0;
     private $_value = 0;
@@ -22,7 +22,7 @@ namespace Carica\Io\Firmata\Response\Midi {
       case 'value' :
         return $this->_value;
       }
-      throw new \LogicException(sprintf('Unknown property %s::$%s', __CLASS__, $name));
+      parent::__get($name);
     }
   }
 }

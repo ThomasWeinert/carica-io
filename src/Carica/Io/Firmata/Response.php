@@ -14,6 +14,16 @@ namespace Carica\Io\Firmata {
       return $this->_command;
     }
 
+    public function __get($name) {
+      switch ($name) {
+      case 'command' :
+        return $this->_command;
+      }
+      throw new \LogicException(
+        sprintf('Unknown property %s::$%s', get_class($this), $name)
+      );
+    }
+
     /**
      * Join groups of to 7 bit bytes into 8 bit bytes.
      *

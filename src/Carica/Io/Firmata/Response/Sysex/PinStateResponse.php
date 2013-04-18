@@ -38,7 +38,7 @@ namespace Carica\Io\Firmata\Response\Sysex {
       case 'value' :
         return $this->_value;
       }
-      throw new \LogicException(sprintf('Unknown property %s::$%s', __CLASS__, $name));
+      parent::__get($name);
     }
   }
 }

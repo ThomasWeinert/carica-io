@@ -22,7 +22,7 @@ namespace Carica\Io\Firmata\Response\Midi {
       case 'minor' :
         return $this->_minor;
       }
-      throw new \LogicException(sprintf('Unknown property %s::$%s', __CLASS__, $name));
+      parent::__get($name);
     }
   }
 }
