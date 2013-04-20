@@ -8,20 +8,20 @@ namespace Carica\Io\Firmata\Request {
 
     private $_pin = 0;
     private $_value = FIRMATA\DIGITAL_HIGH;
-    private $_pulseOut = 0;
+    private $_pulseLength = 0;
     private $_timeout = 1000000;
 
     public function __construct(
       Firmata\Board $board,
       $pin,
       $value = FIRMATA\DIGITAL_HIGH,
-      $pulseOut = 5,
+      $pulseLength = 5,
       $timeout = 1000000
     ) {
       parent::__construct($board);
       $this->_pin = (int)$pin;
       $this->_value = (int)$value;
-      $this->_pulseOut = (int)$pulseOut;
+      $this->_pulseLength = (int)$pulseLength;
       $this->_timeout = (int)$timeout;
     }
 
@@ -36,7 +36,7 @@ namespace Carica\Io\Firmata\Request {
       $data .= self::encodeBytes(
         pack(
          'NN',
-         $this->_pulseOut,
+         $this->_pulseLength,
          $this->_timeout
         )
       );
