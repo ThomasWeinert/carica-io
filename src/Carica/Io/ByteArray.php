@@ -92,6 +92,32 @@ namespace Carica\Io {
     }
 
     /**
+     * Read an hexadecimal encoded binary string
+     *
+     * @param string $string
+     * @param boolean $resize
+     * @throws \OutOfBoundsException
+     */
+    public function fromHexString($string, $resize = FALSE) {
+      $string = strtr($string, " \r\n\t", "");
+      $length = floor(strlen($string) / 2);
+      if ($resize && $length != $this->getLength()) {
+        $this->setLength($length);
+      }
+      if ($length >= $this->_length) {
+        for ($i = 0; $i < $this->_length; ++$i) {
+          $this->_bytes[$i] = hexdec(substr($string, $i * 2, 2));
+        }
+      } else {
+        throw new \OutOfBoundsException(
+          sprintf(
+            'Maximum length is "%d". Got "%d".', $this->_length, count($bytes)
+          )
+        );
+      }
+    }
+
+    /**
      * Get the byte array as an hexdec string.
      *
      * @return string

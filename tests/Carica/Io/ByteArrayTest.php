@@ -104,6 +104,16 @@ namespace Carica\Io {
       $this->assertSame('11111111 10000000 11111111', $bytes->asBitString());
     }
 
+    /**
+     * @covers Carica\Io\ByteArray::fromHexString
+     * @covers Carica\Io\ByteArray::asHex
+     * @dataProvider provideHexSamples
+     */
+    public function testHexStringInOut($string, $binaryString, $length) {
+      $bytes = new ByteArray($length);
+      $bytes->fromHexString($string);
+      $this->assertSame($string, $bytes->asHex());
+    }
 
     /**
      * @covers Carica\Io\ByteArray::asHex
