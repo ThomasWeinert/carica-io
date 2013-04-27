@@ -99,7 +99,7 @@ namespace Carica\Io {
      * @throws \OutOfBoundsException
      */
     public function fromHexString($string, $resize = FALSE) {
-      $string = strtr($string, " \r\n\t", "");
+      $string = str_replace(' ', '', $string);
       $length = floor(strlen($string) / 2);
       if ($resize && $length != $this->getLength()) {
         $this->setLength($length);
@@ -111,7 +111,7 @@ namespace Carica\Io {
       } else {
         throw new \OutOfBoundsException(
           sprintf(
-            'Maximum length is "%d". Got "%d".', $this->_length, count($bytes)
+            'Maximum length is "%d". Got "%d".', $this->_length, $length
           )
         );
       }

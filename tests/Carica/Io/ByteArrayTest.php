@@ -116,6 +116,35 @@ namespace Carica\Io {
     }
 
     /**
+     * @covers Carica\Io\ByteArray::fromHexString
+     */
+    public function testFromHexStringWithInvalidLengthExpectingException() {
+      $bytes = new ByteArray(42);
+      $this->setExpectedException('OutOfBoundsException');
+      $bytes->fromHexString('FFF0FF', FALSE);
+    }
+
+    /**
+     * @covers Carica\Io\ByteArray::asHex
+     * @covers Carica\Io\ByteArray::fromHExString
+     */
+    public function testFromHexStringWithAutomaticLengthIncrease() {
+      $bytes = new ByteArray(1);
+      $bytes->fromHexString('FF F0 FF', TRUE);
+      $this->assertSame('11111111 11110000 11111111', $bytes->asBitString());
+    }
+
+    /**
+     * @covers Carica\Io\ByteArray::asHex
+     * @covers Carica\Io\ByteArray::fromHexString
+     */
+    public function testFromHexStringWithAutomaticLengthDecrease() {
+      $bytes = new ByteArray(10);
+      $bytes->fromHexString('FF F0 FF', TRUE);
+      $this->assertSame('11111111 11110000 11111111', $bytes->asBitString());
+    }
+
+    /**
      * @covers Carica\Io\ByteArray::asHex
      * @dataProvider provideHexSamples
      */
