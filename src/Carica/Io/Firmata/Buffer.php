@@ -20,7 +20,8 @@ namespace Carica\Io\Firmata {
       COMMAND_QUERY_FIRMWARE => 'Sysex\QueryFirmware',
       COMMAND_CAPABILITY_RESPONSE => 'Sysex\CapabilityResponse',
       COMMAND_PIN_STATE_RESPONSE => 'Sysex\PinStateResponse',
-      COMMAND_ANALOG_MAPPING_RESPONSE => 'Sysex\AnalogMappingResponse'
+      COMMAND_ANALOG_MAPPING_RESPONSE => 'Sysex\AnalogMappingResponse',
+      COMMAND_I2C_REPLY => 'SysEx\I2CReply'
     );
 
     public function addData($data) {

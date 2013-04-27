@@ -96,7 +96,8 @@ namespace Carica\Io\Firmata {
       COMMAND_QUERY_FIRMWARE => 'onQueryFirmware',
       COMMAND_CAPABILITY_RESPONSE => 'onCapabilityResponse',
       COMMAND_PIN_STATE_RESPONSE => 'onPinStateResponse',
-      COMMAND_ANALOG_MAPPING_RESPONSE => 'onAnalogMappingResponse'
+      COMMAND_ANALOG_MAPPING_RESPONSE => 'onAnalogMappingResponse',
+      COMMAND_I2C_REPLY => 'onI2CReply'
     );
 
     /**
@@ -300,6 +301,10 @@ namespace Carica\Io\Firmata {
       $this->events()->emit('string', $response->text);
     }
 
+    private function onI2CReply(Response\SysEx\I2CReply $response) {
+      $this->events()->emit('I2C-reply-'.$response->slaveAddress, $response->data);
+    }
+
     private function onPulseIn(Response\SysEx\PulseIn $response) {
       $this->events()->emit('pulse-in-'.$response->pin, $response->duration);
       $this->events()->emit('pulse-in', $response->pin, $response->duration);
@@ -470,6 +475,7 @@ namespace Carica\Io\Firmata {
     public function sendI2CReadRequest($slaveAddress, $byteCount, Callable $callback) {
       $request = new Request\I2C\Read($this, $slaveAddress, $data);
       $request->send();
+      $this->events()->once('I2C-reply-'.$slaveAddress, $callback);
     }
 
     /**
