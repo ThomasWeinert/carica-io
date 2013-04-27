@@ -241,10 +241,7 @@ namespace Carica\Io\Firmata {
      * @param Response\Sysex\CapabilityResponse $response
      */
     private function onCapabilityResponse(Response\Sysex\CapabilityResponse $response) {
-      $this->_pins = new \ArrayObject();
-      foreach ($response->pins as $pin => $modes) {
-        $this->_pins[$pin] = new Pin($this, $pin, $modes);
-      }
+      $this->_pins = new Pins($response->pins);
       $this->events()->emit('capability-query');
     }
 

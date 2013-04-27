@@ -159,7 +159,7 @@ namespace Carica\Io\Firmata {
         ->method('pinMode');
 
       $pin = new Pin($board, 12, array(PIN_STATE_OUTPUT));
-      $this->setExpectedException('OutOfBoundsException');
+      $this->setExpectedException('\Carica\Io\Firmata\Exception\UnsupportedMode');
       $pin->mode = PIN_STATE_ANALOG;
     }
 

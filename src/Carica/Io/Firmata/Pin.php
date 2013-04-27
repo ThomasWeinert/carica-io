@@ -56,27 +56,33 @@ namespace Carica\Io\Firmata {
      */
     public function __construct(Board $board, $pin, array $supports) {
       $this->_board = $board;
-      $that = $this;
-      $this->_board->events()->on(
-        'pin-state-'.$pin,
-        function ($mode, $value) use ($that) {
-          $that->onUpdatePinState($mode, $value);
-        }
-      );
-      $this->_board->events()->on(
-        'analog-read-'.$pin,
-        function ($value) use ($that) {
-          $that->onUpdateValue($value);
-        }
-      );
-      $this->_board->events()->on(
-        'digital-read-'.$pin,
-        function ($value) use ($that) {
-          $that->onUpdateValue($value);
-        }
-      );
       $this->_pin = (int)$pin;
       $this->_supports = $supports;
+      $this->attachEvents();
+    }
+
+    private function attachEvents() {
+      $that = $this;
+      if ($events = $this->board->events()) {
+        $events->on(
+          'pin-state-'.$this->_pin,
+          function ($mode, $value) use ($that) {
+            $that->onUpdatePinState($mode, $value);
+          }
+        );
+        $events->on(
+          'analog-read-'.$this->_pin,
+          function ($value) use ($that) {
+            $that->onUpdateValue($value);
+          }
+        );
+        $events->on(
+          'digital-read-'.$this->_pin,
+          function ($value) use ($that) {
+            $that->onUpdateValue($value);
+          }
+        );
+      }
     }
 
     /**
@@ -180,9 +186,7 @@ namespace Carica\Io\Firmata {
     public function setMode($mode) {
       $mode = (int)$mode;
       if (!in_array($mode, $this->_supports)) {
-        throw new \OutOfBoundsException(
-          sprintf('Invalid mode %d for pin #%d.', $mode, $this->_pin)
-        );
+        throw new Exception\UnsupportedMode($this->_pin, $mode);
       }
       if ($this->_modeInitialized && $this->_mode == $mode) {
         return;
@@ -220,6 +224,16 @@ namespace Carica\Io\Firmata {
       $this->_value = $value;
       $this->_valueInitialized = TRUE;
       $this->_board->analogWrite($this->_pin, $value);
+    }
+
+    /**
+     * Does the pin support the given mode
+     *
+     * @param integer $mode
+     * @return boolean
+     */
+    public function supports($mode) {
+      return in_array($mode, $this->_supports);
     }
   }
 }
