@@ -36,6 +36,11 @@ namespace Carica\Io\Firmata {
   const DIGITAL_LOW = 0;
   const DIGITAL_HIGH = 1;
 
+  const I2C_MODE_WRITE = 0;
+  const I2C_MODE_READ = 1;
+  const I2C_MODE_CONTINOUS_READ = 2;
+  const I2C_MODE_STOP_READING = 3;
+
   /**
    * This class represents an Arduino board running firmata.
    *
@@ -351,7 +356,7 @@ namespace Carica\Io\Firmata {
      *
      * @param callable $callback
      */
-    public function queryAnalogMapping(Callable $callback) {
+    public function queryAnalogMapping(Callable  $callback) {
       $this->events()->once('analog-mapping-query', $callback);
       $this->port()->write([COMMAND_START_SYSEX, COMMAND_ANALOG_MAPPING_QUERY, COMMAND_END_SYSEX]);
     }
@@ -379,7 +384,7 @@ namespace Carica\Io\Firmata {
      * Add a callback for diagital read events on a pin
      * @param integer $pin 0-16
      */
-    public function digitalRead($pin, $callback) {
+    public function digitalRead($pin, Callable $callback) {
       $this->events()->on('digital-read-'.$pin, $callback);
     }
 
@@ -442,10 +447,44 @@ namespace Carica\Io\Firmata {
       $this->pins[$pin]->setMode($mode);
       $this->port()->write([COMMAND_PIN_MODE, $pin, $mode]);
     }
+    
+    public function sendI2CConfig($delay = 0) {
+      $this
+        ->port()
+        ->write(
+           array(
+             COMMAND_START_SYSEX,
+             COMMAND_I2C_CONFIG,
+             delay >> 0xFF,
+             (delay >> 8) & 0XFF,
+             COMMAND_END_SYSEX 
+           )
+        );
+    }
 
-    public function pulseIn($pin, $callback, $value = DIGITAL_HIGH, $pulseOut = 5, $timeout = 1000000) {
+    public function sendI2CWriteRequest($slaveAddress, $data) {
+      $request = new Request\I2C\Write($this, $slaveAddress, $data);
+      $request->send();
+    }
+    
+    public function sendI2CReadRequest($slaveAddress, $byteCount, Callable $callback) {
+      $request = new Request\I2C\Read($this, $slaveAddress, $data);
+      $request->send();
+    }
+
+    /**
+     * Send a pulse and execute the callback attach the callback so it will be executed
+     * with the duration as an argument.
+     * 
+     * @param integer $pin
+     * @param Callable $callback
+     * @param integer $value
+     * @param integer $pulseLength
+     * @param integer $timeout
+     */
+    public function pulseIn($pin, $callback, $value = DIGITAL_HIGH, $pulseLength = 5, $timeout = 1000000) {
       $this->events()->once('pulse-in-'.$pin, $callback);
-      $request = new Request\PulseIn($this, $pin, $value, $pulseOut, $timeout);
+      $request = new Request\PulseIn($this, $pin, $value, $pulseLength, $timeout);
       $request->send();
     }
   }
