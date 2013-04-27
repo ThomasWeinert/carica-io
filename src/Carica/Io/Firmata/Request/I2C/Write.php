@@ -18,7 +18,7 @@ namespace Carica\Io\Firmata\Request\I2C {
       $this->_slaveAddress = (int)$slaveAddress;
       $this->setData($data);
     }
-    
+
     public function setData($data) {
       if (is_array($data)) {
         array_unshift($data, 'C*');
@@ -41,7 +41,7 @@ namespace Carica\Io\Firmata\Request\I2C {
         'C',
         FIRMATA\COMMAND_END_SYSEX
       );
-      $this->board()->port()->write($data);
+      $this->board()->stream()->write($data);
     }
   }
 }

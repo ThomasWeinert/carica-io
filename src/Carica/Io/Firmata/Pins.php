@@ -13,12 +13,12 @@ namespace Carica\Io\Firmata {
     }
 
     public function offsetExists($offset) {
-      return array_key_exists($offset, $this->_pins);
+      return array_key_exists((int)$offset, $this->_pins);
     }
 
     public function offsetGet($offset) {
       if ($this->offsetExists($offset)) {
-        return $this->_pins[$offset];
+        return $this->_pins[(int)$offset];
       }
       throw new Exception\NonExistingPin($offset);
     }

@@ -102,7 +102,7 @@ namespace Carica\Io\Firmata {
     /**
      * Create board and assign stream object
      *
-     * @param Carica\Io\Stream $port
+     * @param Carica\Io\Stream $stream
      */
     public function __construct(Io\Stream $stream) {
       $this->_stream = $stream;
@@ -115,7 +115,7 @@ namespace Carica\Io\Firmata {
      * @return boolean
      */
     public function isActive() {
-      return is_resource($this->port()->resource());
+      return is_resource($this->stream()->resource());
     }
 
     /**
@@ -123,7 +123,7 @@ namespace Carica\Io\Firmata {
      *
      * @return Carica\Io\Stream
      */
-    public function port() {
+    public function stream() {
       return $this->_stream;
     }
 
@@ -152,15 +152,15 @@ namespace Carica\Io\Firmata {
       if (isset($callback)) {
         $defer->always($callback);
       }
-      $this->port()->events()->on(
+      $this->stream()->events()->on(
         'error',
         function($message) use ($defer) {
           $defer->reject($message);
         }
       );
-      $this->port()->events()->on('read-data', array($this->buffer(), 'addData'));
+      $this->stream()->events()->on('read-data', array($this->buffer(), 'addData'));
       $this->buffer()->events()->on('response', array($this, 'onResponse'));
-      if ($this->port()->open()) {
+      if ($this->stream()->open()) {
         $board = $this;
         $board->reportVersion(
           function() use ($board, $defer) {
@@ -223,8 +223,8 @@ namespace Carica\Io\Firmata {
     private function onReportVersion(Response\Midi\ReportVersion $response) {
       $this->_version = new Version($response->major, $response->minor);
       for ($i = 0; $i < 16; $i++) {
-        $this->port()->write([COMMAND_REPORT_DIGITAL | $i, 1]);
-        $this->port()->write([COMMAND_REPORT_ANALOG | $i, 1]);
+        $this->stream()->write([COMMAND_REPORT_DIGITAL | $i, 1]);
+        $this->stream()->write([COMMAND_REPORT_ANALOG | $i, 1]);
       }
       $this->events()->emit('reportversion');
     }
@@ -246,7 +246,7 @@ namespace Carica\Io\Firmata {
      * @param Response\Sysex\CapabilityResponse $response
      */
     private function onCapabilityResponse(Response\Sysex\CapabilityResponse $response) {
-      $this->_pins = new Pins($response->pins);
+      $this->_pins = new Pins($this, $response->pins);
       $this->events()->emit('capability-query');
     }
 
@@ -318,7 +318,7 @@ namespace Carica\Io\Firmata {
      * Reset board
      */
     public function reset() {
-      $this->port()->write([COMMAND_SYSTEM_RESET]);
+      $this->stream()->write([COMMAND_SYSTEM_RESET]);
     }
 
     /**
@@ -328,7 +328,7 @@ namespace Carica\Io\Firmata {
      */
     public function reportVersion(Callable $callback) {
       $this->events()->once('reportversion', $callback);
-      $this->port()->write([COMMAND_REPORT_VERSION]);
+      $this->stream()->write([COMMAND_REPORT_VERSION]);
     }
 
     /**
@@ -338,7 +338,7 @@ namespace Carica\Io\Firmata {
      */
     public function queryFirmware(Callable $callback) {
       $this->events()->once('queryfirmware', $callback);
-      $this->port()->write([COMMAND_START_SYSEX, COMMAND_QUERY_FIRMWARE, COMMAND_END_SYSEX]);
+      $this->stream()->write([COMMAND_START_SYSEX, COMMAND_QUERY_FIRMWARE, COMMAND_END_SYSEX]);
     }
 
     /**
@@ -348,7 +348,7 @@ namespace Carica\Io\Firmata {
      */
     public function queryCapabilities(Callable $callback) {
       $this->events()->once('capability-query', $callback);
-      $this->port()->write([COMMAND_START_SYSEX, COMMAND_CAPABILITY_QUERY, COMMAND_END_SYSEX]);
+      $this->stream()->write([COMMAND_START_SYSEX, COMMAND_CAPABILITY_QUERY, COMMAND_END_SYSEX]);
     }
 
     /**
@@ -358,7 +358,7 @@ namespace Carica\Io\Firmata {
      */
     public function queryAnalogMapping(Callable  $callback) {
       $this->events()->once('analog-mapping-query', $callback);
-      $this->port()->write([COMMAND_START_SYSEX, COMMAND_ANALOG_MAPPING_QUERY, COMMAND_END_SYSEX]);
+      $this->stream()->write([COMMAND_START_SYSEX, COMMAND_ANALOG_MAPPING_QUERY, COMMAND_END_SYSEX]);
     }
 
     /**
@@ -369,7 +369,7 @@ namespace Carica\Io\Firmata {
      */
     public function queryPinState($pin, Callable $callback) {
       $this->events()->once('pin-state-'.$pin, $callback);
-      $this->port()->write([COMMAND_START_SYSEX, COMMAND_PIN_STATE_QUERY, $pin, COMMAND_END_SYSEX]);
+      $this->stream()->write([COMMAND_START_SYSEX, COMMAND_PIN_STATE_QUERY, $pin, COMMAND_END_SYSEX]);
     }
     /**
      * Add a callback for analog read events on a pin
@@ -397,7 +397,7 @@ namespace Carica\Io\Firmata {
      */
     public function analogWrite($pin, $value) {
       $this->_pins[$pin]->setAnalog($value);
-      $this->port()->write(
+      $this->stream()->write(
         [COMMAND_ANALOG_MESSAGE | $pin, $value & 0x7F, ($value >> 7) & 0x7F]
       );
     }
@@ -427,7 +427,7 @@ namespace Carica\Io\Firmata {
           $portValue |= (1 << $i);
         }
       }
-      $this->port()->write(
+      $this->stream()->write(
         [COMMAND_DIGITAL_MESSAGE | $port, $portValue & 0x7F, ($portValue >> 7) & 0x7F]
       );
     }
@@ -445,19 +445,19 @@ namespace Carica\Io\Firmata {
      */
     public function pinMode($pin, $mode) {
       $this->pins[$pin]->setMode($mode);
-      $this->port()->write([COMMAND_PIN_MODE, $pin, $mode]);
+      $this->stream()->write([COMMAND_PIN_MODE, $pin, $mode]);
     }
-    
+
     public function sendI2CConfig($delay = 0) {
       $this
-        ->port()
+        ->stream()
         ->write(
            array(
              COMMAND_START_SYSEX,
              COMMAND_I2C_CONFIG,
              delay >> 0xFF,
              (delay >> 8) & 0XFF,
-             COMMAND_END_SYSEX 
+             COMMAND_END_SYSEX
            )
         );
     }
@@ -466,7 +466,7 @@ namespace Carica\Io\Firmata {
       $request = new Request\I2C\Write($this, $slaveAddress, $data);
       $request->send();
     }
-    
+
     public function sendI2CReadRequest($slaveAddress, $byteCount, Callable $callback) {
       $request = new Request\I2C\Read($this, $slaveAddress, $data);
       $request->send();
@@ -475,7 +475,7 @@ namespace Carica\Io\Firmata {
     /**
      * Send a pulse and execute the callback attach the callback so it will be executed
      * with the duration as an argument.
-     * 
+     *
      * @param integer $pin
      * @param Callable $callback
      * @param integer $value

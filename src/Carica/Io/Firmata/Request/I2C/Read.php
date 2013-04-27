@@ -18,18 +18,18 @@ namespace Carica\Io\Firmata\Request\I2C {
       $this->_slaveAddress = (int)$slaveAddress;
       $this->_length = (int)$length;
     }
-    
+
     public function send() {
       $this
         ->board()
-        ->port()
+        ->stream()
         ->write(
           array(
             FIRMATA\COMMAND_START_SYSEX,
             FIRMATA\COMMAND_I2C_REQUEST,
             $this->_slaveAddress,
             FIRMATA\I2C_MODE_READ << 3,
-            $this->_length & 0x7F, 
+            $this->_length & 0x7F,
             ($this->_length >> 7) & 0x7F,
             FIRMATA\COMMAND_END_SYSEX
           )

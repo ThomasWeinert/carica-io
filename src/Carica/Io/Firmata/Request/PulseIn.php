@@ -44,7 +44,7 @@ namespace Carica\Io\Firmata\Request {
         'C',
         FIRMATA\COMMAND_END_SYSEX
       );
-      $this->board()->port()->write($data);
+      $this->board()->stream()->write($data);
     }
   }
 }
