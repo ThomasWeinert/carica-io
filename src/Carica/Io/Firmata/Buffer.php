@@ -33,7 +33,7 @@ namespace Carica\Io\Firmata {
       }
     }
 
-    function addByte($byte) {
+    private function addByte($byte) {
       if (!$this->_versionReceived) {
         if ($byte !== COMMAND_REPORT_VERSION) {
           return;
