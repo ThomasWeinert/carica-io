@@ -8,6 +8,7 @@ namespace Carica\Io\Firmata {
 
     /*
      * @covers Carica\Io\Firmata\Pin::__construct
+     * @covers Carica\Io\Firmata\Pin::attachEvents
      */
     public function testConstructor() {
       $board = $this->getBoardFixture();

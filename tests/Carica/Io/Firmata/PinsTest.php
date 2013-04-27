@@ -6,6 +6,9 @@ namespace Carica\Io\Firmata {
 
   class PinsTest extends \PHPUnit_Framework_TestCase {
 
+    /**
+     * @covers Carica\Io\Firmata\Pins::__construct
+     */
     public function testConstructor() {
       $pins = new Pins(
         $this->getBoardFixture(),
@@ -14,6 +17,9 @@ namespace Carica\Io\Firmata {
       $this->assertCount(1, $pins);
     }
 
+    /**
+     * @covers Carica\Io\Firmata\Pins::getIterator
+     */
     public function testIterator() {
       $pins = new Pins(
         $board = $this->getBoardFixture(),
@@ -25,6 +31,9 @@ namespace Carica\Io\Firmata {
       );
     }
 
+    /**
+     * @covers Carica\Io\Firmata\Pins::offsetExists
+     */
     public function testArrayAccessOffsetExistsExpectingTrue() {
       $pins = new Pins(
         $board = $this->getBoardFixture(),
@@ -33,6 +42,9 @@ namespace Carica\Io\Firmata {
       $this->assertTrue(isset($pins[42]));
     }
 
+    /**
+     * @covers Carica\Io\Firmata\Pins::offsetExists
+     */
     public function testArrayAccessOffsetExistsExpectingFalse() {
       $pins = new Pins(
         $board = $this->getBoardFixture(),
@@ -41,6 +53,9 @@ namespace Carica\Io\Firmata {
       $this->assertFalse(isset($pins[23]));
     }
 
+    /**
+     * @covers Carica\Io\Firmata\Pins::offsetGet
+     */
     public function testArrayAccessOffsetGet() {
       $pins = new Pins(
         $board = $this->getBoardFixture(),
@@ -49,6 +64,9 @@ namespace Carica\Io\Firmata {
       $this->assertInstanceOf('Carica\Io\Firmata\Pin', $pins[42]);
     }
 
+    /**
+     * @covers Carica\Io\Firmata\Pins::offsetGet
+     */
     public function testArrayAccessOffsetGetWithInvalidOffsetExpectingException() {
       $pins = new Pins(
         $this->getBoardFixture(), array()
@@ -59,6 +77,9 @@ namespace Carica\Io\Firmata {
       $pins[42];
     }
 
+    /**
+     * @covers Carica\Io\Firmata\Pins::offsetSet
+     */
     public function testArrayAccessOffsetSetExpectingException() {
       $pins = new Pins(
         $this->getBoardFixture(), array()
@@ -69,6 +90,9 @@ namespace Carica\Io\Firmata {
       $pins[] = '';
     }
 
+    /**
+     * @covers Carica\Io\Firmata\Pins::offsetUnset
+     */
     public function testArrayAccessOffsetUnsetExpectingException() {
       $pins = new Pins(
         $this->getBoardFixture(), array()
@@ -78,6 +102,10 @@ namespace Carica\Io\Firmata {
       );
       unset($pins[42]);
     }
+
+    /*****************
+     * Fixtures
+     *****************/
 
     private function getBoardFixture() {
       $board = $this
