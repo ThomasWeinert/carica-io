@@ -5,7 +5,7 @@ namespace Carica\Io {
   /**
    * Flexible access to an array of bytes, allow bit handling
    */
-  class ByteArray implements \ArrayAccess {
+  class ByteArray implements \ArrayAccess, \IteratorAggregate, \Countable {
 
     const BIT_ONE = 1;
     const BIT_TWO = 2;
@@ -289,6 +289,23 @@ namespace Carica\Io {
           sprintf('Byte value expected (0-255). Got "%d"', $value)
         );
       }
+    }
+
+    /**
+     * Allow to iterate the bytes
+     * @return \Iterator
+     */
+    public function getIterator() {
+      return new \ArrayIterator($this->_bytes);
+    }
+
+    /**
+     * Return byte count
+     *
+     * @return Integer
+     */
+    public function count() {
+      return count($this->_bytes);
     }
   }
 }

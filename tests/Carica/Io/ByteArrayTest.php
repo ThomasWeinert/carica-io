@@ -309,6 +309,50 @@ namespace Carica\Io {
       $bytes[0] = $value;
     }
 
+    /**
+     * @covers Carica\Io\ByteArray::getIterator
+     */
+    public function testGetIteratorOnEmptyByteArrayWithDefinedLength() {
+      $bytes = new ByteArray(3);
+      $this->assertEquals(
+        array(0x00, 0x00, 0x00),
+        iterator_to_array($bytes)
+      );
+    }
+
+    /**
+     * @covers Carica\Io\ByteArray::getIterator
+     */
+    public function testGetIteratorOnLoadedBytes() {
+      $bytes = new ByteArray();
+      $bytes->fromHexString('FFF00F', TRUE);
+      $this->assertEquals(
+        array(0xFF, 0x0F0, 0x0F),
+        iterator_to_array($bytes)
+      );
+    }
+
+    /**
+     * @covers Carica\Io\ByteArray::count
+     */
+    public function testCountOnEmptyByteArrayWithDefinedLength() {
+      $bytes = new ByteArray(42);
+      $this->assertCount(
+        42, $bytes
+      );
+    }
+
+    /**
+     * @covers Carica\Io\ByteArray::count
+     */
+    public function testCountLoadedBytes() {
+      $bytes = new ByteArray();
+      $bytes->fromHexString('FFF00F', TRUE);
+      $this->assertCount(
+        3, $bytes
+      );
+    }
+
     /**************************
      * Data Provider
      *************************/
