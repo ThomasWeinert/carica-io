@@ -4,7 +4,7 @@ namespace Carica\Io\Firmata\Response {
 
   use Carica\Io\Firmata;
 
-  class Midi extends Firmata\Response {
+  abstract class Midi extends Firmata\Response {
 
   }
 }
