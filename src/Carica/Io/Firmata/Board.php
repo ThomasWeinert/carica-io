@@ -297,14 +297,31 @@ namespace Carica\Io\Firmata {
       }
     }
 
+    /**
+     * Firmata send some string data (error message most likely) emit an
+     * event for it.
+     *
+     * @param Response\SysEx\String $response
+     */
     private function onStringData(Response\SysEx\String $response) {
       $this->events()->emit('string', $response->text);
     }
 
+    /**
+     * Data returned from an i2c device emit the eent for it.
+     *
+     * @param Response\SysEx\I2CReply $response
+     */
     private function onI2CReply(Response\SysEx\I2CReply $response) {
       $this->events()->emit('I2C-reply-'.$response->slaveAddress, $response->data);
     }
 
+    /**
+     * An (sonar) pulse was sent and recived, emit an event with
+     * the duration (in microseconds).
+     *
+     * @param Response\SysEx\PulseIn $response
+     */
     private function onPulseIn(Response\SysEx\PulseIn $response) {
       $this->events()->emit('pulse-in-'.$response->pin, $response->duration);
       $this->events()->emit('pulse-in', $response->pin, $response->duration);
@@ -453,6 +470,11 @@ namespace Carica\Io\Firmata {
       $this->stream()->write([COMMAND_PIN_MODE, $pin, $mode]);
     }
 
+    /**
+     * Configure the i2c coomunication
+     *
+     * @param integer $delay
+     */
     public function sendI2CConfig($delay = 0) {
       $this
         ->stream()
@@ -467,11 +489,25 @@ namespace Carica\Io\Firmata {
         );
     }
 
+    /**
+     * Write some data to an i2c device
+     *
+     * @param integer $slaveAddress
+     * @param string $data
+     */
     public function sendI2CWriteRequest($slaveAddress, $data) {
       $request = new Request\I2C\Write($this, $slaveAddress, $data);
       $request->send();
     }
 
+    /**
+     * Request data from an i2c device and trigger callback if the
+     * data is sent.
+     *
+     * @param integer $slaveAddress
+     * @param integer $byteCount
+     * @param callable $callback
+     */
     public function sendI2CReadRequest($slaveAddress, $byteCount, Callable $callback) {
       $request = new Request\I2C\Read($this, $slaveAddress, $data);
       $request->send();
