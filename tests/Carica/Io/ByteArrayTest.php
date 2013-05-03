@@ -126,7 +126,7 @@ namespace Carica\Io {
 
     /**
      * @covers Carica\Io\ByteArray::asHex
-     * @covers Carica\Io\ByteArray::fromHExString
+     * @covers Carica\Io\ByteArray::fromHexString
      */
     public function testFromHexStringWithAutomaticLengthIncrease() {
       $bytes = new ByteArray(1);
