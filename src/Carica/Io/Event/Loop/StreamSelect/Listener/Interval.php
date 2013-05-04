@@ -1,10 +1,11 @@
 <?php
 
-namespace Carica\Io\Event\Loop\Listener {
+namespace Carica\Io\Event\Loop\StreamSelect\Listener {
 
   use Carica\Io\Event;
+  use Carica\Io\Event\Loop\StreamSelect;
 
-  class Interval extends Event\Loop\Listener {
+  class Interval extends StreamSelect\Listener {
 
     private $_interval = 0;
     private $_next = 0;

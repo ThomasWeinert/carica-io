@@ -3,6 +3,7 @@
 namespace Carica\Io\Event\Loop {
 
   use Carica\Io\Event;
+  use Carica\Io\Event\Loop\StreamSelect\Listener;
 
   class StreamSelect implements Event\Loop {
 

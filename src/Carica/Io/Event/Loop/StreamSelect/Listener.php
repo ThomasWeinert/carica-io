@@ -1,6 +1,6 @@
 <?php
 
-namespace Carica\Io\Event\Loop {
+namespace Carica\Io\Event\Loop\StreamSelect {
 
   use Carica\Io\Event;
 

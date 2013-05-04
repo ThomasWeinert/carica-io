@@ -1,11 +1,11 @@
 <?php
 
-namespace Carica\Io\Event\Loop\Listener {
+namespace Carica\Io\Event\Loop\StreamSelect\Listener {
 
   use Carica\Io\Event;
-  use Carica\Io\Stream;
+  use Carica\Io\Event\Loop\StreamSelect;
 
-  class StreamReader extends Event\Loop\Listener {
+  class StreamReader extends StreamSelect\Listener {
 
     private $_stream = NULL;
     private $_callback = NULL;

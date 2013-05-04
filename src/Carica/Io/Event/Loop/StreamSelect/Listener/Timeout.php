@@ -1,10 +1,8 @@
 <?php
 
-namespace Carica\Io\Event\Loop\Listener {
+namespace Carica\Io\Event\Loop\StreamSelect\Listener {
 
-  use Carica\Io\Event;
-
-  class Timeout extends Event\Loop\Listener\Interval {
+  class Timeout extends Interval {
 
     public function tick() {
       if (parent::tick()) {
