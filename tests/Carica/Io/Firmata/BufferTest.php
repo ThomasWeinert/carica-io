@@ -16,23 +16,48 @@ namespace Carica\Io\Firmata {
      */
     public function testRecievesVersion($data) {
       $buffer = new Buffer();
-      $buffer->addData(
-        $this->getBinaryStringFromHex($data)
-      );
+      $buffer->addData($data);
       $this->assertAttributeSame(TRUE, '_versionReceived', $buffer);
     }
 
-    private function getBinaryStringFromHex($string) {
-      $byteArray = new \Carica\Io\ByteArray();
-      $byteArray->fromHexString($string, TRUE);
-      return (string)$byteArray;
+    public function testRecieveVersionData() {
+      $buffer = new Buffer();
+      $buffer->addData("\xF9\x00\x00");
+      $response = $buffer->getLastResponse();
+      $this->assertInstanceOf('Carica\Io\Firmata\Response\Midi\ReportVersion', $response);
+    }
+
+    public function testRecieveSysExStringResponse() {
+      $buffer = new Buffer();
+      $buffer->addData("\xF9\x00\x00\xF0\x71F\x00o\x00o\x00\xF7");
+      $response = $buffer->getLastResponse();
+      $this->assertInstanceOf('Carica\Io\Firmata\Response\SysEx\String', $response);
+      $this->assertEquals('Foo', $response->text);
+    }
+
+    public function testRecieveSysExStringResponseInSeveralDataString() {
+      $buffer = new Buffer();
+      $buffer->addData("\xF9\x00\x00");
+      $buffer->addData("\xF0\x71F\x00o");
+      $buffer->addData("\x00o\x00\xF7");
+      $response = $buffer->getLastResponse();
+      $this->assertInstanceOf('Carica\Io\Firmata\Response\SysEx\String', $response);
+      $this->assertEquals('Foo', $response->text);
+    }
+
+    public function testIgnoreNullBytesBetweenResponses() {
+      $buffer = new Buffer();
+      $buffer->addData("\xF9\x00\x00\x00\x00\x00\x00\x00\x00");
+      $buffer->addData("\xF0\x71F\x00o\x00o\x00\xF7");
+      $response = $buffer->getLastResponse();
+      $this->assertInstanceOf('Carica\Io\Firmata\Response\SysEx\String', $response);
     }
 
     public function provideDataWithVersionAtEnd() {
       return array(
-        'simply version byte' => array('F9'),
-        'null bytes up front' => array('0000F9'),
-        'garbage up front' => array('010203F9')
+        'simply version byte' => array("\xF9"),
+        'null bytes up front' => array("\x00\x00\xF9"),
+        'garbage up front' => array("\x01\x02\x03\xF9")
       );
     }
   }

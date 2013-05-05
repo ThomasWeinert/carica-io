@@ -10,11 +10,12 @@ namespace Carica\Io\Firmata\Response\SysEx {
   class StringTest extends \PHPUnit_Framework_TestCase {
 
     public function testConstructor() {
-      $bytes = new Io\ByteArray();
-      $bytes->fromHexString('71480061006c006c006f002000570065006c007400', TRUE);
-      $string = new String(0x71, iterator_to_array($bytes));
+      $string = new String(
+        0x71,
+        [0x71, 0x48, 0x00, 0x61, 0x00, 0x6C, 0x00, 0x6C, 0x00, 0x6F, 0x00]
+      );
       $this->assertEquals(
-        'Hallo Welt',
+        'Hallo',
         $string->text
       );
     }

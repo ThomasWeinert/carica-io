@@ -10,6 +10,7 @@ namespace Carica\Io\Firmata {
 
     private $_bytes = array();
     private $_versionReceived = FALSE;
+    private $_lastReponse = NULL;
 
     private $_classes = array(
       COMMAND_REPORT_VERSION => 'Midi\ReportVersion',
@@ -73,8 +74,13 @@ namespace Carica\Io\Firmata {
         $response = new $className($command, $bytes);
       }
       if ($response) {
+        $this->_lastResponse = $response;
         $this->events()->emit('response', $response);
       }
+    }
+
+    public function getLastResponse() {
+      return $this->_lastResponse;
     }
   }
 }
