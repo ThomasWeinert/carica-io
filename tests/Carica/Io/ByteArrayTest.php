@@ -165,6 +165,15 @@ namespace Carica\Io {
     }
 
     /**
+     * @covers Carica\Io\ByteArray::asArray
+     */
+    public function testAsArray() {
+      $bytes = new ByteArray();
+      $bytes->fromString('Foo', TRUE);
+      $this->assertEquals([70, 111, 111], $bytes->asArray());
+    }
+
+    /**
      * @covers Carica\Io\ByteArray::offsetExists
      * @covers Carica\Io\ByteArray::validateOffset
      * @covers Carica\Io\ByteArray::validateBitOffset
@@ -350,6 +359,16 @@ namespace Carica\Io {
       $bytes->fromHexString('FFF00F', TRUE);
       $this->assertCount(
         3, $bytes
+      );
+    }
+
+    /**
+     * @covers Carica\Io\ByteArray::createFromHex
+     */
+    public function testCreateFromHexString() {
+      $bytes = ByteArray::createFromHex('FFF0F1');
+      $this->assertEquals(
+        "\xFF\xF0\xF1", (string)$bytes
       );
     }
 

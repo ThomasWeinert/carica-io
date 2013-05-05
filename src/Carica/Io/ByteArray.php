@@ -131,7 +131,7 @@ namespace Carica\Io {
     }
 
     /**
-     * Get the bytes as bit stirng seperated by spaces.
+     * Get the bytes as bit string seperated by spaces.
      *
      * @return string
      */
@@ -141,6 +141,15 @@ namespace Carica\Io {
         $result .= ' '.str_pad(decbin($byte), 8, '0', STR_PAD_LEFT);
       }
       return substr($result, 1);
+    }
+
+    /**
+     * Get the bytes as array of bytes, only needed for array functions.
+     *
+     * @return array
+     */
+    public function asArray() {
+      return $this->_bytes;
     }
 
     /**
@@ -306,6 +315,12 @@ namespace Carica\Io {
      */
     public function count() {
       return count($this->_bytes);
+    }
+
+    public static function createFromHex($hexString) {
+      $bytes = new ByteArray();
+      $bytes->fromHexString($hexString, TRUE);
+      return $bytes;
     }
   }
 }
