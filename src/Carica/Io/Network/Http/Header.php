@@ -58,10 +58,10 @@ namespace Carica\Io\Network\Http {
       $this->_values = new \ArrayObject;
       if (is_array($data) || $data instanceOf Traversable) {
         foreach ($data as $value) {
-          $this->_values[] = (string)$value;
+          $this->_values[] = trim((string)$value);
         }
       } else {
-        $this->_values[] = (string)$data;
+        $this->_values[] = trim((string)$data);
       }
     }
 
