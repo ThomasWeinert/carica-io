@@ -117,6 +117,22 @@ namespace Carica\Io\Network\Http {
     }
 
     /**
+     * @covers Carica\Io\Network\Http\Headers::offsetGet
+     * @covers Carica\Io\Network\Http\Headers::offsetSet
+     * @covers Carica\Io\Network\Http\Headers::prepareKey
+     */
+    public function testArrayAccessSetAddsValuesToExistingHeader() {
+      $headers = new Headers();
+      $headers['Set-Cookie'] = 'chocolate';
+      $headers['Set-Cookie'] = 'double chocolate';
+      $headers['Set-Cookie'] = 'hazlenut';
+      $this->assertEquals(
+         new Header('Set-Cookie', array('chocolate', 'double chocolate', 'hazlenut')),
+         $headers['Set-Cookie']
+      );
+    }
+
+    /**
      * @covers Carica\Io\Network\Http\Headers::prepareKey
      */
     public function testArrayAccessOffsetGetWithEmptyKey() {

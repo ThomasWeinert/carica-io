@@ -28,16 +28,20 @@ namespace Carica\Io\Network\Http {
     public function offsetSet($name, $value) {
       if (!$value instanceOf Header) {
         if (FALSE != strpos($value, ':')) {
-          list($name, $data) = explode(':', $value, 2);
-          $value = new Header($name, $data);
-        } else {
-          $value = new Header($name, $value);
+          list($name, $value) = explode(':', $value, 2);
         }
       }
-      if (NULL === $name) {
+      if ($value instanceOf Header) {
         $name = $value->name;
       }
-      $this->_headers[$this->prepareKey($name)] = $value;
+      $key = $this->prepareKey($name);
+      if (isset($this->_headers[$key])) {
+        $this->_headers[$key]->values[] = $value;
+      } elseif ($value instanceOf Header) {
+        $this->_headers[$key] = $value;
+      } else {
+        $this->_headers[$key] = new Header($name, $value);
+      }
     }
 
     public function offsetUnset($name) {
