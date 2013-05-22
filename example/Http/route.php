@@ -2,14 +2,27 @@
 include('../../src/Carica/Io/Loader.php');
 Carica\Io\Loader::register();
 
+use Carica\Io\Network\Http;
+
 $route = new Carica\Io\Network\Http\Route();
 $route->match(
   '/hello/{name}',
   function ($request, $parameters) {
-    /*
-     * @todo implement response class
-     */
-    echo "Hello ".$parameters['name']."\n"; 
+    $response = new Http\Response($request->connection());
+    $response->content = new Http\Response\Content\String(
+      "Hello ".$parameters['name']."\n"
+    );
+    return $response;
+  }
+);
+$route->match(
+  '/agent',
+  function ($request, $parameters) {
+    $response = new Http\Response($request->connection());
+    $response->content = new Http\Response\Content\String(
+      (string)$request->headers['User-Agent']
+    );
+    return $response;
   }
 );
 
@@ -23,9 +36,8 @@ $server->events()->on(
       function ($request) use ($route) {
         echo $request->method.' '.$request->url."\n";
         if ($response = $route($request)) {
-          /*
-           * @todo implement response handling
-           */
+          $response->send();
+          $request->Connection()->close();
         } else {
           $request->Connection()->write(
             "HTTP/1.1 200 OK\r\n".
