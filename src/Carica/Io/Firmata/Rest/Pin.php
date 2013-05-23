@@ -32,12 +32,34 @@ namespace Carica\Io\Firmata\Rest {
       $dom->appendChild($boardNode = $dom->createElement('board'));
       if ($this->_board->isActive()) {
         $boardNode->setAttribute('active', 'yes');
-        $boardNode->setAttribute('firmata', (string)$board->version);
-        $this->appendPin($boardNode, (int)$pameters['pin']);
+        $boardNode->setAttribute('firmata', (string)$this->_board->version);
+        $pinId = (int)$parameters['pin'];
+        if (isset($this->_board->pins[$pinId])) {
+          $pin = $this->_board->pins[$pinId];
+          if (isset($request->query['mode'])) {
+            $this->setPinMode($pin, $request->query['mode']);
+          }
+          if (isset($request->query['digital'])) {
+            $pin->digital = $request->query['digital'] == 'yes' ? TRUE : FALSE;
+          }
+          if (isset($request->query['analog'])) {
+            $pin->analog = (int)$request->query['analog'];
+          }
+          $this->appendPin($boardNode, $pinId);
+        }
       } else {
         $boardNode->setAttribute('active', 'no');
       }
       return $response;
+    }
+
+    private function setPinMode(Firmata\Pin $pin, $modeString) {
+      if ($mode = array_search($modeString, $this->_modeStrings)) {
+        try {
+          $pin->mode= $mode;
+        } catch (Firmata\Exception\UnsupportedMode $e) {
+        }
+      }
     }
 
     public function appendPin(\DOMElement $parent, $pinId) {
@@ -45,6 +67,7 @@ namespace Carica\Io\Firmata\Rest {
         $dom = $parent->ownerDocument;
         $pin = $this->_board->pins[$pinId];
         $parent->appendChild($pinNode = $dom->createElement('pin'));
+        $pinNode->setAttribute('number', $pin->pin);
         $pinNode->setAttribute('mode', $this->getModeString($pin->mode));
         switch ($pin->mode) {
         case Firmata\PIN_STATE_INPUT :
