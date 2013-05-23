@@ -8,38 +8,55 @@ namespace Carica\Io\Event\Loop {
 
     private $_base = NULL;
     private $_events = array();
+    private $_resources = array();
 
     public function __construct($base) {
       $this->_base = $base;
     }
 
     public function setTimeout(Callable $callback, $milliseconds) {
-      $this->events[] = $event = event_new();
-      event_timer_set($event, $callback);
-      event_base_set($event, $this->_base);
-      event_add($event, $milliseconds * 1000);
+      $event = new stdClass();
+      $event->resource = event_new();
+      $this->events[spl_object_hash($event)] = $event;
+      $that = $this;
+      event_timer_set(
+        $event,
+        function () use ($that, $event, $callback) {
+          $callback();
+          $that->remove($event);
+        }
+      );
+      event_base_set($event->resource, $this->_base);
+      event_add($event->resource, $milliseconds * 1000);
       return $event;
     }
 
     public function setInterval(Callable $callback, $milliseconds) {
-      $this->events[] = $event = event_new();
+      $event = new stdClass();
+      $event->resource = event_new();
+      $this->events[spl_object_hash($event)] = $event;
       $period = $milliseconds * 1000;
       event_timer_set(
         $event,
         function () use ($event, $callback, $period) {
           $callback();
-          event_add($event, $period);
+          event_add($event->resource, $period);
         }
       );
-      event_base_set($event, $this->_base);
-      event_add($event, $period);
+      event_base_set($event->resource, $this->_base);
+      event_add($event->resource, $period);
       return $event;
     }
 
     public function setStreamReader(Callable $callback, $stream) {
     }
 
-    public function remove($listener) {
+    public function remove($event) {
+      $key = spl_object_hash($event);
+      if (array_key_exists($key, $this->_events)) {
+        event_free($this->_base, $this->_events[$key]);
+        unset($this->_events[$key]);
+      }
     }
 
     public function run() {

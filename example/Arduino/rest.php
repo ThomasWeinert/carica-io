@@ -10,17 +10,16 @@ $board = new Io\Firmata\Board(
   new Io\Stream\Tcp('127.0.0.1', 5339)
 );
 $route = new Carica\Io\Network\Http\Route();
-$route->match(
-  '/pins',
-  new Firmata\Rest\Pins($board)
-);
+$route->match('/pins', new Firmata\Rest\Pins($board));
+$route->match('/pins/{pin}', new Firmata\Rest\Pin($board));
 
 $loop = Io\Event\Loop\Factory::get();
 
 $board
   ->activate()
   ->done(
-    function () {
+    function () use ($board, $route) {
+      $board->reset();
       $server = new Carica\Io\Network\Server();
       $server->events()->on(
         'connection',
