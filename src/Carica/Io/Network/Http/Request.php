@@ -16,10 +16,12 @@ namespace Carica\Io\Network\Http {
 
     private $_connection = NULL;
     private $_headers = NULL;
+    private $_query = NULL;
 
     public function __construct(Connection $connection) {
       $this->connection($connection);
       $this->_headers = new Headers();
+      $this->_query = new Request\Query();
     }
 
     public function __get($name) {
@@ -31,6 +33,7 @@ namespace Carica\Io\Network\Http {
         return $this->{'_'.$name};
       case 'connection' :
       case 'headers' :
+      case 'query' :
         return call_user_func(array($this, $name));
       }
       throw new \LogicException(
@@ -52,13 +55,23 @@ namespace Carica\Io\Network\Http {
       return $this->_headers;
     }
 
+    public function query(Request\Query $query = NULL) {
+      if (isset($query)) {
+        $this->_query = $query;
+      }
+      return $this->_query;
+    }
+
     public function parseStatus($line) {
       if (preg_match($this->_patternStatus, $line, $matches)) {
         $this->method = $matches['method'];
+        $this->version = $matches['version'];
         $this->url = $matches['url'];
         $parsedUrl = parse_url($matches['url']);
         $this->path = empty($parsedUrl['path']) ? '' : $parsedUrl['path'];
-        $this->version = $matches['version'];
+        $this->query->setQueryString(
+          empty($parsedUrl['query']) ? '' : $parsedUrl['query']
+        );
       }
     }
 

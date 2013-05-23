@@ -32,7 +32,13 @@ $route->match(
     $response->content = new Http\Response\Content\Xml();
     $dom = $response->content->document;
     $dom->appendChild($root = $dom->createElement('response'));
-    $root->appendChild($dom->createTextNode('Xml Response Test'));
+    foreach ($request->query as $name => $value) {
+      $root->appendChild($parameter = $dom->createElement('query-parameter'));
+      $parameter->setAttribute('name', $name);
+      if (NULL !== $value) {
+        $parameter->appendChild($dom->createTextNode($value));
+      }
+    }
     return $response;
   }
 );
