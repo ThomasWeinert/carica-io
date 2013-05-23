@@ -13,8 +13,6 @@ $route = new Carica\Io\Network\Http\Route();
 $route->match('/pins', new Firmata\Rest\Pins($board));
 $route->match('/pins/{pin}', new Firmata\Rest\Pin($board));
 
-$loop = Io\Event\Loop\Factory::get();
-
 $board
   ->activate()
   ->done(
