@@ -10,8 +10,10 @@ namespace Carica\Io\Network\Http\Response {
 
     abstract public function sendTo(Network\Connection $connection);
 
-    public function __construct($type) {
-      $this->_type = $type;
+    public function __construct($type = NULL) {
+      if (isset($type)) {
+        $this->_type = $type;
+      }
     }
 
     public function __get($name) {

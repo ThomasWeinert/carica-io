@@ -8,9 +8,9 @@ $route = new Carica\Io\Network\Http\Route();
 $route->match(
   '/hello/{name}',
   function ($request, $parameters) {
-    $response = new Http\Response($request->connection());
+    $response = $request->createResponse();
     $response->content = new Http\Response\Content\String(
-      "Hello ".$parameters['name']."\n"
+      "Hello ".$parameters['name']."!\n"
     );
     return $response;
   }
@@ -18,10 +18,21 @@ $route->match(
 $route->match(
   '/agent',
   function ($request, $parameters) {
-    $response = new Http\Response($request->connection());
+    $response = $request->createResponse();
     $response->content = new Http\Response\Content\String(
-      (string)$request->headers['User-Agent']
+      $request->headers['User-Agent']
     );
+    return $response;
+  }
+);
+$route->match(
+  '/xml',
+  function ($request, $parameters) {
+    $response = $request->createResponse();
+    $response->content = new Http\Response\Content\Xml();
+    $dom = $response->content->document;
+    $dom->appendChild($root = $dom->createElement('response'));
+    $root->appendChild($dom->createTextNode('Xml Response Test'));
     return $response;
   }
 );
@@ -37,9 +48,9 @@ $server->events()->on(
         echo $request->method.' '.$request->url."\n";
         if ($response = $route($request)) {
           $response->send();
-          $request->Connection()->close();
+          $request->connection()->close();
         } else {
-          $request->Connection()->write(
+          $request->connection()->write(
             "HTTP/1.1 200 OK\r\n".
             "Connection: close\r\n".
             "Content-Length: 11\r\n".
@@ -47,7 +58,7 @@ $server->events()->on(
             "Hallo Welt!"
           );
         }
-        $request->Connection()->close();
+        $request->connection()->close();
       }
     );
   }

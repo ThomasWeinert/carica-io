@@ -7,12 +7,11 @@ namespace Carica\Io\Network\Http\Response\Content {
 
   class String extends Response\Content {
 
-    private $_type = 'text/plain';
     private $_data = '';
 
     public function __construct($data, $type = 'text/plain') {
-      $this->_data = $data;
-      $this->_type = $type;
+      parent::__construct($type);
+      $this->_data = (string)$data;
     }
 
     public function sendTo(Network\Connection $connection) {

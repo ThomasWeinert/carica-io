@@ -69,5 +69,9 @@ namespace Carica\Io\Network\Http {
         // ignore invalid headers
       }
     }
+
+    public function createResponse() {
+      return new Response($this->connection());
+    }
   }
 }
