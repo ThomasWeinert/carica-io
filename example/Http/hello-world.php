@@ -11,14 +11,14 @@ $server->events()->on(
       'request',
       function ($request) {
         echo $request->method.' '.$request->url."\n";
-        $request->Connection()->write(
+        $request->connection()->write(
           "HTTP/1.1 200 OK\r\n".
           "Connection: close\r\n".
           "Content-Length: 11\r\n".
           "Content-Type: text/plain; charset=UTF-8\r\n\r\n".
           "Hallo Welt!"
         );
-        $request->Connection()->close();
+        $request->connection()->close();
       }
     );
   }
