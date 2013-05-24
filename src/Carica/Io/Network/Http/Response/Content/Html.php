@@ -6,11 +6,11 @@ namespace Carica\Io\Network\Http\Response\Content {
   use Carica\Io\Network;
   use Carica\Io\Network\Http\Response;
 
-  class Xml extends Response\Content {
+  class Html extends Response\Content {
 
     private $_document = NULL;
 
-    public function __construct($type = 'application/xml; charset=utf-8') {
+    public function __construct($type = 'text/html; charset=utf-8') {
       parent::__construct($type);
       $this->_document = new \DOMDocument('1.0', 'utf-8');
     }
@@ -24,7 +24,7 @@ namespace Carica\Io\Network\Http\Response\Content {
     }
 
     public function sendTo(Network\Connection $connection) {
-      $connection->write($this->_document->saveXml());
+      $connection->write($this->_document->saveHtml());
       return TRUE;
     }
 

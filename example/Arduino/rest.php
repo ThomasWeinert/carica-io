@@ -27,10 +27,18 @@ $board
             'request',
             function ($request) use ($route) {
               echo $request->method.' '.$request->url."\n";
-              if ($response = $route($request)) {
-                $response->send();
+              if (!($response = $route($request))) {
+                $response = new Carica\Io\Network\Http\Response\Error(
+                  $request, 404
+                );
               }
-              $request->connection()->close();
+              $response
+                ->send()
+                ->always(
+                  function () use ($request) {
+                    $request->connection()->close();
+                  }
+                );
             }
           );
         }

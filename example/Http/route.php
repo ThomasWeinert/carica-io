@@ -52,19 +52,18 @@ $server->events()->on(
       'request',
       function ($request) use ($route) {
         echo $request->method.' '.$request->url."\n";
-        if ($response = $route($request)) {
-          $response->send();
-          $request->connection()->close();
-        } else {
-          $request->connection()->write(
-            "HTTP/1.1 200 OK\r\n".
-            "Connection: close\r\n".
-            "Content-Length: 11\r\n".
-            "Content-Type: text/plain; charset=UTF-8\r\n\r\n".
-            "Hallo Welt!"
+        if (!($response = $route($request))) {
+          $response = new Carica\Io\Network\Http\Response\Error(
+            $request, 404
           );
         }
-        $request->connection()->close();
+        $response
+          ->send()
+          ->always(
+            function () use ($request) {
+              $request->connection()->close();
+            }
+          );
       }
     );
   }
