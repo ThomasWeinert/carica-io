@@ -3,6 +3,7 @@ Carica Io
 
 License:   The MIT License
            http://www.opensource.org/licenses/mit-license.php
+           
 Copyright: 2013 Thomas Weinert <thomas@weinert.info>
  
 Carica Io is a collection of experimental php classes and scripts
@@ -16,10 +17,3 @@ Basics
 The repository provides the API needed for non-blocking I/O. A
 simple event loop and event emitter are included. The loop 
 implementation is not performance optimized, yet. 
-
-Arduino
--------
-
-The classes in ~/src/Firmata allow to control an Arduino from PHP
-using the Firmata protocol. They are based on the JavaScript 
-implementation by Julian Gautier (https://github.com/jgautier/firmata)

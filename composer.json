@@ -1,8 +1,8 @@
 {
   "name": "carica/io",
   "type": "library",
-  "description": "Non blocking I/O and Arduino firmata support for PHP",
-  "keywords": ["non-blocking-io", "asynchronous-io", "arduino", "firmata"],
+  "description": "Non blocking I/O for PHP",
+  "keywords": ["non-blocking-io", "asynchronous-io"],
   "homepage": "https://bitbucket.org/ThomasWeinert/carica-io/",
   "license": "MIT",
   "authors": [
