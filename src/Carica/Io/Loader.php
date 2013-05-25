@@ -13,6 +13,8 @@ namespace Carica\Io {
    */
   class Loader {
 
+    private static $_mappings = array();
+
     /**
      * The actual autloader function that will be registered.
      *
@@ -20,7 +22,6 @@ namespace Carica\Io {
      */
     public static function load($class) {
       if ($file = self::getFilename($class)) {
-        $file = __DIR__.$file;
         if (file_exists($file) && is_readable($file)) {
           include_once($file);
           return TRUE;
@@ -40,12 +41,50 @@ namespace Carica\Io {
      * @return string|NULL
      */
     public static function getFilename($class) {
-      if (0 === strpos($class, __NAMESPACE__)) {
-        return str_replace(
+      foreach (self::$_mappings as $namespace => $directory) {
+        if (0 === strpos($class, $namespace)) {
+          return $directory.DIRECTORY_SEPARATOR.str_replace(
+            '\\', DIRECTORY_SEPARATOR, substr($class, strlen($namespace))
+          ).'.php';
+        }
+      }
+      if (0 === strpos($class, __NAMESPACE__.'\\')) {
+        return __DIR__.str_replace(
           '\\', DIRECTORY_SEPARATOR, substr($class, strlen(__NAMESPACE__))
         ).'.php';
       }
       return FALSE;
+    }
+
+    public static function map($mappings) {
+      foreach ($mappings as $namespace => $directory) {
+        if (substr($namespace, -1) != '\\') {
+          $namespace .= '\\';
+        }
+        if (empty($directory) && isset(self::$_mappings[$namespace])) {
+          unset(self::$_mappings[$namespace]);
+        } else {
+          self::$_mappings[$namespace] = $directory;
+        }
+      }
+      uksort(
+        self::$_mappings,
+        function($ns1, $ns2) {
+          $length1 = strlen($ns1);
+          $length2 = strlen($ns2);
+          if ($length1 > $length2) {
+            return -1;
+          } elseif ($length1 < $length2) {
+            return 1;
+          } else {
+            return 0;
+          }
+        }
+      );
+    }
+
+    public function reset() {
+      self::$_mappings = array();
     }
 
     /**

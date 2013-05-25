@@ -32,5 +32,21 @@ namespace Carica\Io {
         Loader::load('Carica\StatusMonitor\NonExistingClass')
       );
     }
+
+    /**
+     * @covers Carica\Io\Loader
+     */
+    public function testMapSortsByLength() {
+      Loader::map(
+        array(
+          'Sample' => 'fail',
+          'Sample\Foo' => 'success'
+        )
+      );
+      $this->assertEquals(
+        str_replace('/', DIRECTORY_SEPARATOR, 'success/File.php'),
+        Loader::getFileName('Sample\\Foo\\File')
+      );
+    }
   }
 }
