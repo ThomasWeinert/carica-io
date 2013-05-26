@@ -8,17 +8,26 @@ namespace Carica\Io\Network\Http {
 
     private $_targets = array();
 
+    public function any($path, Callable $callback) {
+      $this->_targets[] = $target = new Route\Target\Match($callback);
+      return $target;
+    }
+
     public function match($path, Callable $callback) {
-      $this->_targets[] = $target = new Route\Target($callback);
-      $target->path($path);
+      $this->_targets[] = $target = new Route\Target\Match($callback, $path);
+      return $target;
+    }
+
+    public function startsWith($path, Callable $callback) {
+      $this->_targets[] = $target = new Route\Target\StartsWith($callback, $path);
       return $target;
     }
 
     public function __invoke($request) {
-      return $this->handle($request);
+      return $this->fire($request);
     }
 
-    private function handle(Request $request) {
+    public function fire(Request $request) {
       foreach ($this->_targets as $target) {
         if ($result = $target($request)) {
           return $result;
@@ -26,6 +35,5 @@ namespace Carica\Io\Network\Http {
       }
       return NULL;
     }
-
   }
 }

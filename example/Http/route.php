@@ -42,7 +42,7 @@ $route->match(
     return $response;
   }
 );
-$route->match('/files/{file}', new Http\Route\File(__DIR__));
+$route->startsWith('/files', new Http\Route\File(__DIR__));
 
 $server = new Carica\Io\Network\Server();
 $server->events()->on(
