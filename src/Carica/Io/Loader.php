@@ -56,6 +56,12 @@ namespace Carica\Io {
       return FALSE;
     }
 
+    /**
+     * Add mappings (namepace => directory) to the the internal mapping array
+     *
+     * @param array $mappings
+     * @return array
+     */
     public static function map(array $mappings = array()) {
       foreach ($mappings as $namespace => $directory) {
         if (substr($namespace, -1) != '\\') {
@@ -84,6 +90,9 @@ namespace Carica\Io {
       return self::$_mappings;
     }
 
+    /**
+     * Delete all additional mapping definitions
+     */
     public function reset() {
       self::$_mappings = array();
     }
