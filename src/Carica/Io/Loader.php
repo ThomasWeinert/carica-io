@@ -56,7 +56,7 @@ namespace Carica\Io {
       return FALSE;
     }
 
-    public static function map($mappings) {
+    public static function map(array $mappings = array()) {
       foreach ($mappings as $namespace => $directory) {
         if (substr($namespace, -1) != '\\') {
           $namespace .= '\\';
@@ -81,6 +81,7 @@ namespace Carica\Io {
           }
         }
       );
+      return self::$_mappings;
     }
 
     public function reset() {
