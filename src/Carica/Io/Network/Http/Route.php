@@ -9,7 +9,7 @@ namespace Carica\Io\Network\Http {
     private $_targets = array();
 
     public function any(Callable $callback) {
-      $this->_targets[] = $target = new Route\Target\Match($callback);
+      $this->_targets[] = $target = new Route\Target\Any($callback);
       return $target;
     }
 
