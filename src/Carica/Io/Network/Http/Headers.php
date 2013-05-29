@@ -53,7 +53,7 @@ namespace Carica\Io\Network\Http {
       if (empty($name)) {
         throw new \InvalidArgumentException('The header name can not be empty.');
       }
-      if (!preg_match('(^[a-z][a-z\d]*(?:-[a-z\d]+)?$)iD', $name)) {
+      if (!preg_match('(^[a-z][a-z\d]*(?:-[a-z\d]+)*$)iD', $name)) {
         throw new \InvalidArgumentException(
           sprintf(
             'The header name "%s" is invalid.', $name
