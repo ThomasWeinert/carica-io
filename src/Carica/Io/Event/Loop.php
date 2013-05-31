@@ -12,7 +12,7 @@ namespace Carica\Io\Event {
 
     function remove($listener);
 
-    function run();
+    function run(\Carica\Io\Deferred\Promise $for = NULL);
 
     function stop();
 

@@ -6,7 +6,7 @@ namespace Carica\Io\Deferred {
 
   class Promise {
 
-    private $_defer = NULL;
+    protected $_defer = NULL;
 
     /**
      * Create the promise for a Deferred object.

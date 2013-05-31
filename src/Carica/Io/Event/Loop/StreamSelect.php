@@ -55,8 +55,24 @@ namespace Carica\Io\Event\Loop {
       $this->updateStreamStatus();
     }
 
-    public function run() {
+    /**
+     * Start the loop, if a promise is provided, start the loop only if it
+     * it is still pending and add a callback to stop the loop if is is
+     * finished.
+     *
+     * @param \Carica\Io\Deferred\Promise $for
+     */
+    public function run(\Carica\Io\Deferred\Promise $for = NULL) {
       $this->_running = TRUE;
+      if (isset($for) &&
+          $for->state() === \Carica\Io\Deferred::STATE_PENDING) {
+        $loop = $this;
+        $for->always(
+          function () use ($loop) {
+            $loop->stop();
+          }
+        );
+      }
       while ($this->tick()) {
         // ticking
       }

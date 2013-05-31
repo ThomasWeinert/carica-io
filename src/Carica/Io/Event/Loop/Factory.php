@@ -69,8 +69,8 @@ namespace Carica\Io\Event\Loop {
     /**
      * Run the global event loop
      */
-    public static function run() {
-      self::get()->run();
+    public static function run(\Carica\Io\Deferred\Promise $for = NULL) {
+      self::get()->run($for);
     }
   }
 }
