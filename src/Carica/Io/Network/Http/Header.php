@@ -66,7 +66,7 @@ namespace Carica\Io\Network\Http {
     }
 
     /**
-     * Casting the object to string will return the first value
+     * Casting the object to string will return the last value
      * @return string
      */
     public function __toString() {
