@@ -26,7 +26,6 @@ $queries = Io\Deferred::When(
     )
 );
 
-$loop = Io\Event\Loop\Factory::get();
 Io\Event\Loop\Factory::run($queries);
 
 

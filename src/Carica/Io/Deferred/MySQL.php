@@ -26,7 +26,7 @@ namespace Carica\Io\Deferred {
       $this->loop()->setInterval(
         function() use ($defer, $mysqli) {
           $links = $errors = $reject = array($mysqli);
-          if (mysqli_poll($links, $errors, $reject, 0, 0)) {
+          if ($mysqli->poll($links, $errors, $reject, 0, 0)) {
             if ($result = $mysqli->reap_async_query()) {
               $defer->resolve($result);
             } else {
