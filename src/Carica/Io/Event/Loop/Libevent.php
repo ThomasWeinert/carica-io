@@ -57,7 +57,12 @@ namespace Carica\Io\Event\Loop {
           }
         );
       }
-      event_base_loop($this->_base);
+      if (isset($for) &&
+          $for->state() !== \Carica\Io\Deferred::STATE_PENDING) {
+        event_base_loop($this->_base, EVLOOP_ONCE);
+      } else {
+        event_base_loop($this->_base);
+      }
     }
 
     public function stop() {
