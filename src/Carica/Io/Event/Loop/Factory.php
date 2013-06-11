@@ -11,7 +11,7 @@ namespace Carica\Io\Event\Loop {
      */
     private static $_globalLoop = NULL;
 
-    private static $_useLibevent = FALSE;
+    private static $_useLibevent = NULL;
 
     /**
      * Create a event loop
