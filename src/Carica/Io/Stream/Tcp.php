@@ -85,11 +85,17 @@ namespace Carica\Io\Stream {
 
     public function write($data) {
       if ($resource = $this->resource()) {
-        stream_socket_sendto(
+        $bytesSent = @stream_socket_sendto(
           $resource,
           $writtenData = is_array($data) ? \Carica\Io\encodeBinaryFromArray($data) : $data
         );
-        $this->events()->emit('write-data', $writtenData);
+        if ($bytesSent != -1) {
+          $this->events()->emit('write-data', $writtenData);
+        } else {
+          $this->events()->emit(
+            'error', 'Socket sent to failed.'
+          );
+        }
       }
     }
   }
