@@ -15,36 +15,14 @@ namespace Carica\Io\Event\Loop {
     }
 
     public function setTimeout(Callable $callback, $milliseconds) {
-      $event = new stdClass();
-      $event->resource = event_new();
-      $this->events[spl_object_hash($event)] = $event;
-      $that = $this;
-      event_timer_set(
-        $event,
-        function () use ($that, $event, $callback) {
-          $callback();
-          $that->remove($event);
-        }
-      );
-      event_base_set($event->resource, $this->_base);
-      event_add($event->resource, $milliseconds * 1000);
+      $event = new Libevent\Listener\Timeout($this, $callback, $milliseconds);
+      $this->events[spl_object_hash($event)] = $event();
       return $event;
     }
 
     public function setInterval(Callable $callback, $milliseconds) {
-      $event = new stdClass();
-      $event->resource = event_new();
-      $this->events[spl_object_hash($event)] = $event;
-      $period = $milliseconds * 1000;
-      event_timer_set(
-        $event,
-        function () use ($event, $callback, $period) {
-          $callback();
-          event_add($event->resource, $period);
-        }
-      );
-      event_base_set($event->resource, $this->_base);
-      event_add($event->resource, $period);
+      $event = new Libevent\Listener\Interval($this, $callback, $milliseconds);
+      $this->events[spl_object_hash($event)] = $event();
       return $event;
     }
 
@@ -54,17 +32,29 @@ namespace Carica\Io\Event\Loop {
     public function remove($event) {
       $key = spl_object_hash($event);
       if (array_key_exists($key, $this->_events)) {
-        event_free($this->_base, $this->_events[$key]);
         unset($this->_events[$key]);
       }
     }
 
-    public function run() {
+    public function run(\Carica\Io\Deferred\Promise $for = NULL) {
+      if (isset($for) &&
+          $for->state() === \Carica\Io\Deferred::STATE_PENDING) {
+        $loop = $this;
+        $for->always(
+          function () use ($loop) {
+            $loop->stop();
+          }
+        );
+      }
       event_base_loop($this->_base);
     }
 
     public function stop() {
       event_base_loopbreak($this->_base);
+    }
+
+    public function getBase() {
+      return $this->_base;
     }
   }
 }
