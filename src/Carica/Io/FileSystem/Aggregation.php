@@ -6,6 +6,11 @@ namespace Carica\Io\FileSystem {
 
     private $_fileSystem = NULL;
 
+    /**
+     * Create an return a FileSystem instance
+     *
+     * @param \Carica\Io\FileSystem $fileSystem
+     */
     public function fileSystem(\Carica\Io\FileSystem $fileSystem = NULL) {
       if (isset($fileSystem)) {
         $this->_fileSystem = $fileSystem;
