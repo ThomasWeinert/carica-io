@@ -56,14 +56,22 @@ namespace Carica\Io\Event\Loop {
     }
 
     /**
+     * Set the global event loop instance
+     *
+     * @param Event\Loop $loop
+     */
+    public static function set(Event\Loop $loop) {
+      self::$_globalLoop = $loop;
+    }
+
+    /**
      * Destroy the global event loop
      *
      * @return Carica\Io\Event\Loop
      */
     public static function reset() {
-      if (!is_null(self::$_globalLoop)) {
-        self::$_globalLoop = NULL;
-      }
+      self::$_useLibevent = NULL;
+      self::$_globalLoop = NULL;
     }
 
     /**
