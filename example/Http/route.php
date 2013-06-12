@@ -44,32 +44,7 @@ $route->match(
 );
 $route->startsWith('/files', new Http\Route\File(__DIR__));
 
-$server = new Carica\Io\Network\Server();
-$server->events()->on(
-  'connection',
-  function ($stream) use ($route) {
-    $request = new Carica\Io\Network\Http\Connection($stream);
-    $request->events()->on(
-      'request',
-      function ($request) use ($route) {
-        echo $request->method.' '.$request->url."\n";
-        if (!($response = $route($request))) {
-          $response = new Carica\Io\Network\Http\Response\Error(
-            $request, 404
-          );
-        }
-        $response
-          ->send()
-          ->always(
-            function () use ($request) {
-              $request->connection()->close();
-            }
-          );
-      }
-    );
-  }
-);
-
+$server = new Carica\Io\Network\Http\Server($route);
 $server->listen(8080);
 
 Carica\Io\Event\Loop\Factory::run();
