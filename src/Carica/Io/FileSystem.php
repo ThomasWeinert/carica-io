@@ -14,6 +14,18 @@ namespace Carica\Io {
   class FileSystem {
 
     /**
+     * fileinfo provides weird results for css/js. This mapping is used to
+     * force mimetypes by extension.
+     *
+     * @var array
+     */
+    private $_mimetypes = array(
+      'css' => 'text/css',
+      'html' => 'text/html',
+      'js' => 'application/x-javascript'
+    );
+
+    /**
      * Create an return a splFileInfo instance for the filename
      *
      * @param string $filename
@@ -62,6 +74,13 @@ namespace Carica\Io {
      * @return string
      */
     public function getMimeType($filename) {
+      $pattern = '(\.(?P<extension>[^/\\.]+)$)';
+      if (preg_match($pattern, $filename, $matches)) {
+        $extension = strtolower($matches['extension']);
+        if (isset($this->_mimetypes[$extension])) {
+          return $this->_mimetypes[$extension];
+        }
+      }
       return (function_exists('mime_content_type'))
         ? mime_content_type($filename)
         : 'application/octet-stream';

@@ -15,6 +15,7 @@ namespace Carica\Io\Network\Http\Route {
       'text/plain' => 'utf-8',
       'text/html' => 'utf-8',
       'text/javascript' => 'utf-8',
+      'application/x-javascript' => 'utf-8',
       'application/xml' => 'utf-8'
     );
 

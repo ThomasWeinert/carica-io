@@ -72,6 +72,16 @@ namespace Carica\Io {
     }
 
     /**
+     * @covers Carica\Io\FileSystem::getMimeType
+     */
+    public function testGetMimeTypeUsingExtensionMapping() {
+      $fileSystem = new FileSystem();
+      $this->assertEquals(
+        'text/css', $fileSystem->getMimeType('sample.css')
+      );
+    }
+
+    /**
      * @covers Carica\Io\FileSystem::getRealPath
      */
     public function testGetRealPath() {
