@@ -150,7 +150,12 @@ namespace Carica\Io\Network\Http {
 
     public function send() {
       $connection = $this->request()->connection();
-      $this->headers['Content-Type'] = $this->content()->type;
+      $contentType = $this->content()->type;
+      $encoding = $this->content()->encoding;
+      if (!empty($encoding)) {
+        $contentType .= '; charset='.$encoding;
+      }
+      $this->headers['Content-Type'] = $contentType;
       $this->headers['Content-Length'] = $this->content()->length;
       $connection->write(
         sprintf(

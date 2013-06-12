@@ -14,8 +14,8 @@ namespace Carica\Io\Network\Http\Response\Content {
     private $_filename = NULL;
     private $_bufferSize = 51200;
 
-    public function __construct($filename, $type = 'application/octet-stream') {
-      parent::__construct($type);
+    public function __construct($filename, $type = 'application/octet-stream', $encoding = '') {
+      parent::__construct($type, $encoding);
       $this->_filename = (string)$filename;
     }
 

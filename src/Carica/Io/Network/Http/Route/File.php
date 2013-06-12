@@ -11,8 +11,18 @@ namespace Carica\Io\Network\Http\Route {
 
     private $_documentRoot = '';
 
-    public function __construct($documentRoot) {
+    private $_encodings = array(
+      'text/plain' => 'utf-8',
+      'text/html' => 'utf-8',
+      'text/javascript' => 'utf-8',
+      'application/xml' => 'utf-8'
+    );
+
+    public function __construct($documentRoot, array $encodings = array()) {
       $this->setDocumentRoot($documentRoot);
+      foreach ($encodings as $mimetype => $encoding) {
+        $this->setEncoding($mimetype, $encoding);
+      }
     }
 
     public function setDocumentRoot($documentRoot) {
@@ -28,6 +38,17 @@ namespace Carica\Io\Network\Http\Route {
       );
     }
 
+    public function setEncoding($mimetype, $encoding) {
+      $this->_encoding[$mimetype] = (string)$encoding;
+    }
+
+    public function getEncoding($mimetype) {
+      if (isset($this->_encodings[$mimetype])) {
+        return $this->_encodings[$mimetype];
+      }
+      return '';
+    }
+
     public function __invoke() {
       return call_user_func_array(array($this, 'call'), func_get_args());
     }
@@ -37,8 +58,10 @@ namespace Carica\Io\Network\Http\Route {
         if ($file->isFile() && $file->isReadable()) {
           $response = $request->createResponse();
           $localFile = $file->getRealPath();
+          $mimetype = $this->fileSystem()->getMimeType($localFile);
+          $encoding = $this->getEncoding($mimetype);
           $response->content = new Http\Response\Content\File(
-            $localFile, $this->fileSystem()->getMimeType($localFile)
+            $localFile, $mimetype, $encoding
           );
           return $response;
         } else {
