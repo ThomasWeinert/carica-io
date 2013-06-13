@@ -4,30 +4,37 @@ namespace Carica\Io\Stream\Serial {
 
   class Factory {
 
-    private $_useDio = NULL;
-     
-    public function useDio($use = NULL) {
+    /**
+     * Set use dio to false, by default dio is not a valid
+     * stream resource so it uses a interval listener on the
+     * event loop. It is no able to use a stream listener.
+     *
+     * @var boolean
+     */
+    private static $_useDio = FALSE;
+
+    public static function useDio($use = NULL) {
       if (isset($use)) {
         if ($use && extension_loaded('dio')) {
-          $this->_useDio = TRUE;
+          self::$_useDio = TRUE;
         } elseif (!$use) {
-          $this->_useDio = FALSE;
+          self::$_useDio = FALSE;
         } else {
           throw new LogicException('Extension "dio" not available.');
         }
-      } elseif (NULL == $this->_useDio) {
-        $this->_useDio = extension_loaded('dio');
+      } elseif (NULL == self::$_useDio) {
+        self::$_useDio = extension_loaded('dio');
       }
-      return $this->_useDio;
+      return self::$_useDio;
     }
-    
-    public function get($device) {
-      if ($this->useDio()) {
+
+    public function create($device) {
+      if (self::useDio()) {
         return new Dio($device);
       } else {
         return new Stream\Serial($device);
       }
     }
-    
+
   }
 }

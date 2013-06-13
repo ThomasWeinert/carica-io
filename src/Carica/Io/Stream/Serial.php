@@ -16,8 +16,8 @@ namespace Carica\Io\Stream {
 
     private $_reading = FALSE;
 
-    public function __construct($device) {
-      $this->_device = new Serial\Device($device);
+    public function __construct($device, $baud = 57000) {
+      $this->_device = new Serial\Device($device, $baud);
     }
 
     public function __destruct() {

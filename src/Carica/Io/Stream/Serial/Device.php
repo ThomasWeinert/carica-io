@@ -7,18 +7,39 @@ namespace Carica\Io\Stream\Serial {
     private $_device = 0;
     private $_command = '';
 
-    public function __construct($device) {
+    private $_baudRates = array (
+      110 => 11,
+      150 => 15,
+      300 => 30,
+      600 => 60,
+      1200 => 12,
+      2400 => 24,
+      4800 => 48,
+      9600 => 96,
+      19200 => 19,
+      38400 => 38400,
+      57600 => 57600,
+      115200 => 115200
+    );
+
+
+    public function __construct($device, $baud = 57600) {
+      if (!isset($this->_baudRates[$baud])) {
+        $baud = 57600;
+      }
       if (substr(PHP_OS, 0, 3) === "WIN") {
         $pattern = '(^COM\d+:$)';
         $command = sprintf(
-            'mode %s BAUD=57600 PARITY=N data=8 stop=1 xon=off', strtolower($device)
+          'mode %s BAUD=%d PARITY=N data=8 stop=1 xon=off',
+          strtolower($device),
+          $this->_baudRates[$baud]
         );
       } elseif (substr(PHP_OS, 0, 6) === "Darwin") {
         $pattern = '(^COM\d+:$)';
-        $command = sprintf('stty -F %s', $device);
+        $command = sprintf('stty -f %s %d', $device, $baud);
       } elseif (substr(PHP_OS, 0, 5) === "Linux") {
         $pattern = '(^/dev/tty\w+\d+$)';
-        $prepare = sprintf('stty -F %s', $device);
+        $prepare = sprintf('stty -F %s %d', $device, $baud);
       } else {
         throw new \LogicException(sprintf('Unsupport OS: "%s".', PHP_OS));
       }
@@ -29,12 +50,20 @@ namespace Carica\Io\Stream\Serial {
       $this->_command = $command;
     }
 
+    public function getCommand() {
+      return $this->_command;
+    }
+
+    public function getDevice() {
+      return $this->_device;
+    }
+
     public function setUp() {
-      exec($this->_command);
+      exec($this->getCommand());
     }
 
     public function __toString() {
-      return $this->_device;
+      return $this->getDevice();
     }
   }
 }
