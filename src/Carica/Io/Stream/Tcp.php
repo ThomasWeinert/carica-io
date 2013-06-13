@@ -29,11 +29,11 @@ namespace Carica\Io\Stream {
       } elseif (isset($resource)) {
         $this->_resource = $resource;
         $that = $this;
-        $this->_listener = $this->loop()->setInterval(
+        $this->_listener = $this->loop()->setStreamReader(
           function() use ($that) {
             $that->read();
           },
-          100
+          $stream
         );
       }
       if (is_resource($this->_resource)) {
