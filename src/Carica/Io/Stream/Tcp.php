@@ -33,7 +33,7 @@ namespace Carica\Io\Stream {
           function() use ($that) {
             $that->read();
           },
-          $stream
+          $resource
         );
       }
       if (is_resource($this->_resource)) {
