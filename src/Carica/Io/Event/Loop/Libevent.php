@@ -40,22 +40,24 @@ namespace Carica\Io\Event\Loop {
     }
 
     public function remove($event) {
-      $key = spl_object_hash($event);
-      if (array_key_exists($key, $this->_timers)) {
-        $this->_timers[$key]->free();
-        $this->gc();
-        $this->_gc[] = $this->_timers[$key]->getEvent();
-        unset($this->_timers[$key]);
-      }
-      if ($event instanceOf Libevent\Listener\Stream\Callback) {
-        $event->remove();
-      } elseif ($event instanceOf Libevent\Listener\Stream &&
-                ($stream = $event->getStream())) {
-        if (is_resource($stream) && isset($this->_streams[$stream])) {
-          $this->_streams[$stream]->free();
+      if (isset($event)) {
+        $key = spl_object_hash($event);
+        if (array_key_exists($key, $this->_timers)) {
+          $this->_timers[$key]->free();
           $this->gc();
-          $this->_gc[] = $this->_streams[$stream]->getEvent();
-          unset($this->_streams[$stream]);
+          $this->_gc[] = $this->_timers[$key]->getEvent();
+          unset($this->_timers[$key]);
+        }
+        if ($event instanceOf Libevent\Listener\Stream\Callback) {
+          $event->remove();
+        } elseif ($event instanceOf Libevent\Listener\Stream &&
+                  ($stream = $event->getStream())) {
+          if (is_resource($stream) && isset($this->_streams[$stream])) {
+            $this->_streams[$stream]->free();
+            $this->gc();
+            $this->_gc[] = $this->_streams[$stream]->getEvent();
+            unset($this->_streams[$stream]);
+          }
         }
       }
     }
