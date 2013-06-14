@@ -16,6 +16,7 @@ namespace Carica\Io\Event\Loop\Libevent\Listener\Stream {
       Listener\Stream $listener, Callable $remove, Callable $callback
     ) {
       $this->_listener = $listener;
+      $this->_remove = $remove;
       $this->_callback = $callback;
     }
 
@@ -25,6 +26,7 @@ namespace Carica\Io\Event\Loop\Libevent\Listener\Stream {
 
     public function remove() {
       call_user_func($this->_remove, $this);
+      $this->_listener->update();
     }
 
   }

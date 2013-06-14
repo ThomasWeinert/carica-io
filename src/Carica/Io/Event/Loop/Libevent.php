@@ -10,6 +10,8 @@ namespace Carica\Io\Event\Loop {
     private $_timers = array();
     private $_streams = array();
 
+    private $_gc = array();
+
     public function __construct($base) {
       $this->_base = $base;
     }
@@ -27,6 +29,9 @@ namespace Carica\Io\Event\Loop {
     }
 
     public function setStreamReader(Callable $callback, $stream) {
+      if (!is_resource($stream)) {
+        throw new LogicException('%s needs a valid stream resource.', __METHOD__);
+      }
       if (!isset($this->_streams[$stream])) {
         $this->_streams[$stream] = new Libevent\Listener\Stream($this, $stream);
       }
@@ -37,13 +42,21 @@ namespace Carica\Io\Event\Loop {
     public function remove($event) {
       $key = spl_object_hash($event);
       if (array_key_exists($key, $this->_timers)) {
+        $this->_timers[$key]->free();
+        $this->gc();
+        $this->_gc[] = $this->_timers[$key]->getEvent();
         unset($this->_timers[$key]);
       }
-      if ($event instanceOf Listener\Stream\Callback) {
+      if ($event instanceOf Libevent\Listener\Stream\Callback) {
         $event->remove();
-      } elseif ($event instanceOf Listener\Stream &&
-                array_key_exists($stream = $event->getStream(), $this->_streams)) {
-        unset($this->_streams[$stream]);
+      } elseif ($event instanceOf Libevent\Listener\Stream &&
+                ($stream = $event->getStream())) {
+        if (is_resource($stream) && isset($this->_streams[$stream])) {
+          $this->_streams[$stream]->free();
+          $this->gc();
+          $this->_gc[] = $this->_streams[$stream]->getEvent();
+          unset($this->_streams[$stream]);
+        }
       }
     }
 
@@ -71,6 +84,17 @@ namespace Carica\Io\Event\Loop {
 
     public function getBase() {
       return $this->_base;
+    }
+
+    public function count() {
+      return count($this->_timers) + count($this->_streams);
+    }
+
+    public function gc() {
+      foreach ($this->_gc as $key => $event) {
+        event_free($event);
+      }
+      $this->_gc = array();
     }
   }
 }

@@ -62,12 +62,12 @@ namespace Carica\Io\Network\Http {
       510 => 'Not Extended'
     );
 
-    private $_request = NULL;
+    private $_connection = NULL;
     private $_headers = NULL;
     private $_content = NULL;
 
-    public function __construct(Request $request) {
-      $this->request($request);
+    public function __construct(Connection $connection) {
+      $this->connection($connection);
       $this->_headers = new Headers();
     }
 
@@ -76,7 +76,7 @@ namespace Carica\Io\Network\Http {
       case 'version' :
       case 'status' :
         return $this->{'_'.$name};
-      case 'request' :
+      case 'connection' :
       case 'content' :
       case 'headers' :
         return call_user_func(array($this, $name));
@@ -125,11 +125,11 @@ namespace Carica\Io\Network\Http {
       }
     }
 
-    public function request(Request $request = NULL) {
-      if (isset($request)) {
-        $this->_request = $request;
+    public function connection(Connection $connection = NULL) {
+      if (isset($connection)) {
+        $this->_connection = $connection;
       }
-      return $this->_request;
+      return $this->_connection;
     }
 
     public function headers(Headers $headers = NULL) {
@@ -149,7 +149,7 @@ namespace Carica\Io\Network\Http {
     }
 
     public function send() {
-      $connection = $this->request()->connection();
+      $connection = $this->connection();
       $contentType = $this->content()->type;
       $encoding = $this->content()->encoding;
       if (!empty($encoding)) {

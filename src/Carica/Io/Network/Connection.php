@@ -16,6 +16,9 @@ namespace Carica\Io\Network {
     public function __construct($stream) {
       $this->resource($stream);
     }
+    public function __destruct() {
+      $this->resource(FALSE);
+    }
 
     public function resource($stream = NULL) {
       if (isset($stream)) {
@@ -26,7 +29,7 @@ namespace Carica\Io\Network {
         if ($this->isActive()) {
           stream_set_blocking($stream, 0);
           $that = $this;
-          $this->loop()->setStreamReader(
+          $this->_listener = $this->loop()->setStreamReader(
             function() use ($that) {
               $that->read();
             },
@@ -63,9 +66,9 @@ namespace Carica\Io\Network {
     public function close() {
       if ($this->isActive()) {
         stream_socket_shutdown($this->_stream, STREAM_SHUT_RDWR);
-        $this->resource(FALSE);
         $this->events()->emit('close');
       }
+      $this->resource(FALSE);
     }
   }
 }

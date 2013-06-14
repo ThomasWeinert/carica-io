@@ -31,8 +31,8 @@ namespace Carica\Io\Network\Http {
               $response
                 ->send()
                 ->always(
-                  function () use ($request) {
-                    $request->connection()->close();
+                  function () use ($response) {
+                    $response->connection()->close();
                   }
                 );
             }

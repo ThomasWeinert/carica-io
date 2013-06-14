@@ -43,12 +43,14 @@ namespace Carica\Io\Event\Loop {
     }
 
     public function remove($listener) {
-      if (!is_object($listener)) {
+      if (is_object($listener)) {
         $key = spl_object_hash($listener);
         if (isset($this->_listeners[$key])) {
           unset($this->_listeners[$key]);
-          if (isset($this->_streams['read'][$key])) {
-            unset($this->_streams['read'][$key]);
+        }
+        foreach ($this->_streams as &$group) {
+          if (isset($group[$key])) {
+            unset($group[$key]);
           }
         }
       }
@@ -110,6 +112,10 @@ namespace Carica\Io\Event\Loop {
         count($this->_streams['write']) > 0 ||
         count($this->_streams['except']) > 0
       );
+    }
+
+    public function count() {
+      return count($this->_listeners);
     }
   }
 }

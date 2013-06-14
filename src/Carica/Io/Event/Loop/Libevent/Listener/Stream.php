@@ -14,34 +14,37 @@ namespace Carica\Io\Event\Loop\Libevent\Listener {
 
     public function __construct(Event\Loop $loop, $stream) {
       parent::__construct($loop);
-      $this->_read = new Io\Callbacks();
       $this->_write = new Io\Callbacks();
       $this->_stream = $stream;
     }
 
-    public function __destruct() {
-      var_dump('destruct buffer event', $this->_event);
-      /**
-      if (is_resource($this->_event)) {
-        event_buffer_free($this->_event);
-      }*/
-    }
-
     public function onRead(Callable $callback) {
+      if (is_null($this->_read)) {
+        $this->_read = new Io\Callbacks();
+      }
       $this->_read->add($result = new Stream\Callback($this, $this->_read->remove, $callback));
-      $this->setUp();
+      $this->update();
       return $result;
     }
 
     public function onWrite(Callable $callback) {
+      if (is_null($this->_write)) {
+        $this->_write = new Io\Callbacks();
+      }
       $this->_write->add($result = new Stream\Callback($this, $this->_write->remove, $callback));
-      $this->setUp();
+      $this->update();
       return $result;
     }
 
-    private function setUp() {
-      $hasEvents = count($this->_read) + count($this->_write);
-      if ($hasEvents > 0) {
+    public function update() {
+      $hasEvents = FALSE;
+      if ($this->_read && count($this->_read)) {
+        $hasEvents = TRUE;
+      }
+      if ($this->_write && count($this->_write)) {
+        $hasEvents = TRUE;
+      }
+      if ($hasEvents) {
         if (is_null($this->_event)) {
           $this->_event = $event = event_new();
           $that = $this;
@@ -50,13 +53,15 @@ namespace Carica\Io\Event\Loop\Libevent\Listener {
             $this->_stream,
             EV_READ | EV_WRITE,
             function ($stream, $events) use ($event, $that) {
-              if (($events & EV_READ) == EV_READ) {
+              if (($events & EV_READ) == EV_READ && $this->_read) {
                 call_user_func($that->_read);
               }
-              if (($events & EV_WRITE) == EV_WRITE) {
+              if (($events & EV_WRITE) == EV_WRITE && $this->_write) {
                 call_user_func($that->_write);
               }
-              event_add($this->_event, 1000000);
+              if (is_resource($that->getStream())) {
+                event_add($event, 1000000);
+              }
             }
           );
           event_base_set($this->_event, $this->getLoop()->getBase());
@@ -69,6 +74,13 @@ namespace Carica\Io\Event\Loop\Libevent\Listener {
 
     public function getStream() {
       return $this->_stream;
+    }
+
+    public function free() {
+      $this->_read = NULL;
+      $this->_write = NULL;
+      $this->_stream = NULL;
+      parent::free();
     }
   }
 }

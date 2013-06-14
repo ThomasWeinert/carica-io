@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Ajax Time</title>
+  </head>
+  <body>
+    <div id="ajaxResult"></div>
+    <script type="text/javascript" src="http://code.jquery.com/jquery.js"></script>
+    <script type="text/javascript">
+      jQuery(
+        function () {
+          window.setInterval(
+            function () {
+              jQuery
+                .ajax(
+                  {
+                    url : 'time',
+                    cache : false
+                  }
+                )
+                .done(
+                  function(response) {
+                    jQuery('#ajaxResult').text(jQuery(response).text()); 
+                  }  
+                );
+            },
+            1000
+          );
+        }  
+      );
+    </script>
+  </body>
+</html>

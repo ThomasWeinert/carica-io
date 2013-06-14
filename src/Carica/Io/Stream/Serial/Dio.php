@@ -60,9 +60,9 @@ namespace Carica\Io\Stream\Serial {
 
     public function close() {
       if ($resource = $this->resource()) {
-        $this->resource(FALSE);
         dio_close($resource);
       }
+      $this->resource(FALSE);
     }
 
     public function read($bytes = 1024) {

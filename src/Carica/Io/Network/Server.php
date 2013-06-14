@@ -60,8 +60,8 @@ namespace Carica\Io\Network {
     public function close() {
       if ($this->isActive()) {
         stream_socket_shutdown($this->_stream, STREAM_SHUT_RDWR);
-        $this->resource(FALSE);
       }
+      $this->resource(FALSE);
     }
 
     public function read($bytes = 0) {

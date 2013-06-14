@@ -69,6 +69,8 @@ namespace Carica\Io\Stream {
       if ($resource = $this->resource()) {
         $this->resource(FALSE);
         stream_socket_shutdown($resource, STREAM_SHUT_RDWR);
+      } else {
+        $this->resource(FALSE);
       }
     }
 

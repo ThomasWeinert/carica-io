@@ -59,9 +59,9 @@ namespace Carica\Io\Stream {
 
     public function close() {
       if ($resource = $this->Resource()) {
-        $this->resource(FALSE);
         fclose($resource);
       }
+      $this->resource(FALSE);
     }
 
     public function read($bytes = 1024) {
