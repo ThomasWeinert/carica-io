@@ -19,8 +19,8 @@ namespace Carica\Io\Network\Http\Response {
         </body>
       </html>';
 
-    public function __construct(Http\Connection $connection, $status = 500, $message = NULL) {
-      parent::__construct($connection);
+    public function __construct(Http\Request $request, $status = 500, $message = NULL) {
+      parent::__construct($request->connection());
       $this->setStatus($status);
       $this->content = new Http\Response\Content\Html();
       if (NULL === $message) {

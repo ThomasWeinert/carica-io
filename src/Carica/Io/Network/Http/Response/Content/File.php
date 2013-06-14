@@ -23,9 +23,9 @@ namespace Carica\Io\Network\Http\Response\Content {
       if ($file = $this->fileSystem()->getFileResource($this->_filename)) {
         $defer = new Io\Deferred();
         $bytes = $this->_bufferSize;
-        $loop = $this->loop();
+        $that = $this;
         $interval = $this->loop()->setInterval(
-          function () use ($file, $bytes, $defer, $connection, $loop, $interval) {
+          function () use ($file, $bytes, $defer, $connection) {
             if ($connection->isActive() && is_resource($file)) {
               if (feof($file)) {
                 $defer->resolve();
@@ -36,9 +36,13 @@ namespace Carica\Io\Network\Http\Response\Content {
             } else {
               $defer->reject();
             }
-            $loop->remove($interval);
           },
           100
+        );
+        $defer->always(
+          function () use ($that, $interval) {
+            $that->loop()->remove($interval);
+          }
         );
         return $defer->promise();
       }
