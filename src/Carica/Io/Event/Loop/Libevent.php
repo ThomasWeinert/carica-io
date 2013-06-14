@@ -10,8 +10,6 @@ namespace Carica\Io\Event\Loop {
     private $_timers = array();
     private $_streams = array();
 
-    private $_gc = array();
-
     public function __construct($base) {
       $this->_base = $base;
     }
@@ -43,9 +41,8 @@ namespace Carica\Io\Event\Loop {
       if (isset($event)) {
         $key = spl_object_hash($event);
         if (array_key_exists($key, $this->_timers)) {
-          $this->_timers[$key]->free();
-          $this->gc();
-          $this->_gc[] = $this->_timers[$key]->getEvent();
+          $listener = $this->_timers[$key];
+          $listener->cancel();
           unset($this->_timers[$key]);
         }
         if ($event instanceOf Libevent\Listener\Stream\Callback) {
@@ -53,9 +50,8 @@ namespace Carica\Io\Event\Loop {
         } elseif ($event instanceOf Libevent\Listener\Stream &&
                   ($stream = $event->getStream())) {
           if (is_resource($stream) && isset($this->_streams[$stream])) {
-            $this->_streams[$stream]->free();
-            $this->gc();
-            $this->_gc[] = $this->_streams[$stream]->getEvent();
+            $listener = $this->_streams[$stream];
+            $listener->cancel();
             unset($this->_streams[$stream]);
           }
         }
@@ -90,13 +86,6 @@ namespace Carica\Io\Event\Loop {
 
     public function count() {
       return count($this->_timers) + count($this->_streams);
-    }
-
-    public function gc() {
-      foreach ($this->_gc as $key => $event) {
-        event_free($event);
-      }
-      $this->_gc = array();
     }
   }
 }

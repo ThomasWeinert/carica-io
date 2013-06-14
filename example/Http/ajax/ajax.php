@@ -30,7 +30,6 @@ $route->match(
 $server = new Carica\Io\Network\Http\Server($route);
 $server->listen(8080);
 
-Carica\Io\Event\Loop\Factory::useLibevent(FALSE);
 $loop = Carica\Io\Event\Loop\Factory::get();
 $loop->setInterval(
   function() use ($loop) {

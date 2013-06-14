@@ -7,17 +7,13 @@ namespace Carica\Io\Event\Loop\Libevent {
   abstract class Listener {
 
     private $_loop = NULL;
+    private $_isCancelled = FALSE;
+    private $_callback = FALSE;
     protected $_event = NULL;
 
-    public function __construct(Event\Loop\Libevent $loop) {
+    public function __construct(Event\Loop\Libevent $loop, Callable $callback) {
       $this->_loop = $loop;
-    }
-
-    public function __destruct() {
-      $this->free();
-      if (is_resource($this->_event)) {
-        event_free($this->_event);
-      }
+      $this->_callback = $callback;
     }
 
     public function getEvent() {
@@ -28,9 +24,19 @@ namespace Carica\Io\Event\Loop\Libevent {
       return $this->_loop;
     }
 
-    public function free() {
+    public function getCallback() {
+      return $this->_callback;
+    }
+
+    public function isCancelled() {
+      return $this->_isCancelled;
+    }
+
+    public function cancel() {
+      $this->_isCancelled = TRUE;
       if (is_resource($this->_event)) {
         event_del($this->_event);
+        event_free($this->_event);
       }
     }
   }
