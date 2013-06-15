@@ -1,15 +1,15 @@
 <?php
 
-include('../src/Carica/Io/Loader.php');
+include(__DIR__.'/../src/Carica/Io/Loader.php');
 Carica\Io\Loader::register();
 
 use Carica\Io\Event\Loop;
 use Carica\Io\Stream;
 
 $loop = Loop\Factory::get();
-$write = fopen('c:/temp/sample.txt', 'w');
+$write = fopen('c:/tmp/sample.txt', 'w');
 
-$stream = new Stream\File('c:/temp/sample.txt');
+$stream = new Stream\File('c:/tmp/sample.txt');
 $stream->events()->on(
   'read-data',
   function($data) {
@@ -24,13 +24,12 @@ $stream->events()->on(
   }
 );
 
-if ($stream->open()) {
-  $loop->setInterval(
-    function () use ($write) {
-      fwrite($write, microtime(TRUE)."\n");
-    },
-    1000
-  );
+$loop->setInterval(
+  function () use ($write) {
+    fwrite($write, microtime(TRUE)."\n");
+  },
+  1000
+);
 
-  $loop->run();
-}
+$stream->open();
+$loop->run();

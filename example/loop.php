@@ -1,6 +1,6 @@
 <?php
 
-include('../src/Carica/Io/Loader.php');
+include(__DIR__.'/../src/Carica/Io/Loader.php');
 Carica\Io\Loader::register();
 use Carica\Io\Event\Loop;
 
