@@ -6,6 +6,7 @@ namespace Carica\Io\Stream\Serial {
 
     private $_device = 0;
     private $_command = '';
+    private $_baud = 57600;
 
     private $_baudRates = array (
       110 => 11,
@@ -24,8 +25,8 @@ namespace Carica\Io\Stream\Serial {
 
 
     public function __construct($device, $baud = 57600) {
-      if (!isset($this->_baudRates[$baud])) {
-        $baud = 57600;
+      if (isset($this->_baudRates[$baud])) {
+        $this->_baud = $baud;
       }
       if (substr(PHP_OS, 0, 3) === "WIN") {
         $pattern = '(^COM\d+:$)';
@@ -56,6 +57,10 @@ namespace Carica\Io\Stream\Serial {
 
     public function getDevice() {
       return $this->_device;
+    }
+
+    public function getBaud() {
+      return $this->_baud;
     }
 
     public function setUp() {
