@@ -9,46 +9,43 @@ namespace Carica\Io\Event\Loop {
 
     private $_wait = 5;
 
-    private $_listeners = array();
-    private $_streams = array(
+    private $_timers = array();
+    private $_streams = array();
+    private $_resources = array(
       'read' => array(),
       'write' => array(),
       'except' => array()
     );
-    private $_hasStreams = FALSE;
+    private $_hasResources = FALSE;
 
     public function setTimeout(Callable $callback, $milliseconds) {
-      return $this->add(
-        new Listener\Timeout($this, $callback, $milliseconds)
-      );
+      $listener = new Listener\Timeout($this, $callback, $milliseconds);
+      return $this->_timers[spl_object_hash($listener)] = $listener;
     }
 
     public function setInterval(Callable $callback, $milliseconds) {
-      return $this->add(
-        new Listener\Interval($this, $callback, $milliseconds)
-      );
+      $listener = new Listener\Interval($this, $callback, $milliseconds);
+      return $this->_timers[spl_object_hash($listener)] = $listener;
     }
 
     public function setStreamReader(Callable $callback, $stream) {
-      $listener = $this->add(
-        new Listener\StreamReader($this, $callback, $stream)
-      );
-      $this->_streams['read'][spl_object_hash($listener)] = $stream;
+      $listener = new Listener\StreamReader($this, $callback, $stream);
+      $this->_streams[spl_object_hash($listener)] = $listener;
+      $this->_resources['read'][spl_object_hash($listener)] = $stream;
       $this->updateStreamStatus();
-      return $listener;
-    }
-
-    private function add(Listener $listener) {
-      return $this->_listeners[spl_object_hash($listener)] = $listener;
+      return $this->_streams[spl_object_hash($listener)] = $listener;
     }
 
     public function remove($listener) {
       if (is_object($listener)) {
         $key = spl_object_hash($listener);
-        if (isset($this->_listeners[$key])) {
-          unset($this->_listeners[$key]);
+        if (isset($this->_timers[$key])) {
+          unset($this->_timers[$key]);
         }
-        foreach ($this->_streams as &$group) {
+        if (isset($this->_streams[$key])) {
+          unset($this->_streams[$key]);
+        }
+        foreach ($this->_resources as &$group) {
           if (isset($group[$key])) {
             unset($group[$key]);
           }
@@ -86,36 +83,40 @@ namespace Carica\Io\Event\Loop {
 
     private function tick() {
       if ($this->_running) {
-        foreach ($this->_listeners as $listener) {
-          $listener->tick();
+        if ($this->_hasStreams) {
+          $read = $this->_resources['read'];
+          $write = $this->_resources['write'];
+          $except = $this->_resources['except'];
+          stream_select($read, $write, $except, $this->_wait);
+          foreach ($read as $key => $resource) {
+            if (isset($this->_streams[$key]) && ($listener = $this->_streams[$key])) {
+              $listener->tick();
+            }
+          }
+          foreach ($this->_timers as $listener) {
+            $listener->tick();
+          }
+        } else {
+          usleep($this->_wait);
+          foreach ($this->_timers as $listener) {
+            $listener->tick();
+          }
         }
-        $this->schedule();
         return TRUE;
       }
       return FALSE;
     }
 
-    private function schedule() {
-      if ($this->_hasStreams) {
-        $read = $this->_streams['read'];
-        $write = $this->_streams['write'];
-        $except = $this->_streams['except'];
-        stream_select($read, $write, $except, $this->_wait);
-      } else {
-        usleep($this->_wait);
-      }
-    }
-
     private function updateStreamStatus() {
       $this->_hasStreams = (
-        count($this->_streams['read']) > 0 ||
-        count($this->_streams['write']) > 0 ||
-        count($this->_streams['except']) > 0
+        count($this->_resources['read']) > 0 ||
+        count($this->_resources['write']) > 0 ||
+        count($this->_resources['except']) > 0
       );
     }
 
     public function count() {
-      return count($this->_listeners);
+      return count($this->_timers) + count($this->_streams);
     }
   }
 }
