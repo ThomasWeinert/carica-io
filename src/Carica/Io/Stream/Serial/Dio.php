@@ -5,7 +5,8 @@ namespace Carica\Io\Stream\Serial {
   use Carica\Io;
   use Carica\Io\Event;
 
-  class Dio implements Io\Stream {
+  class Dio implements Io\Stream
+  {
 
     use Event\Emitter\Aggregation;
     use Event\Loop\Aggregation;
@@ -17,14 +18,18 @@ namespace Carica\Io\Stream\Serial {
 
     private $_reading = FALSE;
 
-    public function __construct($device, $baud = 57000) {
+    public function __construct($device, $baud = 57600)
+    {
       $this->_device = new Device($device, $baud);
     }
-    public function __destruct() {
+
+    public function __destruct()
+    {
       $this->close();
     }
 
-    public function resource($resource = NULL) {
+    public function resource($resource = NULL)
+    {
       if ($resource === FALSE) {
         $this->_resource = NULL;
       } elseif (isset($resource)) {
@@ -46,28 +51,52 @@ namespace Carica\Io\Stream\Serial {
       return NULL;
     }
 
-    public function open() {
-      $this->_device->setUp();
-      $device = (string)$this->_device;
-      if ($resource = @dio_open($device, O_RDWR | O_NOCTTY | O_NONBLOCK)) {
+    public function open()
+    {
+      $device = 'dio.serial://' . $this->_device;
+      $context = $this->createContext();
+
+      if ($resource = fopen($device, 'r+', FALSE, $context)) {
         $this->resource($resource);
         return TRUE;
-      } else {
-        $this->events()->emit('error', sprintf('Can not open serial port: "%s".', $device));
-        return FALSE;
+      }
+
+      $this->events()->emit('error', sprintf('Can not open serial port: "%s".', $device));
+      return FALSE;
+
+    }
+
+    private function createContext()
+    {
+      return stream_context_create(
+        array(
+          'dio' =>
+          array(
+            'data_rate' => $this->_device->getBaud(),
+            'data_bits' => 8,
+            'stop_bits' => 1,
+            'parity' => 0,
+            'flow_control' => 0,
+            'is_blocking' => 0,
+            'canonical' => 1
+          )
+        )
+      );
+
+    }
+
+    public function close()
+    {
+      if ($resource = $this->resource()) {
+        $this->resource(FALSE);
+        fclose($resource);
       }
     }
 
-    public function close() {
+    public function read($bytes = 1024)
+    {
       if ($resource = $this->resource()) {
-        dio_close($resource);
-      }
-      $this->resource(FALSE);
-    }
-
-    public function read($bytes = 1024) {
-      if ($resource = $this->resource()) {
-        $data = dio_read($resource, $bytes);
+        $data = fread($resource, $bytes);
         if (is_string($data) && $data !== '') {
           $this->events()->emit('read-data', $data);
           return $data;
@@ -76,9 +105,10 @@ namespace Carica\Io\Stream\Serial {
       return NULL;
     }
 
-    public function write($data) {
+    public function write($data)
+    {
       if ($resource = $this->resource()) {
-        dio_write(
+        fwrite(
           $resource,
           $writtenData = is_array($data) ? Io\encodeBinaryFromArray($data) : $data
         );
