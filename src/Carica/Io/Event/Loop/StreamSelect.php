@@ -83,7 +83,7 @@ namespace Carica\Io\Event\Loop {
 
     private function tick() {
       if ($this->_running) {
-        if ($this->_hasStreams) {
+        if ($this->_hasResources) {
           $read = $this->_resources['read'];
           $write = $this->_resources['write'];
           $except = $this->_resources['except'];
@@ -108,7 +108,7 @@ namespace Carica\Io\Event\Loop {
     }
 
     private function updateStreamStatus() {
-      $this->_hasStreams = (
+      $this->_hasResources = (
         count($this->_resources['read']) > 0 ||
         count($this->_resources['write']) > 0 ||
         count($this->_resources['except']) > 0
