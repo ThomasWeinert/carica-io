@@ -15,15 +15,31 @@ namespace Carica\Io\Stream {
     private $_resource = NULL;
     private $_listener = NULL;
 
+    /**
+     * Store filename and mode options
+     *
+     * @param string $filename
+     * @param string $mode
+     */
     public function __construct($filename, $mode = 'r') {
       $this->_filename = $filename;
       $this->_mode = $mode;
     }
 
+    /**
+     * On destruct close file resource
+     */
     public function __destruct() {
       $this->close();
     }
 
+    /**
+     * Read/Write the file resource, if it is an valid resource attach
+     * the an event listener to the loop, that calls read on new data
+     *
+     * @param string $resource
+     * @return NULL
+     */
     public function resource($resource = NULL) {
       if ($resource === FALSE) {
         $this->_resource = NULL;
@@ -46,6 +62,11 @@ namespace Carica\Io\Stream {
       return NULL;
     }
 
+    /**
+     * Open file (nonblocking) and store resource
+     *
+     * @return boolean
+     */
     public function open() {
       if ($resource = @fopen($this->_filename, $this->_mode)) {
         stream_set_blocking($resource, 0);
@@ -57,15 +78,24 @@ namespace Carica\Io\Stream {
       }
     }
 
+    /**
+     * Close file resource if it is opened
+     */
     public function close() {
-      if ($resource = $this->Resource()) {
+      if ($resource = $this->resource()) {
         fclose($resource);
       }
       $this->resource(FALSE);
     }
 
+    /**
+     * Read some bytes from the file resource
+     *
+     * @param number $bytes
+     * @return string|NULL
+     */
     public function read($bytes = 1024) {
-      if ($resource = $this->Resource()) {
+      if ($resource = $this->resource()) {
         $data = fread($resource, $bytes);
         if (is_string($data) && $data !== '') {
           $this->events()->emit('read-data', $data);
@@ -75,6 +105,11 @@ namespace Carica\Io\Stream {
       return NULL;
     }
 
+    /**
+     * Write some bytes to the file resource
+     *
+     * @param unknown $data
+     */
     public function write($data) {
       if ($resource = $this->resource()) {
         fwrite(
@@ -82,7 +117,9 @@ namespace Carica\Io\Stream {
           $writtenData = is_array($data) ? \Carica\Io\encodeBinaryFromArray($data) : $data
         );
         $this->events()->emit('write-data', $writtenData);
+        return TRUE;
       }
+      return FALSE;
     }
   }
 }
