@@ -145,6 +145,42 @@ namespace Carica\Io {
     }
 
     /**
+     * @covers Carica\Io\ByteArray::fromArray
+     */
+    public function testFromArray() {
+      $bytes = new ByteArray(2);
+      $bytes->fromArray([0x00, 0xFF]);
+      $this->assertEquals('00ff', $bytes->asHex());
+    }
+
+    /**
+     * @covers Carica\Io\ByteArray::fromArray
+     */
+    public function testFromArrayWithInvalidLengthExpectingException() {
+      $bytes = new ByteArray(42);
+      $this->setExpectedException('OutOfBoundsException');
+      $bytes->fromArray([0xFF, 0xF0, 0xFF], FALSE);
+    }
+
+    /**
+     * @covers Carica\Io\ByteArray::fromArray
+     */
+    public function testFromArrayWithAutomaticLengthIncrease() {
+      $bytes = new ByteArray(1);
+      $bytes->fromArray([0xFF, 0xF0, 0xFF], TRUE);
+      $this->assertSame('11111111 11110000 11111111', $bytes->asBitString());
+    }
+
+    /**
+     * @covers Carica\Io\ByteArray::fromArray
+     */
+    public function testFromArrayWithAutomaticLengthDecrease() {
+      $bytes = new ByteArray(10);
+      $bytes->fromArray([0xFF, 0xF0, 0xFF], TRUE);
+      $this->assertSame('11111111 11110000 11111111', $bytes->asBitString());
+    }
+
+    /**
      * @covers Carica\Io\ByteArray::asHex
      * @dataProvider provideHexSamples
      */
@@ -369,6 +405,16 @@ namespace Carica\Io {
       $bytes = ByteArray::createFromHex('FFF0F1');
       $this->assertEquals(
         "\xFF\xF0\xF1", (string)$bytes
+      );
+    }
+
+    /**
+     * @covers Carica\Io\ByteArray::createFromArray
+     */
+    public function testCreateFromArray() {
+      $bytes = ByteArray::createFromArray([0x00, 0xF0, 0xFF]);
+      $this->assertEquals(
+        "\x00\xF0\xFF", (string)$bytes
       );
     }
 

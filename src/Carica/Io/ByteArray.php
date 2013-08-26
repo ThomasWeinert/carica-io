@@ -118,6 +118,31 @@ namespace Carica\Io {
     }
 
     /**
+     * Read an hexadecimal encoded binary string
+     *
+     * @param string $string
+     * @param boolean $resize
+     * @throws \OutOfBoundsException
+     */
+    public function fromArray(array $bytes, $resize = FALSE) {
+      $length = count($bytes);
+      if ($resize && $length != $this->getLength()) {
+        $this->setLength($length);
+      }
+      if ($length >= $this->_length) {
+        foreach (array_values($bytes) as $index => $byte) {
+          $this->_bytes[$index] = $byte;
+        }
+      } else {
+        throw new \OutOfBoundsException(
+          sprintf(
+            'Maximum length is "%d". Got "%d".', $this->_length, $length
+          )
+        );
+      }
+    }
+
+    /**
      * Get the byte array as an hexdec string.
      *
      * @return string
@@ -317,9 +342,26 @@ namespace Carica\Io {
       return count($this->_bytes);
     }
 
+    /**
+     * Create an ByteArray from an hexadecimal byte string
+     * @param string $hexString
+     * @return \Carica\Io\ByteArray
+     */
     public static function createFromHex($hexString) {
       $bytes = new ByteArray();
       $bytes->fromHexString($hexString, TRUE);
+      return $bytes;
+    }
+
+    /**
+     * Create a new ByteArray from an array of bytes
+     *
+     * @param array $bytes
+     * @return \Carica\Io\ByteArray
+     */
+    public static function createFromArray(array $array) {
+      $bytes = new ByteArray();
+      $bytes->fromArray($array, TRUE);
       return $bytes;
     }
   }
