@@ -104,7 +104,7 @@ namespace Carica\Io {
     /**
      * Execute the callbacks
      *
-     * @param mixed $argument,...
+     * @param mixed [$argument,...]
      */
     public function fire() {
       if (!$this->_disabled) {
@@ -128,7 +128,8 @@ namespace Carica\Io {
     /**
      * If the object is used as an functor, call fire()
      *
-     * @param mixed $argument,...
+     * @param mixed [$argument,...]
+     * @return mixed
      */
     public function __invoke() {
       return call_user_func_array(array($this, 'fire'), func_get_args());
@@ -155,6 +156,9 @@ namespace Carica\Io {
      * Block changes to the object properties
      *
      * @param string $name
+     * @param mixed $value
+     *
+     * @throws \LogicException
      */
     public function __set($name, $value) {
       throw new \LogicException('Unknown/Readonly property: '.$name);

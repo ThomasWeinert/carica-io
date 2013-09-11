@@ -10,7 +10,7 @@ namespace Carica\Io\Event {
      * Add a listener object. If a callable is added, it is wrapped into a listener
      *
      * @param string $event
-     * @param Carica\Io\Event\Emitter\Listener $listener
+     * @param Emitter\Listener $listener
      */
     public function on($event, $listener) {
       $listener = $listener instanceOf Emitter\Listener
@@ -24,7 +24,7 @@ namespace Carica\Io\Event {
      * into a listener
      *
      * @param string $event
-     * @param Carica\Io\Event\Emitter\Listener $listener
+     * @param Emitter\Listener $listener
      */
     public function once($event, $listener) {
       $listener = $listener instanceOf Emitter\Listener\Once
@@ -36,7 +36,7 @@ namespace Carica\Io\Event {
      * Remode the specified listenr from the event
      *
      * @param string $event
-     * @param Carica\Io\Event\Emitter\Listener $listener
+     * @param Emitter\Listener $listener
      */
     public function removeListener($event, $listener) {
       if (isset($this->_events[$event])) {
@@ -61,7 +61,7 @@ namespace Carica\Io\Event {
      * Return an list of a listeners attached to the event
      *
      * @param string $event
-     * @return array(Carica\Io\Event\Emitter\Listener)
+     * @return array(Emitter\Listener)
      */
     public function listeners($event) {
       return isset($this->_events[$event]) ? $this->_events[$event] : array();
@@ -71,7 +71,7 @@ namespace Carica\Io\Event {
      * Emit an event to all attached listeners
      *
      * @param string $event
-     * @param mixed $argument,...
+     * @param mixed [$argument,...]
      */
     public function emit($event) {
       $arguments = func_get_args();

@@ -2,9 +2,10 @@
 
 namespace Carica\Io\Stream {
 
+  use Carica\Io;
   use Carica\Io\Event;
 
-  class File implements \Carica\Io\Stream {
+  class File implements Io\Stream {
 
     use Event\Emitter\Aggregation;
     use Event\Loop\Aggregation;
@@ -91,7 +92,7 @@ namespace Carica\Io\Stream {
     /**
      * Read some bytes from the file resource
      *
-     * @param number $bytes
+     * @param integer $bytes
      * @return string|NULL
      */
     public function read($bytes = 1024) {
@@ -108,13 +109,14 @@ namespace Carica\Io\Stream {
     /**
      * Write some bytes to the file resource
      *
-     * @param unknown $data
+     * @param string|array(integer) $data
+     * @return bool
      */
     public function write($data) {
       if ($resource = $this->resource()) {
         fwrite(
           $resource,
-          $writtenData = is_array($data) ? \Carica\Io\encodeBinaryFromArray($data) : $data
+          $writtenData = is_array($data) ? Io\encodeBinaryFromArray($data) : $data
         );
         $this->events()->emit('write-data', $writtenData);
         return TRUE;

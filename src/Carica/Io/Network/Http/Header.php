@@ -29,7 +29,7 @@ namespace Carica\Io\Network\Http {
 
     /**
      * @param string $name
-     * @param string|array|Traversable $data
+     * @param string|array|\Traversable $data
      */
     public function __construct($name, $data = array()) {
       $this->setName($name);
@@ -38,7 +38,9 @@ namespace Carica\Io\Network\Http {
 
     /**
      * Set the http header name
+     *
      * @param string $name
+     * @throws \UnexpectedValueException
      */
     public function setName($name) {
       if (trim($name) == '') {
@@ -89,8 +91,8 @@ namespace Carica\Io\Network\Http {
 
     /**
      * @param string $name
-     * @throws InvalidArgumentException
-     * @return string|mixed|ArrayObject
+     * @throws \LogicException
+     * @return string|mixed|\ArrayObject
      */
     public function __get($name) {
       switch ($name) {
@@ -108,7 +110,7 @@ namespace Carica\Io\Network\Http {
 
     /**
      * @param string $name
-     * @param string|array|Traversable $value
+     * @param string|array|\Traversable $value
      * @throws \LogicException
      */
     public function __set($name, $value) {
@@ -138,6 +140,7 @@ namespace Carica\Io\Network\Http {
 
     /**
      * @param integer $offset
+     * @return string
      */
     public function offsetGet($offset) {
       return $this->_values->offsetGet($offset);

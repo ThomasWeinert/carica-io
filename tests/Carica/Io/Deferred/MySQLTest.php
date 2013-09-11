@@ -15,7 +15,7 @@ namespace Carica\Io\Deferred {
       $mysql = new MySQL($this->getMySQLConnectionFixture(FALSE));
       $mysql->loop($this->getLoopFixture());
       $promise = $mysql('SQL');
-      $this->assertEquals(\Carica\Io\Deferred::STATE_REJECTED, $promise->state());
+      $this->assertEquals(Io\Deferred::STATE_REJECTED, $promise->state());
     }
 
     /**
@@ -25,7 +25,7 @@ namespace Carica\Io\Deferred {
       $mysql = new MySQL($this->getMySQLConnectionFixture(TRUE));
       $mysql->loop($this->getLoopFixture());
       $promise = $mysql('SQL');
-      $this->assertEquals(\Carica\Io\Deferred::STATE_RESOLVED, $promise->state());
+      $this->assertEquals(Io\Deferred::STATE_RESOLVED, $promise->state());
     }
 
     public function getLoopFixture() {

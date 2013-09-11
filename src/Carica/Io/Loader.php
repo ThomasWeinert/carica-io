@@ -19,6 +19,7 @@ namespace Carica\Io {
      * The actual autloader function that will be registered.
      *
      * @param string $class
+     * @return boolean
      */
     public static function load($class) {
       if ($file = self::getFilename($class)) {

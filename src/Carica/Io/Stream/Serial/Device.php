@@ -40,7 +40,7 @@ namespace Carica\Io\Stream\Serial {
         $command = sprintf('stty -f %s speed %d', $device, $baud);
       } elseif (substr(PHP_OS, 0, 5) === "Linux") {
         $pattern = '(^/dev/tty\w+\d+$)';
-        $prepare = sprintf('stty -F %s %d', $device, $baud);
+        $command = sprintf('stty -F %s %d', $device, $baud);
       } else {
         throw new \LogicException(sprintf('Unsupport OS: "%s".', PHP_OS));
       }
@@ -68,7 +68,7 @@ namespace Carica\Io\Stream\Serial {
     }
 
     public function __toString() {
-      return $this->getDevice();
+      return (string)$this->getDevice();
     }
   }
 }

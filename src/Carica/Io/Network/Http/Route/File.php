@@ -66,7 +66,7 @@ namespace Carica\Io\Network\Http\Route {
           );
           return $response;
         } else {
-          return new Carica\Io\Network\Http\Response\Error(
+          return new Http\Response\Error(
             $request, 403
           );
         }

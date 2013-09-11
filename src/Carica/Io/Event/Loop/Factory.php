@@ -2,12 +2,13 @@
 
 namespace Carica\Io\Event\Loop {
 
+  use Carica\Io;
   use Carica\Io\Event;
 
   class Factory {
 
     /**
-     * @var Carica\Io\Event\Loop
+     * @var Event\Loop
      */
     private static $_globalLoop = NULL;
 
@@ -16,7 +17,7 @@ namespace Carica\Io\Event\Loop {
     /**
      * Create a event loop
      *
-     * @return Carica\Io\Event\Loop
+     * @return Event\Loop
      */
     public static function create() {
       if (self::useLibevent()) {
@@ -46,7 +47,7 @@ namespace Carica\Io\Event\Loop {
     /**
      * Return a global event loop instance, create it if it does not exists yet.
      *
-     * @return Carica\Io\Event\Loop
+     * @return Event\Loop
      */
     public static function get() {
       if (is_null(self::$_globalLoop)) {
@@ -67,7 +68,7 @@ namespace Carica\Io\Event\Loop {
     /**
      * Destroy the global event loop
      *
-     * @return Carica\Io\Event\Loop
+     * @return Event\Loop
      */
     public static function reset() {
       self::$_useLibevent = NULL;
@@ -77,7 +78,7 @@ namespace Carica\Io\Event\Loop {
     /**
      * Run the global event loop
      */
-    public static function run(\Carica\Io\Deferred\Promise $for = NULL) {
+    public static function run(Io\Deferred\Promise $for = NULL) {
       self::get()->run($for);
     }
   }

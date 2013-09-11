@@ -53,8 +53,11 @@ namespace Carica\Io\Network {
           stream_set_blocking($stream, 0);
           $this->resource($stream);
           $this->events()->emit('listen', $this->_address.':'.$port);
+          return TRUE;
         }
+        return FALSE;
       }
+      return TRUE;
     }
 
     public function close() {

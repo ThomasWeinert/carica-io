@@ -42,9 +42,9 @@ namespace Carica\Io\Network\Http {
      * Attach a callback as a route target starting with the given path. This
      * is not unlike match but ignores if here is path has additional parts.
      *
-     * @param unknown $path
+     * @param string $path
      * @param callable $callback
-     * @return \Carica\Io\Network\Http\Route\Target\StartsWith
+     * @return Route\Target\StartsWith
      */
     public function startsWith($path, Callable $callback) {
       $this->_targets[] = $target = new Route\Target\StartsWith($callback, $path);
@@ -53,7 +53,9 @@ namespace Carica\Io\Network\Http {
 
     /**
      * Allow to trigger the route
-     * @param unknown $request
+     *
+     * @param Request $request
+     * @return NULL|Response
      */
     public function __invoke($request) {
       return $this->fire($request);
@@ -78,7 +80,7 @@ namespace Carica\Io\Network\Http {
      * Allow to iterate the attached route targets
      *
      * @see IteratorAggregate::getIterator()
-     * @return Iterator
+     * @return \Iterator
      */
     public function getIterator() {
       return new \ArrayIterator($this->_targets);

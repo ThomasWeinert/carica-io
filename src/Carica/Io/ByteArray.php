@@ -120,7 +120,7 @@ namespace Carica\Io {
     /**
      * Read an hexadecimal encoded binary string
      *
-     * @param string $string
+     * @param array $bytes
      * @param boolean $resize
      * @throws \OutOfBoundsException
      */
@@ -145,14 +145,18 @@ namespace Carica\Io {
     /**
      * Get the byte array as an hexdec string.
      *
+     * @param string $separator
+     *
      * @return string
      */
-    public function asHex() {
+    public function asHex($separator = '') {
       $result = '';
       foreach ($this->_bytes as $byte) {
-        $result .= str_pad(dechex($byte), 2, '0', STR_PAD_LEFT);
+        $result .= str_pad(dechex($byte), 2, '0', STR_PAD_LEFT).$separator;
       }
-      return $result;
+      return empty($separator)
+        ? $result
+        : substr($result, 0, -strlen($separator));
     }
 
     /**
@@ -314,8 +318,8 @@ namespace Carica\Io {
     /**
      * Validate the given value is a storeable in a single byte
      *
-     * @param integer $offset
-     * @throws \OutOfBoundsException
+     * @param integer $value
+     * @throws \OutOfRangeException
      */
     private function validateValue($value) {
       if (($value < 0 || $value > 255)) {
@@ -356,7 +360,7 @@ namespace Carica\Io {
     /**
      * Create a new ByteArray from an array of bytes
      *
-     * @param array $bytes
+     * @param array $array
      * @return \Carica\Io\ByteArray
      */
     public static function createFromArray(array $array) {

@@ -90,10 +90,10 @@ namespace Carica\Io\Network\Http {
       switch ($name) {
       case 'version' :
         $this->setVersion($value);
-        return;
+        return NULL;
       case 'status' :
         $this->setStatus($value);
-        return;
+        return NULL;
       case 'connection' :
       case 'content' :
       case 'headers' :

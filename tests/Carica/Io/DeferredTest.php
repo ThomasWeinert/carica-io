@@ -390,7 +390,7 @@ namespace Carica\Io {
      */
     public function testWhenWithOneArgumentThatsNotReferredReturnsResolvedPromise() {
       $result = NULL;
-      $promise = Deferred::when(42)
+      Deferred::when(42)
         ->then(
           function ($argument) use (&$result) {
             $result = $argument;
@@ -404,7 +404,7 @@ namespace Carica\Io {
      */
     public function testWhenWithOneArgumentThatsAnArrayOfCallbacks() {
       $result = array();
-      $promise = Deferred::when(42)
+      Deferred::when(42)
         ->then(
           array(
             function ($argument) use (&$result) {

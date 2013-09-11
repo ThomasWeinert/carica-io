@@ -7,7 +7,7 @@ namespace Carica\Io\Event\Loop {
   trait Aggregation {
 
     /**
-     * @var Carica\Io\Event\Loop
+     * @var Event\Loop
      */
     private $_eventLoop = NULL;
 
@@ -15,8 +15,8 @@ namespace Carica\Io\Event\Loop {
      * Getter/Setter for the event loop including implicit create. The create uses
      * the factory fetching a global instance of the loop by default.
      *
-     * @param Carica\Io\Event\Loop $loop
-     * @return Carica\Io\Event\Loop
+     * @param Event\Loop $loop
+     * @return Event\Loop
      */
     public function loop(Event\Loop $loop = NULL) {
       if (NULL !== $loop) {

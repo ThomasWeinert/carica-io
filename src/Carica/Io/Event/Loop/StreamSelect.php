@@ -2,11 +2,13 @@
 
 namespace Carica\Io\Event\Loop {
 
+  use Carica\Io;
   use Carica\Io\Event;
   use Carica\Io\Event\Loop\StreamSelect\Listener;
 
   class StreamSelect implements Event\Loop {
 
+    private $_running;
     private $_wait = 5;
 
     private $_timers = array();
@@ -59,12 +61,12 @@ namespace Carica\Io\Event\Loop {
      * it is still pending and add a callback to stop the loop if is is
      * finished.
      *
-     * @param \Carica\Io\Deferred\Promise $for
+     * @param Io\Deferred\Promise $for
      */
-    public function run(\Carica\Io\Deferred\Promise $for = NULL) {
+    public function run(Io\Deferred\Promise $for = NULL) {
       $this->_running = TRUE;
       if (isset($for) &&
-          $for->state() === \Carica\Io\Deferred::STATE_PENDING) {
+          $for->state() === Io\Deferred::STATE_PENDING) {
         $loop = $this;
         $for->always(
           function () use ($loop) {
@@ -83,6 +85,9 @@ namespace Carica\Io\Event\Loop {
 
     private function tick() {
       if ($this->_running) {
+        /**
+         * @var StreamSelect\Listener $listener
+         */
         if ($this->_hasResources) {
           $read = $this->_resources['read'];
           $write = $this->_resources['write'];

@@ -2,6 +2,8 @@
 
 namespace Carica\Io\FileSystem {
 
+  use Carica\Io;
+
   trait Aggregation {
 
     private $_fileSystem = NULL;
@@ -9,13 +11,14 @@ namespace Carica\Io\FileSystem {
     /**
      * Create an return a FileSystem instance
      *
-     * @param \Carica\Io\FileSystem $fileSystem
+     * @param Io\FileSystem $fileSystem
+     * @return Io\FileSystem
      */
-    public function fileSystem(\Carica\Io\FileSystem $fileSystem = NULL) {
+    public function fileSystem(Io\FileSystem $fileSystem = NULL) {
       if (isset($fileSystem)) {
         $this->_fileSystem = $fileSystem;
       } elseif (NULL === $this->_fileSystem) {
-        $this->_fileSystem = new \Carica\Io\FileSystem();
+        $this->_fileSystem = new Io\FileSystem();
       }
       return $this->_fileSystem;
     }

@@ -2,6 +2,8 @@
 
 namespace Carica\Io\Event {
 
+  use Carica\Io;
+
   interface Loop {
 
     function setTimeout(Callable $callback, $milliseconds);
@@ -12,7 +14,7 @@ namespace Carica\Io\Event {
 
     function remove($listener);
 
-    function run(\Carica\Io\Deferred\Promise $for = NULL);
+    function run(Io\Deferred\Promise $for = NULL);
 
     function stop();
 

@@ -7,15 +7,15 @@ namespace Carica\Io\Event\Emitter {
   trait Aggregation {
 
     /**
-     * @var Carica\Io\Event\Emitter
+     * @var Event\Emitter
      */
     private $_eventEmitter = NULL;
 
     /**
      * Getter/Setter for the event emitter including implicit create.
      *
-     * @param Carica\Io\Event\Emitter $emitter
-     * @return Carica\Io\Event\Emitter
+     * @param Event\Emitter $emitter
+     * @return Event\Emitter
      */
     public function events(Event\Emitter $emitter = NULL) {
       if (NULL !== $emitter) {

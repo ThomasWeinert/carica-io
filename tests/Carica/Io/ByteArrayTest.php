@@ -22,7 +22,7 @@ namespace Carica\Io {
       $this->setExpectedException(
         'OutOfRangeException', 'Zero or negative length is not possible'
       );
-      $bytes = new ByteArray(-3);
+      new ByteArray(-3);
     }
 
     /**

@@ -334,6 +334,9 @@ namespace Carica\Io {
         $master = new Deferred();
         $resolveArguments = array();
         foreach ($arguments as $index => $argument) {
+          /**
+           * @var Deferred\Promise $argument
+           */
           if ($argument instanceOf Deferred || $argument instanceOf Deferred\Promise) {
             $argument
               ->done(
