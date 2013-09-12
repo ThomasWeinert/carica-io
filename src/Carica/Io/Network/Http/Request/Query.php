@@ -42,7 +42,7 @@ namespace Carica\Io\Network\Http\Request {
 
     public function offsetSet($name, $value) {
       if (empty($name)) {
-        throw \InvalidArgumentException('Query string parameter name can not be empty.');
+        throw new \InvalidArgumentException('Query string parameter name can not be empty.');
       }
       $this->_data[$name] = $value;
     }

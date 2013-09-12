@@ -44,8 +44,9 @@ namespace Carica\Io\Deferred {
     }
 
     public function getMySQLConnectionFixture($result = FALSE) {
+      // seems that mysqli is not completly mockable, we use a pseudo class
       $mysqli = $this
-        ->getMockBuilder('Carica\Io\Deferred\MySQL')
+        ->getMockBuilder('mysqli_just_for_mocking')
         ->disableOriginalConstructor()
         ->setMethods(array('query', 'poll', 'reap_async_query'))
         ->getMock();
@@ -64,12 +65,10 @@ namespace Carica\Io\Deferred {
           0
         )
         ->will($this->returnValue(TRUE));
-      if ($result) {
-        $mysqli
-          ->expects($this->once())
-          ->method('reap_async_query')
-          ->will($this->returnValue($result));
-      }
+      $mysqli
+        ->expects($this->once())
+        ->method('reap_async_query')
+        ->will($this->returnValue($result));
       return $mysqli;
     }
   }

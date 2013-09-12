@@ -41,6 +41,9 @@ namespace Carica\Io\Event {
     public function removeListener($event, $listener) {
       if (isset($this->_events[$event])) {
         foreach ($this->_events[$event] as $key => $eventListener) {
+          /**
+           * @var Emitter\Listener $eventListener
+           */
           if ($eventListener === $listener || $eventListener->getCallback() == $listener) {
             unset($this->_events[$event][$key]);
           }

@@ -54,7 +54,7 @@ namespace Carica\Io\Network\Http\Route {
       return call_user_func_array(array($this, 'call'), func_get_args());
     }
 
-    public function call(Http\Request $request, array $parameters) {
+    public function call(Http\Request $request) {
       if ($file = $this->getFileInfo($request)) {
         if ($file->isFile() && $file->isReadable()) {
           $response = $request->createResponse();

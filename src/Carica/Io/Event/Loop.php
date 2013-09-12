@@ -4,7 +4,7 @@ namespace Carica\Io\Event {
 
   use Carica\Io;
 
-  interface Loop {
+  interface Loop extends \Countable {
 
     function setTimeout(Callable $callback, $milliseconds);
 

@@ -5,15 +5,18 @@ namespace Carica\Io\Network\Http {
   use Carica\Io;
 
   /**
+   * An HTTP response encapsulation to answer the request. It does no contain the
+   * content but the general data.
+   *
    * @property string $version
    * @property integer $status
-   * @property Connection $connection
    * @property Headers $headers
    * @property Response\Content $content
+   * @property Connection $connection
    */
   class Response {
 
-    public $_version = '1.0';
+    private $_version = '1.0';
 
     private $_status = 200;
 
@@ -116,7 +119,7 @@ namespace Carica\Io\Network\Http {
       if (in_array($version, array('1.0', '1.1'))) {
         $this->_version = $version;
       } else {
-        throw \InvalidArgumentException(
+        throw new \InvalidArgumentException(
           sprintf('Invalid http version string %s', $version)
         );
       }
@@ -127,7 +130,7 @@ namespace Carica\Io\Network\Http {
       if (isset($this->_statusStrings[$status])) {
         $this->_status = $status;
       } else {
-        throw \InvalidArgumentException(
+        throw new \InvalidArgumentException(
           sprintf('Invalid http status code %d', $status)
         );
       }

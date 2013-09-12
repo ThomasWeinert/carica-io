@@ -9,6 +9,9 @@ namespace Carica\Io\Deferred {
 
     use Event\Loop\Aggregation;
 
+    /**
+     * @var \mysqli
+     */
     private $_mysqli = NULL;
 
     public function __construct($mysqli) {
