@@ -33,7 +33,7 @@ namespace Carica\Io\Network {
           $that = $this;
           $this->loop()->setStreamReader(
             function() use ($that) {
-              $that->read();
+              $that->accept();
             },
             $stream
           );
@@ -62,13 +62,13 @@ namespace Carica\Io\Network {
 
     public function close() {
       if ($this->isActive()) {
-        stream_socket_shutdown($this->_stream, STREAM_SHUT_RDWR);
+        stream_socket_shutdown($this->resource(), STREAM_SHUT_RDWR);
       }
       $this->resource(FALSE);
     }
 
-    public function read($bytes = 0) {
-      if ($this->isActive() && ($stream = @stream_socket_accept($this->_stream, 1, $peer))) {
+    public function accept() {
+      if ($this->isActive() && ($stream = @stream_socket_accept($this->resource(), 1, $peer))) {
         $this->events()->emit('connection', $stream, $peer);
       }
     }

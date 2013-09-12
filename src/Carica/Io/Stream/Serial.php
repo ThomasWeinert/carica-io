@@ -11,7 +11,6 @@ namespace Carica\Io\Stream {
     use Event\Loop\Aggregation;
 
     private $_device = 0;
-    private $_command = '';
     private $_resource = NULL;
     private $_listener = NULL;
 

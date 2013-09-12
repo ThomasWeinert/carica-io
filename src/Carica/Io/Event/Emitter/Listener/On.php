@@ -4,6 +4,11 @@ namespace Carica\Io\Event\Emitter\Listener  {
 
   use Carica\Io\Event;
 
+  /**
+   * @property Event\Emitter $emitter
+   * @property string $event
+   * qproperty Callable $callback
+   */
   class On implements Event\Emitter\Listener {
 
     private $_emitter = NULL;
@@ -49,7 +54,7 @@ namespace Carica\Io\Event\Emitter\Listener  {
     }
 
     public function getCallback() {
-      return $this->callback;
+      return $this->_callback;
     }
   }
 }

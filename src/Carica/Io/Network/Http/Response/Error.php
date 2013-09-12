@@ -5,6 +5,9 @@ namespace Carica\Io\Network\Http\Response {
   use Carica\Io;
   use Carica\Io\Network\Http;
 
+  /**
+   * @property \DOMDocument $document
+   */
   class Error extends Http\Response {
 
     private $_template = '
@@ -22,11 +25,11 @@ namespace Carica\Io\Network\Http\Response {
     public function __construct(Http\Request $request, $status = 500, $message = NULL) {
       parent::__construct($request->connection());
       $this->setStatus($status);
-      $this->content = new Http\Response\Content\Html();
+      $this->content = $content = new Http\Response\Content\Html();
       if (NULL === $message) {
         $message = $this->_statusStrings[$this->status];
       }
-      $this->content->document->loadHtml(
+      $content->document->loadHtml(
         sprintf(
           $this->_template,
           (int)$status,

@@ -58,7 +58,7 @@ namespace Carica\Io\Network\Http {
      */
     public function setData($data) {
       $this->_values = new \ArrayObject;
-      if (is_array($data) || $data instanceOf Traversable) {
+      if (is_array($data) || $data instanceOf \Traversable) {
         foreach ($data as $value) {
           $this->_values[] = trim((string)$value);
         }
@@ -72,6 +72,7 @@ namespace Carica\Io\Network\Http {
      * @return string
      */
     public function __toString() {
+      /** @noinspection PhpParamsInspection */
       return (string)end($this->_values);
     }
 
@@ -99,6 +100,7 @@ namespace Carica\Io\Network\Http {
       case 'name' :
         return $this->_name;
       case 'value' :
+        /** @noinspection PhpParamsInspection */
         return end($this->_values);
       case 'values' :
         return $this->_values;

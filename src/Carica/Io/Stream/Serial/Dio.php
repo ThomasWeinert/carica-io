@@ -12,11 +12,8 @@ namespace Carica\Io\Stream\Serial {
     use Event\Loop\Aggregation;
 
     private $_device = 0;
-    private $_command = '';
     private $_resource = NULL;
     private $_listener = NULL;
-
-    private $_reading = FALSE;
 
     public function __construct($device, $baud = 57600)
     {

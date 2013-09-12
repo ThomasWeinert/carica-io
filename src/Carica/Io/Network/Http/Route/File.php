@@ -40,7 +40,7 @@ namespace Carica\Io\Network\Http\Route {
     }
 
     public function setEncoding($mimetype, $encoding) {
-      $this->_encoding[$mimetype] = (string)$encoding;
+      $this->_encodings[$mimetype] = (string)$encoding;
     }
 
     public function getEncoding($mimetype) {

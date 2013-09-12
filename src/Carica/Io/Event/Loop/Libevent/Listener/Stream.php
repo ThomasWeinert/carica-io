@@ -12,6 +12,10 @@ namespace Carica\Io\Event\Loop\Libevent\Listener {
     private $_write = NULL;
     private $_stream = NULL;
 
+    /**
+     * @param Libevent $loop
+     * @param Resource $stream
+     */
     public function __construct(Event\Loop\Libevent $loop, $stream) {
       $that = $this;
       parent::__construct(
@@ -32,7 +36,11 @@ namespace Carica\Io\Event\Loop\Libevent\Listener {
       if (is_null($this->_read)) {
         $this->_read = new Io\Callbacks();
       }
-      $this->_read->add($result = new Stream\Callback($this, $this->_read->remove, $callback));
+      /**
+       * @var Callable $result
+       */
+      $result = new Stream\Callback($this, $this->_read->remove, $callback);
+      $this->_read->add($result);
       $this->update();
       return $result;
     }
@@ -41,7 +49,11 @@ namespace Carica\Io\Event\Loop\Libevent\Listener {
       if (is_null($this->_write)) {
         $this->_write = new Io\Callbacks();
       }
-      $this->_write->add($result = new Stream\Callback($this, $this->_write->remove, $callback));
+      /**
+       * @var Callable $result
+       */
+      $result = new Stream\Callback($this, $this->_write->remove, $callback);
+      $this->_write->add($result);
       $this->update();
       return $result;
     }
@@ -58,6 +70,7 @@ namespace Carica\Io\Event\Loop\Libevent\Listener {
         if (is_null($this->_event)) {
           $this->_event = $event = event_new();
           $that = $this;
+          /** @noinspection PhpUnusedParameterInspection */
           $callback = function ($stream, $events) use ($event, $that, &$callback) {
             if (!$that->isCancelled()) {
               call_user_func($this->getCallback(), $events);
@@ -88,7 +101,6 @@ namespace Carica\Io\Event\Loop\Libevent\Listener {
       $this->_read = NULL;
       $this->_write = NULL;
       $this->_stream = NULL;
-      parent::free();
     }
   }
 }

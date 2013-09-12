@@ -9,10 +9,19 @@ namespace Carica\Io\Network {
     use Io\Event\Emitter\Aggregation;
     use Io\Event\Loop\Aggregation;
 
+    /**
+     * @var object
+     */
     private $_listener = NULL;
 
+    /**
+     * @var bool|resource
+     */
     private $_stream = FALSE;
 
+    /**
+     * @param Io\Stream $stream
+     */
     public function __construct($stream) {
       $this->resource($stream);
     }

@@ -4,6 +4,15 @@ namespace Carica\Io\Network\Http {
 
   use Carica\Io;
 
+  /**
+   * @property string $method
+   * @property string $version
+   * @property string $url
+   * @property string $path
+   * @property Connection $connection
+   * @property Headers $headers
+   * @property Request\Query $query
+   */
   class Request {
 
     private $_patternStatus =
@@ -83,6 +92,9 @@ namespace Carica\Io\Network\Http {
       }
     }
 
+    /**
+     * @return Response
+     */
     public function createResponse() {
       return new Response($this->connection());
     }

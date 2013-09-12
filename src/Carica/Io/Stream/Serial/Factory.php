@@ -2,6 +2,8 @@
 
 namespace Carica\Io\Stream\Serial {
 
+  use Carica\Io\Stream;
+
   class Factory {
 
     /**
@@ -20,7 +22,7 @@ namespace Carica\Io\Stream\Serial {
         } elseif (!$use) {
           self::$_useDio = FALSE;
         } else {
-          throw new LogicException('Extension "dio" not available.');
+          throw new \LogicException('Extension "dio" not available.');
         }
       } elseif (NULL == self::$_useDio) {
         self::$_useDio = extension_loaded('dio');

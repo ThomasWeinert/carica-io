@@ -36,26 +36,26 @@ namespace Carica\Io {
     /**
      * An promise for this object
      * .
-     * @var \Carica\Io\Deferred\Promise
+     * @var Deferred\Promise
      */
     private $_promise = NULL;
 
     /**
      * Callbacks if the object is resolved
      * .
-     * @var \Carica\Io\Callbacks
+     * @var Callable|Callbacks
      */
     private $_done = NULL;
     /**
      * Callbacks if the object is rejected
      * .
-     * @var \Carica\Io\Callbacks
+     * @var Callable|Callbacks
      */
     private $_failed = NULL;
     /**
      * Callbacks if the object is notified about a progress
      * .
-     * @var \Carica\Io\Callbacks
+     * @var Callable|Callbacks
      */
     private $_progress = NULL;
 
@@ -88,7 +88,7 @@ namespace Carica\Io {
      * resolved or reject
      *
      * @param Callable $callback
-     * @return \Carica\Io\Deferred
+     * @return Deferred
      */
     public function always(Callable $callback) {
       $this->_done->add($callback);
@@ -103,7 +103,7 @@ namespace Carica\Io {
      * Add a callback that will be executed if the object is resolved
      *
      * @param Callable $callback
-     * @return \Carica\Io\Deferred
+     * @return Deferred
      */
     public function done(Callable $callback) {
       $this->_done->add($callback);
@@ -117,7 +117,7 @@ namespace Carica\Io {
      * Add a callback that will be eecuted if the object was rejected
      *
      * @param Callable $callback
-     * @return \Carica\Io\Deferred
+     * @return Deferred
      */
     public function fail(Callable $callback) {
       $this->_failed->add($callback);
@@ -162,7 +162,7 @@ namespace Carica\Io {
      * @param Callable $doneFilter
      * @param Callable $failFilter
      * @param Callable $progressFilter
-     * @return \Carica\Io\Deferred\Promise
+     * @return Deferred\Promise
      */
     public function pipe(
       Callable $doneFilter = NULL,
@@ -204,7 +204,7 @@ namespace Carica\Io {
      * Add a callback that will be executed if the object is notified about progress
      *
      * @param Callable $callback
-     * @return \Carica\Io\Deferred
+     * @return Deferred
      */
     public function progress(Callable $callback) {
       $this->_progress->add($callback);
@@ -218,7 +218,7 @@ namespace Carica\Io {
      * Creates and returns a promise attached to this object, a promise is used to
      * attach callbacks and validate the status. But has no methods to change the status.
      *
-     * @return \Carica\Io\Deferred\Promise
+     * @return Deferred\Promise
      */
     public function promise() {
       if (NULL === $this->_promise) {
@@ -231,7 +231,7 @@ namespace Carica\Io {
      * Finalize the object and set the status to rejected - the action has failed.
      * This will execute all callbacks attached with fail() or always()
      *
-     * @return \Carica\Io\Deferred
+     * @return Deferred
      */
     public function reject() {
       if ($this->_state == self::STATE_PENDING) {
@@ -246,7 +246,7 @@ namespace Carica\Io {
      * Finalize the object and set the status to rejected - the action was successful.
      * This will execute all callbacks attached with done() or always()
      *
-     * @return \Carica\Io\Deferred
+     * @return Deferred
      */
     public function resolve() {
       if ($this->_state == self::STATE_PENDING) {
@@ -274,7 +274,7 @@ namespace Carica\Io {
      * @param Callable|array(Callable) $done
      * @param Callable|array(Callable) $fail
      * @param Callable|array(Callable) $progress
-     * @return \Carica\Io\Deferred
+     * @return Deferred
      */
     public function then($done = NULL, $fail = NULL, $progress = NULL) {
       $this->addCallbacksIfProvided(array($this, 'done'), $done);
@@ -304,7 +304,7 @@ namespace Carica\Io {
     /**
      * Static method to the create a new Deferred object.
      *
-     * @return \Carica\Io\Deferred
+     * @return Deferred
      */
     public static function create() {
       return new Deferred();
@@ -314,7 +314,7 @@ namespace Carica\Io {
      * Provides a way to execute callback functions based on one or more
      * objects, usually Deferred objects that represent asynchronous events.
      *
-     * @return \Carica\Io\Deferred\Promise
+     * @return Deferred\Promise
      */
     public static function when() {
       $arguments = func_get_args();

@@ -6,6 +6,9 @@ namespace Carica\Io\Network\Http\Response\Content {
   use Carica\Io\Network;
   use Carica\Io\Network\Http\Response;
 
+  /**
+   * @property \DOMDocument $document
+   */
   class Xml extends Response\Content {
 
     private $_document = NULL;

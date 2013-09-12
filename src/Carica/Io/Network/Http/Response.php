@@ -4,11 +4,19 @@ namespace Carica\Io\Network\Http {
 
   use Carica\Io;
 
+  /**
+   * @property string $version
+   * @property integer $status
+   * @property Connection $connection
+   * @property Headers $headers
+   * @property Response\Content $content
+   */
   class Response {
 
     public $_version = '1.0';
 
     private $_status = 200;
+
     protected $_statusStrings = array(
       100 => 'Continue',
       101 => 'Switching Protocols',

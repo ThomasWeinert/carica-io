@@ -3,7 +3,13 @@
 namespace Carica\Io {
 
   /**
-   * Manage a list Callables, the Callables can be uses as one callable, too.
+   * Manage a list Callable elements, the list can be uses as one callable, too.
+   *
+   * @property Callable add
+   * @property Callable remove
+   * @property Callable fire
+   * @property Callable lock
+   * @property Callable disable
    */
   class Callbacks implements \IteratorAggregate, \Countable {
 
@@ -16,7 +22,7 @@ namespace Carica\Io {
      * Add a new callable, and return itself for chaining
      *
      * @param callable $callback
-     * @return \Carica\Io\Callbacks
+     * @return Callbacks
      */
     public function add(Callable $callback) {
       $hash = $this->getCallableHash($callback);
@@ -30,7 +36,7 @@ namespace Carica\Io {
      * Remove an callable, and return itself for chaining
      *
      * @param callable $callback
-     * @return \Carica\Io\Callbacks
+     * @return Callbacks
      */
     public function remove(Callable $callback) {
       $hash = $this->getCallableHash($callback);
@@ -43,7 +49,7 @@ namespace Carica\Io {
     /**
      * Remove all callables
      *
-     * @return \Carica\Io\Callbacks
+     * @return Callbacks
      */
     public function clear() {
       if (!$this->_locked) {
@@ -66,7 +72,7 @@ namespace Carica\Io {
     /**
      * Lock the list, do now allow chanes any more.
      *
-     * @return \Carica\Io\Callbacks
+     * @return Callbacks
      */
     public function lock() {
       $this->_locked = TRUE;
@@ -85,7 +91,7 @@ namespace Carica\Io {
     /**
      * Disable the execution of the callbacks in the list
      *
-     * @return \Carica\Io\Callbacks
+     * @return Callbacks
      */
     public function disable() {
       $this->_disabled = TRUE;

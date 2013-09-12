@@ -39,7 +39,7 @@ namespace Carica\Io\Stream {
      * the an event listener to the loop, that calls read on new data
      *
      * @param string $resource
-     * @return NULL
+     * @return NULL|resource
      */
     public function resource($resource = NULL) {
       if ($resource === FALSE) {
