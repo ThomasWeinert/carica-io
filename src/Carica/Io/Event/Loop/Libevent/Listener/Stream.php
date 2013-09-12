@@ -12,7 +12,7 @@ namespace Carica\Io\Event\Loop\Libevent\Listener {
     private $_write = NULL;
     private $_stream = NULL;
 
-    public function __construct(Event\Loop $loop, $stream) {
+    public function __construct(Event\Loop\Libevent $loop, $stream) {
       $that = $this;
       parent::__construct(
         $loop,

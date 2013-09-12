@@ -9,7 +9,7 @@ namespace Carica\Io\Event\Loop\Libevent\Listener {
 
     private $_milliseconds = 0;
 
-    public function __construct(Event\Loop $loop, Callable $callback, $milliseconds) {
+    public function __construct(Event\Loop\Libevent $loop, Callable $callback, $milliseconds) {
       parent::__construct($loop, $callback);
       $this->_milliseconds = $milliseconds;
     }
