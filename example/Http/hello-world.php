@@ -2,14 +2,16 @@
 include(__DIR__.'/../../src/Carica/Io/Loader.php');
 Carica\Io\Loader::register();
 
+use Carica\Io\Network\Http;
+
 $server = new Carica\Io\Network\Server();
 $server->events()->on(
   'connection',
   function ($stream) {
-    $request = new Carica\Io\Network\Http\Connection($stream);
+    $request = new Http\Connection($stream);
     $request->events()->on(
       'request',
-      function ($request) {
+      function (Http\Request $request) {
         echo $request->method.' '.$request->url."\n";
         $request->connection()->write(
           "HTTP/1.1 200 OK\r\n".

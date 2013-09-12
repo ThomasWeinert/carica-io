@@ -37,7 +37,7 @@ $server->events()->on(
       'read-data',
       function($data) use ($client, &$clients) {
         if (empty($client->name) &&
-            preg_match("(\S+)", $data, $matches) &&
+            preg_match('(\S+)', $data, $matches) &&
             !isset($clients[$matches[0]])) {
           $client->name = $matches[0];
           $clients[$client->name] = $client;

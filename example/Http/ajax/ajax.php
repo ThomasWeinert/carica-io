@@ -7,7 +7,7 @@ use Carica\Io\Network\Http;
 $route = new Http\Route();
 $route->match(
   '/time',
-  function ($request, $parameters) {
+  function (Http\Request $request) {
     $response = $request->createResponse();
     $response->content = new Http\Response\Content\Xml();
     $dom = $response->content->document;
@@ -18,7 +18,7 @@ $route->match(
 );
 $route->match(
   '/',
-  function ($request) {
+  function (Http\Request $request) {
     $response = $request->createResponse();
     $response->content = new Http\Response\Content\File(
       __DIR__.'/index.html', 'text/html', 'utf-8'
@@ -33,7 +33,7 @@ $server->listen(8080);
 $loop = Carica\Io\Event\Loop\Factory::get();
 $loop->setInterval(
   function() use ($loop) {
-    var_dump($loop->count());
+    echo "Current event count: ", $loop->count(), "\n";
     gc_collect_cycles();
   },
   5000

@@ -21,6 +21,9 @@ $loop->setInterval(
   function () use (&$clients) {
     echo "Send time to ".count($clients)." clients\n";
     foreach ($clients as $index => $client) {
+      /**
+       * @var Io\Network\Connection $client
+       */
       if ($client->isActive()) {
         $client->write(date(DATE_ATOM)."\n");
       } else {

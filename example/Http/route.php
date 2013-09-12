@@ -7,7 +7,7 @@ use Carica\Io\Network\Http;
 $route = new Carica\Io\Network\Http\Route();
 $route->match(
   '/hello/{name}',
-  function ($request, $parameters) {
+  function (Http\Request $request, $parameters) {
     $response = $request->createResponse();
     $response->content = new Http\Response\Content\String(
       "Hello ".$parameters['name']."!\n"
@@ -17,7 +17,7 @@ $route->match(
 );
 $route->match(
   '/agent',
-  function ($request, $parameters) {
+  function (Http\Request $request) {
     $response = $request->createResponse();
     $response->content = new Http\Response\Content\String(
       $request->headers['User-Agent']
@@ -27,7 +27,7 @@ $route->match(
 );
 $route->match(
   '/xml',
-  function ($request, $parameters) {
+  function (Http\Request $request) {
     $response = $request->createResponse();
     $response->content = new Http\Response\Content\Xml();
     $dom = $response->content->document;
