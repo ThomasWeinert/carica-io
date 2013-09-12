@@ -30,7 +30,7 @@ namespace Carica\Io\Stream\Serial {
       return self::$_useDio;
     }
 
-    public function create($device) {
+    public static function create($device) {
       if (self::useDio()) {
         return new Dio($device);
       } else {
