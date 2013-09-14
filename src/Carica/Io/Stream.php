@@ -14,6 +14,8 @@ namespace Carica\Io {
 
     function write($data);
 
+    function events(Event\Emitter $events = NULL);
+    
   }
 
   function encodeBinaryFromArray(array $data) {
