@@ -24,6 +24,7 @@ namespace Carica\Io {
     public static function load($class) {
       if ($file = self::getFilename($class)) {
         if (file_exists($file) && is_readable($file)) {
+          /** @noinspection PhpIncludeInspection */
           include_once($file);
           return TRUE;
         }

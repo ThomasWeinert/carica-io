@@ -7,8 +7,15 @@
  */
 
 class Client {
+
+  /**
+   * @var Carica\Io\Stream
+   */
   public $connection = NULL;
-  public $nick = NULL;
+  /**
+   * @var string
+   */
+  public $name = NULL;
 }
 
 function broadcast($clients, $data) {
