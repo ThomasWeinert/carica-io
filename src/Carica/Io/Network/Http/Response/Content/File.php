@@ -6,7 +6,11 @@ namespace Carica\Io\Network\Http\Response\Content {
   use Carica\Io\Network;
   use Carica\Io\Network\Http\Response;
 
-  class File extends Response\Content {
+  class File
+    extends
+      Response\Content
+    implements
+      Io\Event\HasLoop {
 
     use Io\FileSystem\Aggregation;
     use Io\Event\Loop\Aggregation;

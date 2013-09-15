@@ -4,7 +4,10 @@ namespace Carica\Io\Network {
 
   use Carica\Io;
 
-  class Connection {
+  class Connection
+    implements
+      Io\Event\HasEmitter,
+      Io\Event\HasLoop {
 
     use Io\Event\Emitter\Aggregation;
     use Io\Event\Loop\Aggregation;

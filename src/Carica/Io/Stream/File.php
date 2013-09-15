@@ -5,7 +5,10 @@ namespace Carica\Io\Stream {
   use Carica\Io;
   use Carica\Io\Event;
 
-  class File implements Io\Stream {
+  class File
+    implements
+      Io\Stream,
+      Io\Event\HasLoop {
 
     use Event\Emitter\Aggregation;
     use Event\Loop\Aggregation;

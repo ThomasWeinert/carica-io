@@ -5,8 +5,10 @@ namespace Carica\Io\Stream\Serial {
   use Carica\Io;
   use Carica\Io\Event;
 
-  class Dio implements Io\Stream
-  {
+  class Dio
+    implements
+      Io\Stream,
+      Io\Event\HasLoop {
 
     use Event\Emitter\Aggregation;
     use Event\Loop\Aggregation;

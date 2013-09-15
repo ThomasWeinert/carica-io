@@ -10,6 +10,6 @@ namespace Carica\Io\Event {
      * @param Event\Loop $loop
      * @return Event\Loop
      */
-    function events(Event\Loop $loop = NULL);
+    function loop(Event\Loop $loop = NULL);
   }
 }
