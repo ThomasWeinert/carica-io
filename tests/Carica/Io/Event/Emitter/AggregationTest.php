@@ -23,6 +23,26 @@ namespace Carica\Io\Event\Emitter {
       $this->assertInstanceOf('Carica\Io\Event\Emitter', $aggregation->events());
     }
 
+    /**
+     * @covers Carica\Io\Event\Emitter\Aggregation::emitEvent
+     */
+    public function testEmitEvent() {
+      $aggregation = new Aggregation_TestProxy();
+      $result = FALSE;
+      $aggregation->events()->on('test', function() use (&$result) { $result = TRUE; });
+      $aggregation->emitEvent('test');
+      $this->assertTrue($result);
+    }
+
+    /**
+     * @covers Carica\Io\Event\Emitter\Aggregation::emitEvent
+     */
+    public function testEmitEventDoesNotImplicitCreateEmitter() {
+      $aggregation = new Aggregation_TestProxy();
+      $aggregation->emitEvent('dummy');
+      $this->assertAttributeSame(NULL, '_eventEmitter', $aggregation);
+    }
+
   }
 
   class Aggregation_TestProxy {

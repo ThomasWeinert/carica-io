@@ -25,5 +25,16 @@ namespace Carica\Io\Event\Emitter {
       }
       return $this->_eventEmitter;
     }
+
+    /**
+     * Avoid to create the emitter object just for emitting, without any callbacks attached
+     *
+     * @param $event
+     */
+    public function emitEvent($event) {
+      if (isset($this->_eventEmitter) && !empty($event)) {
+        call_user_func_array(array($this->_eventEmitter, 'emit'), func_get_args());
+      }
+    }
   }
 }
