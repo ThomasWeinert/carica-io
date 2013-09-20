@@ -62,10 +62,11 @@ namespace Carica\Io\Event\Loop {
       if (!is_resource($stream)) {
         throw new \LogicException('%s needs a valid stream resource.', __METHOD__);
       }
-      if (!isset($this->_streams[$stream])) {
-        $this->_streams[$stream] = $listener = new Libevent\Listener\Stream($this, $stream);
+      $index = (int)$stream;
+      if (!isset($this->_streams[$index])) {
+        $this->_streams[$index] = $listener = new Libevent\Listener\Stream($this, $stream);
       } else {
-        $listener = $this->_streams[$stream];
+        $listener = $this->_streams[$index];
       }
       $result = $listener->onRead($callback);
       return $result;
@@ -86,10 +87,11 @@ namespace Carica\Io\Event\Loop {
           $event->remove();
         } elseif ($event instanceOf Libevent\Listener\Stream &&
                   ($stream = $event->getStream())) {
-          if (is_resource($stream) && isset($this->_streams[$stream])) {
-            $listener = $this->_streams[$stream];
+          $index = (int)$stream;
+          if (is_resource($stream) && isset($this->_streams[$index])) {
+            $listener = $this->_streams[$index];
             $listener->cancel();
-            unset($this->_streams[$stream]);
+            unset($this->_streams[$index]);
           }
         }
       }
