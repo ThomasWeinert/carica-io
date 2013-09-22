@@ -1,6 +1,6 @@
 <?php
 
-namespace Carica\Io {
+namespace Carica\Io\File {
 
   /**
    * A wrapper/factory object for the file system.
@@ -11,7 +11,7 @@ namespace Carica\Io {
    * The object is used in other classes to provide a tesable access to
    * the file system.
    */
-  class FileSystem {
+  class Access {
 
     /**
      * fileinfo provides weird results for css/js. This mapping is used to

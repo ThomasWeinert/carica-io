@@ -1,16 +1,16 @@
 <?php
 
-namespace Carica\Io {
+namespace Carica\Io\File {
 
-  include_once(__DIR__.'/Bootstrap.php');
+  include_once(__DIR__ . '/../Bootstrap.php');
 
-  class FileSystemTest extends \PHPUnit_Framework_TestCase {
+  class FileAccessTest extends \PHPUnit_Framework_TestCase {
 
     /**
-     * @covers Carica\Io\FileSystem::getInfo
+     * @covers Carica\Io\File\Access::getInfo
      */
     public function testGetInfo() {
-      $fileSystem = new FileSystem();
+      $fileSystem = new Access();
       $info = $fileSystem->getInfo(__FILE__);
       $this->assertInstanceOf('splFileInfo', $info);
       $this->assertEquals(
@@ -20,37 +20,37 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\FileSystem::getFile
+     * @covers Carica\Io\File\Access::getFile
      */
     public function testGetFile() {
-      $fileSystem = new FileSystem();
+      $fileSystem = new Access();
       $file = $fileSystem->getFile(__FILE__);
       $this->assertInstanceOf('splFileObject', $file);
     }
 
     /**
-     * @covers Carica\Io\FileSystem::getFile
+     * @covers Carica\Io\File\Access::getFile
      */
     public function testGetFileWithContext() {
-      $fileSystem = new FileSystem();
+      $fileSystem = new Access();
       $file = $fileSystem->getFile(__FILE__, 'r', stream_context_create(array()));
       $this->assertInstanceOf('splFileObject', $file);
     }
 
     /**
-     * @covers Carica\Io\FileSystem::getFileResource
+     * @covers Carica\Io\File\Access::getFileResource
      */
     public function testGetFileResource() {
-      $fileSystem = new FileSystem();
+      $fileSystem = new Access();
       $this->assertInternalType('resource', $fh = $fileSystem->getFileResource(__FILE__));
       fclose($fh);
     }
 
     /**
-     * @covers Carica\Io\FileSystem::getFileResource
+     * @covers Carica\Io\File\Access::getFileResource
      */
     public function testGetFileResourceWithContext() {
-      $fileSystem = new FileSystem();
+      $fileSystem = new Access();
       $this->assertInternalType(
         'resource',
         $fh = $fileSystem->getFileResource(__FILE__, 'r', stream_context_create(array()))
@@ -59,36 +59,36 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\FileSystem::getMimeType
+     * @covers Carica\Io\File\Access::getMimeType
      */
     public function testGetMimeTypeExpectingPhp() {
       if (!function_exists('mime_content_type')) {
         $this->markTestSkipped('Function "mime_content_type()" not available.');
       }
-      $fileSystem = new FileSystem();
+      $fileSystem = new Access();
       $this->assertEquals(
         'text/x-php', $fileSystem->getMimeType(__FILE__)
       );
     }
 
     /**
-     * @covers Carica\Io\FileSystem::getMimeType
+     * @covers Carica\Io\File\Access::getMimeType
      */
     public function testGetMimeTypeUsingExtensionMapping() {
-      $fileSystem = new FileSystem();
+      $fileSystem = new Access();
       $this->assertEquals(
         'text/css', $fileSystem->getMimeType('sample.css')
       );
     }
 
     /**
-     * @covers Carica\Io\FileSystem::getRealPath
+     * @covers Carica\Io\File\Access::getRealPath
      */
     public function testGetRealPath() {
-      $fileSystem = new FileSystem();
+      $fileSystem = new Access();
       $this->assertEquals(
         __FILE__,
-        $fileSystem->getRealPath(__DIR__.'/././FileSystemTest.php')
+        $fileSystem->getRealPath(__DIR__.'/././AccessTest.php')
       );
     }
   }

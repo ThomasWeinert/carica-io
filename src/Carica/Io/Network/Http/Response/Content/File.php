@@ -10,9 +10,10 @@ namespace Carica\Io\Network\Http\Response\Content {
     extends
       Response\Content
     implements
-      Io\Event\HasLoop {
+      Io\Event\HasLoop,
+      Io\File\HasAccess {
 
-    use Io\FileSystem\Aggregation;
+    use Io\File\Access\Aggregation;
     use Io\Event\Loop\Aggregation;
 
     private $_filename = NULL;
@@ -24,7 +25,7 @@ namespace Carica\Io\Network\Http\Response\Content {
     }
 
     public function sendTo(Network\Connection $connection) {
-      if ($file = $this->fileSystem()->getFileResource($this->_filename)) {
+      if ($file = $this->fileAccess()->getFileResource($this->_filename)) {
         $defer = new Io\Deferred();
         $bytes = $this->_bufferSize;
         $that = $this;
@@ -54,7 +55,7 @@ namespace Carica\Io\Network\Http\Response\Content {
     }
 
     public function getLength() {
-      return $this->fileSystem()->getInfo($this->_filename)->getSize();
+      return $this->fileAccess()->getInfo($this->_filename)->getSize();
     }
   }
 }
