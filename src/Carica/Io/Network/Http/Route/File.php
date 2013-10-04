@@ -27,7 +27,7 @@ namespace Carica\Io\Network\Http\Route {
     }
 
     public function setDocumentRoot($documentRoot) {
-      if ($directory = $this->fileSystem()->getRealPath($documentRoot)) {
+      if ($directory = $this->fileAccess()->getRealPath($documentRoot)) {
         $this->_documentRoot = $directory;
         return;
       }
@@ -59,7 +59,7 @@ namespace Carica\Io\Network\Http\Route {
         if ($file->isFile() && $file->isReadable()) {
           $response = $request->createResponse();
           $localFile = $file->getRealPath();
-          $mimetype = $this->fileSystem()->getMimeType($localFile);
+          $mimetype = $this->fileAccess()->getMimeType($localFile);
           $encoding = $this->getEncoding($mimetype);
           $response->content = new Http\Response\Content\File(
             $localFile, $mimetype, $encoding
@@ -79,9 +79,9 @@ namespace Carica\Io\Network\Http\Route {
      * @return \SplFileInfo
      */
     private function getFileInfo(Http\Request $request) {
-      if ($localFile = $this->fileSystem()->getRealPath($this->_documentRoot.$request->path)) {
+      if ($localFile = $this->fileAccess()->getRealPath($this->_documentRoot.$request->path)) {
         if (0 === strpos($localFile, $this->_documentRoot.DIRECTORY_SEPARATOR)) {
-          return $this->fileSystem()->getInfo($localFile);
+          return $this->fileAccess()->getInfo($localFile);
         }
       }
       return FALSE;
