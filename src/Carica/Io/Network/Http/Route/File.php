@@ -7,7 +7,7 @@ namespace Carica\Io\Network\Http\Route {
 
   class File {
 
-    use Io\FileSystem\Aggregation;
+    use Io\File\Access\Aggregation;
 
     private $_documentRoot = '';
 
