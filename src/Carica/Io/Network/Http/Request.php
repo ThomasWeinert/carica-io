@@ -95,8 +95,12 @@ namespace Carica\Io\Network\Http {
     /**
      * @return Response
      */
-    public function createResponse() {
-      return new Response($this->connection());
+    public function createResponse(Response\Content $content = NULL) {
+      $response = new Response($this->connection());
+      if (isset($content)) {
+        $response->content = $content;
+      }
+      return $response;
     }
   }
 }

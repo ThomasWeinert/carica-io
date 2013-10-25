@@ -8,9 +8,10 @@ $route = new Carica\Io\Network\Http\Route();
 $route->match(
   '/hello/{name}',
   function (Http\Request $request, $parameters) {
-    $response = $request->createResponse();
-    $response->content = new Http\Response\Content\String(
-      "Hello ".$parameters['name']."!\n"
+    $response = $request->createResponse(
+      new Http\Response\Content\String(
+        "Hello ".$parameters['name']."!\n"
+      )
     );
     return $response;
   }
@@ -18,9 +19,10 @@ $route->match(
 $route->match(
   '/agent',
   function (Http\Request $request) {
-    $response = $request->createResponse();
-    $response->content = new Http\Response\Content\String(
-      $request->headers['User-Agent']
+    $response = $request->createResponse(
+      new Http\Response\Content\String(
+        $request->headers['User-Agent']
+      )
     );
     return $response;
   }
@@ -28,8 +30,7 @@ $route->match(
 $route->match(
   '/xml',
   function (Http\Request $request) {
-    $response = $request->createResponse();
-    $response->content = new Http\Response\Content\Xml();
+    $response = $request->createResponse(new Http\Response\Content\Xml());
     $dom = $response->content->document;
     $dom->appendChild($root = $dom->createElement('response'));
     foreach ($request->query as $name => $value) {
