@@ -9,45 +9,26 @@ namespace Carica\Io\Network\Http\Route {
 
     use Io\File\Access\Aggregation;
 
-    private $_documentRoot = '';
+    private $_file = '';
 
-    private $_encodings = array(
-      'text/plain' => 'utf-8',
-      'text/html' => 'utf-8',
-      'text/javascript' => 'utf-8',
-      'application/x-javascript' => 'utf-8',
-      'application/xml' => 'utf-8'
-    );
+    private $_encoding = 'utf-8';
 
-    public function __construct($documentRoot, array $encodings = array()) {
-      $this->setDocumentRoot($documentRoot);
-      foreach ($encodings as $mimetype => $encoding) {
-        $this->setEncoding($mimetype, $encoding);
-      }
+    public function __construct($file, $encoding = 'utf-8') {
+      $this->setFile($file);
+      $this->_encoding = $encoding;
     }
 
-    public function setDocumentRoot($documentRoot) {
-      if ($directory = $this->fileAccess()->getRealPath($documentRoot)) {
-        $this->_documentRoot = $directory;
+    public function setFile($documentRoot) {
+      if ($file = $this->fileAccess()->getRealPath($documentRoot)) {
+        $this->_file = $file;
         return;
       }
       throw new \LogicException(
         sprintf(
-         'Invalid document root: Directory "%s" not found.',
-         $documentRoot
+         'Invalid file: "%s" not found.',
+         $file
         )
       );
-    }
-
-    public function setEncoding($mimetype, $encoding) {
-      $this->_encodings[$mimetype] = (string)$encoding;
-    }
-
-    public function getEncoding($mimetype) {
-      if (isset($this->_encodings[$mimetype])) {
-        return $this->_encodings[$mimetype];
-      }
-      return '';
     }
 
     public function __invoke() {
@@ -55,12 +36,12 @@ namespace Carica\Io\Network\Http\Route {
     }
 
     public function call(Http\Request $request) {
-      if ($file = $this->getFileInfo($request)) {
+      if ($file = $this->getFileInfo()) {
         if ($file->isFile() && $file->isReadable()) {
           $response = $request->createResponse();
           $localFile = $file->getRealPath();
           $mimetype = $this->fileAccess()->getMimeType($localFile);
-          $encoding = $this->getEncoding($mimetype);
+          $encoding = $this->_encoding;
           $response->content = new Http\Response\Content\File(
             $localFile, $mimetype, $encoding
           );
@@ -75,14 +56,11 @@ namespace Carica\Io\Network\Http\Route {
     }
 
     /**
-     * @param Http\Request $request
      * @return \SplFileInfo
      */
-    private function getFileInfo(Http\Request $request) {
-      if ($localFile = $this->fileAccess()->getRealPath($this->_documentRoot.$request->path)) {
-        if (0 === strpos($localFile, $this->_documentRoot.DIRECTORY_SEPARATOR)) {
-          return $this->fileAccess()->getInfo($localFile);
-        }
+    private function getFileInfo() {
+      if ($localFile = $this->fileAccess()->getRealPath($this->_file)) {
+        return $this->fileAccess()->getInfo($localFile);
       }
       return FALSE;
     }

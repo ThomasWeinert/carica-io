@@ -42,7 +42,8 @@ $route->match(
     return $response;
   }
 );
-$route->startsWith('/files', new Http\Route\File(__DIR__));
+$route->match('/hello', new Http\Route\File(__DIR__.'/files/hello.html'));
+$route->startsWith('/files', new Http\Route\Directory(__DIR__));
 
 $server = new Carica\Io\Network\Http\Server($route);
 $server->listen(8080);
