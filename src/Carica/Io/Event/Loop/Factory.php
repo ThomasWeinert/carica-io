@@ -24,8 +24,8 @@ namespace Carica\Io\Event\Loop {
     private static $_priority = array();
 
     private static $_defaultPriority = array(
-      // self::USE_REACT,
-      // self::USE_LIBEVENT,
+      self::USE_REACT,
+      self::USE_LIBEVENT,
       self::USE_STREAMSELECT
     );
 
