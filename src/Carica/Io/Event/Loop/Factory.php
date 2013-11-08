@@ -7,51 +7,95 @@ namespace Carica\Io\Event\Loop {
 
   class Factory {
 
+    const USE_STREAMSELECT = 'streamselect';
+    const USE_LIBEVENT = 'libevent';
+    const USE_REACT = 'react';
+
     /**
      * @var Event\Loop
      */
     private static $_globalLoop = NULL;
 
-    private static $_useLibevent = FALSE;
+    /**
+     * @var null|int
+     */
+    private static $_useImplementation = NULL;
+
+    private static $_priority = array();
+
+    private static $_defaultPriority = array(
+      // self::USE_REACT,
+      // self::USE_LIBEVENT,
+      self::USE_STREAMSELECT
+    );
 
     /**
      * Create a event loop
      *
+     * @param array $priority
      * @return Event\Loop
      */
-    public static function create() {
-      if (self::useLibevent()) {
+    public static function create(array $priority = NULL) {
+      switch (self::getImplementation($priority)) {
+      case self::USE_REACT :
+        return new React();
+      case self::USE_LIBEVENT :
         return new Libevent(event_base_new());
-      } else {
+      default :
         return new StreamSelect();
       }
     }
 
     /**
-     * Getter/Setter for libevent usage, if TRUE is provided as an argument it will
-     * only activate the use if the extension is installed.
+     * Determine the implementation that should be used
      *
-     * @param string $use
-     * @return boolean
+     * @param array $priority
+     * @return string
      */
-    public static function useLibevent($use = NULL) {
-      if (isset($use)) {
-        self::$_useLibevent = $use ? NULL : FALSE;
+    public static function getImplementation(array $priority = NULL) {
+      $priority = self::getPriority($priority);
+      if (NULL === self::$_useImplementation ||
+          !in_array(self::$_useImplementation, $priority)) {
+        foreach ($priority as $implementation) {
+          switch ($implementation) {
+          case self::USE_REACT :
+            if (interface_exists('\\React\\EventLoop\\LoopInterface')) {
+              return self::$_useImplementation = self::USE_REACT;
+            }
+            break;
+          case self::USE_LIBEVENT :
+            if (extension_loaded('libevent')) {
+              return self::$_useImplementation = self::USE_LIBEVENT;
+            }
+            break;
+          }
+        }
+        self::$_useImplementation = self::USE_STREAMSELECT;
       }
-      if (NULL === self::$_useLibevent) {
-        self::$_useLibevent = extension_loaded('libevent');
+      return self::$_useImplementation;
+    }
+
+    private function getPriority($priority) {
+      if (NULL == self::$_priority) {
+        self::$_priority = self::$_defaultPriority;
       }
-      return self::$_useLibevent;
+      if (NULL === $priority) {
+        $priority = self::$_priority;
+      } else {
+        self::$_priority = $priority;
+      }
+      return $priority;
     }
 
     /**
      * Return a global event loop instance, create it if it does not exists yet.
      *
+     * @param null $priority
      * @return Event\Loop
      */
-    public static function get() {
+    public static function get($priority = NULL) {
       if (is_null(self::$_globalLoop)) {
-        self::$_globalLoop = self::create();
+        self::$_globalLoop = self::create($priority);
       }
       return self::$_globalLoop;
     }
@@ -71,7 +115,8 @@ namespace Carica\Io\Event\Loop {
      * @return Event\Loop
      */
     public static function reset() {
-      self::$_useLibevent = NULL;
+      self::$_priority = self::$_defaultPriority;
+      self::$_useImplementation = NULL;
       self::$_globalLoop = NULL;
     }
 

@@ -22,8 +22,7 @@ namespace Carica\Io\Event\Loop {
     }
 
     public function testCreateStreamSelectExplicit() {
-      Factory::useLibevent(FALSE);
-      $loop = Factory::create();
+      $loop = Factory::create(array());
       $this->assertInstanceOf('Carica\Io\Event\Loop\StreamSelect', $loop);
     }
 
