@@ -10,6 +10,7 @@ namespace Carica\Io\Event\Loop {
     const USE_STREAMSELECT = 'streamselect';
     const USE_LIBEVENT = 'libevent';
     const USE_REACT = 'react';
+    const USE_ALERT_REACTOR = 'alert-reactor';
 
     /**
      * @var Event\Loop
@@ -39,6 +40,8 @@ namespace Carica\Io\Event\Loop {
       switch (self::getImplementation($priority)) {
       case self::USE_REACT :
         return new React();
+      case self::USE_REACT :
+        return new AlertReactor();
       case self::USE_LIBEVENT :
         return new Libevent(event_base_new());
       default :
