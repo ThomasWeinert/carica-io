@@ -83,7 +83,7 @@ namespace Carica\Io\Event\Loop {
       return self::$_useImplementation;
     }
 
-    private function getPriority($priority) {
+    private static function getPriority($priority) {
       if (NULL == self::$_priority) {
         self::$_priority = self::$_defaultPriority;
       }
