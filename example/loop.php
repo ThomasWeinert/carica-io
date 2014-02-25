@@ -1,7 +1,6 @@
 <?php
+include(__DIR__.'/../vendor/autoload.php');
 
-include(__DIR__.'/../src/Carica/Io/Loader.php');
-Carica\Io\Loader::register();
 use Carica\Io\Event\Loop;
 
 $loop = Loop\Factory::get();

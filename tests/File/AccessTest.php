@@ -2,7 +2,7 @@
 
 namespace Carica\Io\File {
 
-  include_once(__DIR__ . '/../Bootstrap.php');
+  include_once(__DIR__.'/../Bootstrap.php');
 
   class FileAccessTest extends \PHPUnit_Framework_TestCase {
 

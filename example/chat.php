@@ -6,6 +6,8 @@
  * http://dhotson.tumblr.com/post/271733389/a-simple-chat-server-in-node-js
  */
 
+include(__DIR__.'/../vendor/autoload.php');
+
 class Client {
 
   /**
@@ -26,8 +28,6 @@ function broadcast($clients, $data) {
   }
 }
 
-include(__DIR__.'/../src/Carica/Io/Loader.php');
-Carica\Io\Loader::register();
 use Carica\Io;
 
 $clients = array();
