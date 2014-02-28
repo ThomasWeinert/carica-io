@@ -11,7 +11,7 @@ namespace Carica\Io {
      */
     public function testStaticFunctionCreate() {
       $defer = Deferred::create();
-      $this->assertInstanceOf('Carica\Io\Deferred', $defer);
+      $this->assertInstanceOf('Carica\\Io\\Deferred', $defer);
     }
 
     /**
@@ -239,7 +239,7 @@ namespace Carica\Io {
     public function testPromise() {
       $defer = new Deferred();
       $promise = $defer->promise();
-      $this->assertInstanceOf('Carica\Io\Deferred\Promise', $promise);
+      $this->assertInstanceOf('Carica\\Io\\Deferred\\Promise', $promise);
       $this->assertAttributeSame(
         $defer, '_defer', $promise
       );
@@ -490,7 +490,7 @@ namespace Carica\Io {
      */
     public function testWhenWihtoutArgumentsReturnsResolvedPromise() {
       $promise = Deferred::when();
-      $this->assertInstanceOf('Carica\Io\Deferred\Promise', $promise);
+      $this->assertInstanceOf('Carica\\Io\\Deferred\\Promise', $promise);
       $this->assertEquals(Deferred::STATE_RESOLVED, $promise->state());
     }
 
@@ -506,7 +506,7 @@ namespace Carica\Io {
             $calls[] = func_get_args();
           }
         );
-      $this->assertInstanceOf('Carica\Io\Deferred\Promise', $promise);
+      $this->assertInstanceOf('Carica\\Io\\Deferred\\Promise', $promise);
       $this->assertEquals(Deferred::STATE_RESOLVED, $promise->state());
       $this->assertEquals(
         array(

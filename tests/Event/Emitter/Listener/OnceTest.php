@@ -16,7 +16,7 @@ namespace Carica\Io\Event\Emitter\Listener {
       $callback = function() use ($that) {
         $that->calledCallback = TRUE;
       };
-      $emitter = $this->getMock('Carica\Io\Event\Emitter');
+      $emitter = $this->getMock('Carica\\Io\\Event\\Emitter');
       $emitter
         ->expects($this->once())
         ->method('removeListener')

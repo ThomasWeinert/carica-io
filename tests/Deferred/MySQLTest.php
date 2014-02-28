@@ -8,6 +8,12 @@ namespace Carica\Io\Deferred {
 
   class MySQLTest extends \PHPUnit_Framework_TestCase {
 
+    public function setUp() {
+      if (!defined('MYSQLI_ASYNC')) {
+        $this->markTestSkipped('MySQL async not available in this PHP.');
+      }
+    }
+
     /**
      * @covers Carica\Io\Deferred\MySQL
      */
@@ -29,7 +35,7 @@ namespace Carica\Io\Deferred {
     }
 
     public function getLoopFixture() {
-      $loop = $this->getMock('Carica\Io\Event\Loop');
+      $loop = $this->getMock('Carica\\Io\\Event\\Loop');
       $loop
         ->expects($this->once())
         ->method('setInterval')

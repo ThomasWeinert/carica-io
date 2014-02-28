@@ -11,7 +11,7 @@ namespace Carica\Io\Event\Emitter {
      */
     public function testGetEventsAfterSet() {
       $aggregation = new Aggregation_TestProxy();
-      $aggregation->events($events = $this->getMock('Carica\Io\Event\Emitter'));
+      $aggregation->events($events = $this->getMock('Carica\\Io\\Event\\Emitter'));
       $this->assertSame($events, $aggregation->events());
     }
 
@@ -20,7 +20,7 @@ namespace Carica\Io\Event\Emitter {
      */
     public function testGetEventsImplicitCreate() {
       $aggregation = new Aggregation_TestProxy();
-      $this->assertInstanceOf('Carica\Io\Event\Emitter', $aggregation->events());
+      $this->assertInstanceOf('Carica\\Io\\Event\\Emitter', $aggregation->events());
     }
 
     /**

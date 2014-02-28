@@ -73,7 +73,7 @@ namespace Carica\Io\Network\Http\Route\Target {
 
     private function getRequestFixture() {
       $request = $this
-        ->getMockBuilder('Carica\Io\Network\Http\Request')
+        ->getMockBuilder('Carica\\Io\\Network\\Http\\Request')
         ->disableOriginalConstructor()
         ->getMock();
       $request

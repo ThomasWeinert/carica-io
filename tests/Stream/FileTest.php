@@ -23,7 +23,7 @@ namespace Carica\Io\Stream {
      * @covers Carica\Io\Stream\File
      */
     public function testOpen() {
-      $loop = $this->getMock('Carica\Io\Event\Loop');
+      $loop = $this->getMock('Carica\\Io\\Event\\Loop');
       $loop
         ->expects($this->once())
         ->method('setStreamReader')
@@ -40,7 +40,7 @@ namespace Carica\Io\Stream {
      */
     public function testOpenExpectingError() {
       $events = $this
-        ->getMockBuilder('Carica\Io\Event\Emitter')
+        ->getMockBuilder('Carica\\Io\\Event\\Emitter')
         ->disableOriginalConstructor()
         ->getMock();
       $events
@@ -58,14 +58,14 @@ namespace Carica\Io\Stream {
      * @covers Carica\Io\Stream\File
      */
     public function testRead() {
-      $loop = $this->getMock('Carica\Io\Event\Loop');
+      $loop = $this->getMock('Carica\\Io\\Event\\Loop');
       $loop
         ->expects($this->once())
         ->method('setStreamReader')
         ->with($this->isType('callable'), $this->isType('resource'));
 
       $events = $this
-        ->getMockBuilder('Carica\Io\Event\Emitter')
+        ->getMockBuilder('Carica\\Io\\Event\\Emitter')
         ->disableOriginalConstructor()
         ->getMock();
       $events

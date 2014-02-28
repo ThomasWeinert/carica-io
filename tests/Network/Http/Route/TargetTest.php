@@ -21,7 +21,7 @@ namespace Carica\Io\Network\Http\Route {
      */
     public function testCallableInterfaceVaildationSuccessful() {
       $request = $this
-        ->getMockBuilder('Carica\Io\Network\Http\Request')
+        ->getMockBuilder('Carica\\Io\\Network\\Http\\Request')
         ->disableOriginalConstructor()
         ->getMock();
       $target = new Target_TestProxy(
@@ -37,7 +37,7 @@ namespace Carica\Io\Network\Http\Route {
      */
     public function testCallableInterfaceVaildationFailed() {
       $request = $this
-        ->getMockBuilder('Carica\Io\Network\Http\Request')
+        ->getMockBuilder('Carica\\Io\\Network\\Http\\Request')
         ->disableOriginalConstructor()
         ->getMock();
       $target = new Target_TestProxy(

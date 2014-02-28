@@ -53,11 +53,11 @@ namespace Carica\Io\Network\Http {
      */
     public function testRoutingOneMatchingTarget() {
       $request = $this
-        ->getMockBuilder('Carica\Io\Network\Http\Request')
+        ->getMockBuilder('Carica\\Io\\Network\\Http\\Request')
         ->disableOriginalConstructor()
         ->getMock();
       $response = $this
-        ->getMockBuilder('Carica\Io\Network\Http\Response')
+        ->getMockBuilder('Carica\\Io\\Network\\Http\\Response')
         ->disableOriginalConstructor()
         ->getMock();
 
@@ -75,7 +75,7 @@ namespace Carica\Io\Network\Http {
      */
     public function testRoutingNoMatchingTarget() {
       $request = $this
-        ->getMockBuilder('Carica\Io\Network\Http\Request')
+        ->getMockBuilder('Carica\\Io\\Network\\Http\\Request')
         ->disableOriginalConstructor()
         ->getMock();
 

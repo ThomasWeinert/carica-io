@@ -13,7 +13,7 @@ namespace Carica\Io\Event {
      */
     public function testOnAddListener() {
       $event = $this
-        ->getMockBuilder('Carica\Io\Event\Emitter\Listener\On')
+        ->getMockBuilder('Carica\\Io\\Event\\Emitter\\Listener\\On')
         ->disableOriginalConstructor()
         ->getMock();
       $emitter = new Emitter();
@@ -34,7 +34,7 @@ namespace Carica\Io\Event {
       );
       $events = $emitter->listeners('foo');
       $this->assertInstanceOf(
-        'Carica\Io\Event\Emitter\Listener\On',
+        'Carica\\Io\\Event\\Emitter\\Listener\\On',
         $events[0]
       );
     }
@@ -44,7 +44,7 @@ namespace Carica\Io\Event {
      */
     public function testOnceAddListener() {
       $event = $this
-        ->getMockBuilder('Carica\Io\Event\Emitter\Listener\Once')
+        ->getMockBuilder('Carica\\Io\\Event\\Emitter\\Listener\\Once')
         ->disableOriginalConstructor()
         ->getMock();
       $emitter = new Emitter();
@@ -65,7 +65,7 @@ namespace Carica\Io\Event {
       );
       $events = $emitter->listeners('foo');
       $this->assertInstanceOf(
-        'Carica\Io\Event\Emitter\Listener\Once',
+        'Carica\\Io\\Event\\Emitter\\Listener\\Once',
         $events[0]
       );
     }
@@ -74,7 +74,7 @@ namespace Carica\Io\Event {
      * @covers Carica\Io\Event\Emitter::removeListener
      */
     public function testRemoveListener() {
-      $listener = $this->getMock('Carica\Io\Event\Emitter\Listener');
+      $listener = $this->getMock('Carica\\Io\\Event\\Emitter\\Listener');
       $emitter = new Emitter();
       $emitter->on('foo', $listener);
       $emitter->removeListener('foo', $listener);
@@ -86,8 +86,8 @@ namespace Carica\Io\Event {
      */
     public function testRemoveAllListeners() {
       $emitter = new Emitter();
-      $emitter->on('foo', $this->getMock('Carica\Io\Event\Emitter\Listener'));
-      $emitter->on('foo', $this->getMock('Carica\Io\Event\Emitter\Listener'));
+      $emitter->on('foo', $this->getMock('Carica\\Io\\Event\\Emitter\\Listener'));
+      $emitter->on('foo', $this->getMock('Carica\\Io\\Event\\Emitter\\Listener'));
       $emitter->removeAllListeners('foo');
       $this->assertCount(0, $emitter->listeners('foo'));
     }
@@ -105,8 +105,8 @@ namespace Carica\Io\Event {
      */
     public function testListernersReturnsListenersForSpecifiedEvent() {
       $emitter = new Emitter();
-      $emitter->on('foo', $this->getMock('Carica\Io\Event\Emitter\Listener'));
-      $emitter->on('bar', $this->getMock('Carica\Io\Event\Emitter\Listener'));
+      $emitter->on('foo', $this->getMock('Carica\\Io\\Event\\Emitter\\Listener'));
+      $emitter->on('bar', $this->getMock('Carica\\Io\\Event\\Emitter\\Listener'));
       $this->assertCount(1, $emitter->listeners('bar'));
     }
 

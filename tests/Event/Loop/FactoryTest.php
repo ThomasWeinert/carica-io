@@ -18,27 +18,27 @@ namespace Carica\Io\Event\Loop {
 
     public function testCreate() {
       $loop = Factory::create();
-      $this->assertInstanceOf('Carica\Io\Event\Loop', $loop);
+      $this->assertInstanceOf('Carica\\Io\\Event\\Loop', $loop);
     }
 
     public function testCreateStreamSelectExplicit() {
       $loop = Factory::create(array());
-      $this->assertInstanceOf('Carica\Io\Event\Loop\StreamSelect', $loop);
+      $this->assertInstanceOf('Carica\\Io\\Event\\Loop\\StreamSelect', $loop);
     }
 
     public function testGetAfterSet() {
-      $loop = $this->getMock('Carica\Io\Event\Loop');
+      $loop = $this->getMock('Carica\\Io\\Event\\Loop');
       Factory::set($loop);
       $this->assertSame($loop, Factory::get());
     }
 
     public function testGetImplicitCreate() {
       $loop = Factory::get();
-      $this->assertInstanceOf('Carica\Io\Event\Loop', $loop);
+      $this->assertInstanceOf('Carica\\Io\\Event\\Loop', $loop);
     }
 
     public function testRun() {
-      $loop = $this->getMock('Carica\Io\Event\Loop');
+      $loop = $this->getMock('Carica\\Io\\Event\\Loop');
       $loop
         ->expects($this->once())
         ->method('run');

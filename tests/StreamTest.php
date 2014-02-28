@@ -7,7 +7,7 @@ namespace Carica\Io {
   class StreamTest extends \PHPUnit_Framework_TestCase {
 
     public function setUp() {
-      class_exists('Carica\Io\Stream');
+      class_exists('Carica\\Io\\Stream');
     }
 
     function testEncodeBinaryFromArray() {
