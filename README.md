@@ -1,6 +1,8 @@
 Carica Io
 =========
 
+[![Build Status](https://travis-ci.org/ThomasWeinert/carica-io.png?branch=master)](https://travis-ci.org/ThomasWeinert/carica-io)
+
 License:   [The MIT License](http://www.opensource.org/licenses/mit-license.php)
 
 Copyright: 2013 Thomas Weinert <thomas@weinert.info>
