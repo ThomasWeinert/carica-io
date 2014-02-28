@@ -3,7 +3,7 @@
   "type": "library",
   "description": "Non blocking I/O for PHP",
   "keywords": ["non-blocking-io", "asynchronous-io"],
-  "homepage": "https://bitbucket.org/ThomasWeinert/carica-io/",
+  "homepage": "https://github.com/ThomasWeinert/carica-io",
   "license": "MIT",
   "authors": [
     {"name": "Thomas Weinert", "email": "thomas@weinert.info"}
