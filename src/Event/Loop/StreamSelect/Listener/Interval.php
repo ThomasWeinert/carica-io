@@ -32,6 +32,10 @@ namespace Carica\Io\Event\Loop\StreamSelect\Listener {
     }
 
     private function getNow() {
+      $loop = $this->getLoop();
+      if ($loop instanceOf Event\Loop\Clock) {
+        return $loop->getNow();
+      }
       return ceil(microtime(TRUE) * 1000);
     }
   }
