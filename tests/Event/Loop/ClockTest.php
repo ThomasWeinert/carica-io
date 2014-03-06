@@ -7,7 +7,7 @@ namespace Carica\Io\Event\Loop {
   use Carica\Io\Event;
 
   /**
-   * @covers Carica\Io\Event\Loop\Fake
+   * @covers Carica\Io\Event\Loop\Clock
    */
   class ClockTest extends \PHPUnit_Framework_TestCase {
 
@@ -24,6 +24,32 @@ namespace Carica\Io\Event\Loop {
       $this->assertFalse($success);
       $loop->tick(1);
       $this->assertTrue($success);
+    }
+
+    public function testSetTimeoutOnlyCalledOnce() {
+      $loop = new Clock();
+      $counter = 0;
+      $loop->setTimeout(
+        function () use (&$counter) {
+          $counter++;
+        },
+        100
+      );
+      $loop->tick(1000);
+      $this->assertEquals(1, $counter);
+    }
+
+    public function testSetInterval() {
+      $loop = new Clock();
+      $counter = 0;
+      $loop->setInterval(
+        function () use (&$counter) {
+          $counter++;
+        },
+        100
+      );
+      $loop->tick(1000);
+      $this->assertEquals(10, $counter);
     }
   }
 }
