@@ -21,9 +21,19 @@ namespace Carica\Io\Event\Emitter {
       if (NULL !== $emitter) {
         $this->_eventEmitter = $emitter;
       } elseif (NULL === $this->_eventEmitter) {
-        $this->_eventEmitter = new Event\Emitter();
+        $this->_eventEmitter = $this->createEventEmitter();
       }
       return $this->_eventEmitter;
+    }
+
+    /**
+     * Lazy create for the event emitter, overload to restrict/define
+     * the events
+     *
+     * @return Event\Emitter
+     */
+    protected function createEventEmitter() {
+      return new Event\Emitter();
     }
 
     /**
@@ -31,7 +41,7 @@ namespace Carica\Io\Event\Emitter {
      *
      * @param $event
      */
-    public function emitEvent($event) {
+    protected function emitEvent($event) {
       if (isset($this->_eventEmitter) && !empty($event)) {
         call_user_func_array(array($this->_eventEmitter, 'emit'), func_get_args());
       }

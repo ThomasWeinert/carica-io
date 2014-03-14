@@ -169,5 +169,66 @@ namespace Carica\Io\Event {
       $emitter->emit('bar');
       $this->assertEquals(array('success'), $that->emittedEvents);
     }
+
+    /**
+     * @covers Carica\Io\Event\Emitter
+     */
+    public function testCallEventAfterDefining() {
+      $that = $this;
+      $emitter = new Emitter();
+      $emitter->defineEvents(array('foo'));
+      $emitter->on(
+        'foo',
+        function() use ($that) {
+          $that->emittedEvents[] = 'one';
+        }
+      );
+      $emitter->emit('foo');
+      $this->assertEquals(array('one'), $that->emittedEvents);
+    }
+
+    /**
+     * @covers Carica\Io\Event\Emitter
+     */
+    public function testCallEventAfterDefiningUsingAlias() {
+      $that = $this;
+      $emitter = new Emitter();
+      $emitter->defineEvents(array('foo' => 'bar'));
+      $emitter->on(
+        'bar',
+        function() use ($that) {
+          $that->emittedEvents[] = 'one';
+        }
+      );
+      $emitter->emit('bar');
+      $this->assertEquals(array('one'), $that->emittedEvents);
+    }
+
+    /**
+     * @covers Carica\Io\Event\Emitter
+     */
+    public function testCallEventAfterDefiningUsingSecondAlias() {
+      $that = $this;
+      $emitter = new Emitter();
+      $emitter->defineEvents(array('foo' => array('bar', 'foobar')));
+      $emitter->on(
+        'foobar',
+        function() use ($that) {
+          $that->emittedEvents[] = 'one';
+        }
+      );
+      $emitter->emit('foobar');
+      $this->assertEquals(array('one'), $that->emittedEvents);
+    }
+
+    /**
+     * @covers Carica\Io\Event\Emitter
+     */
+    public function testEventAfterDefinitionWithUndefinedEventExpectingException() {
+      $emitter = new Emitter();
+      $emitter->defineEvents(array('foo' => 'bar'));
+      $this->setExpectedException('UnexpectedValueException');
+      $emitter->on('invalid', function() {});
+    }
   }
 }

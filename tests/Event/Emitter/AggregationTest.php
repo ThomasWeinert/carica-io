@@ -46,6 +46,8 @@ namespace Carica\Io\Event\Emitter {
   }
 
   class Aggregation_TestProxy {
-    use Aggregation;
+    use Aggregation {
+      Aggregation::emitEvent as public;
+    }
   }
 }
