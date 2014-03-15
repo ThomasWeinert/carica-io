@@ -43,11 +43,19 @@ namespace Carica\Io\Event\Emitter {
       $this->assertAttributeSame(NULL, '_eventEmitter', $aggregation);
     }
 
+    public function testAttachEventUsingMagicMethod() {
+      $aggregation = new Aggregation_TestProxy();
+      $result = FALSE;
+      $aggregation->onTest(function() use (&$result) { $result = TRUE; });
+      $aggregation->emitEvent('test');
+      $this->assertTrue($result);
+    }
   }
 
   class Aggregation_TestProxy {
     use Aggregation {
       Aggregation::emitEvent as public;
+      Aggregation::callEmitter as __call;
     }
   }
 }

@@ -46,5 +46,40 @@ namespace Carica\Io\Event\Emitter {
         call_user_func_array(array($this->_eventEmitter, 'emit'), func_get_args());
       }
     }
+
+    /**
+     * A handler for dynamic method calls like $object->onEventName(). It can be used
+     * implicit as __call() or called explicit it. If called explicit, you can suppress
+     * the exceptions and use your own error handling.
+     *
+     * @param string $method
+     * @param array $arguments
+     * @param bool $silent
+     * @return bool
+     * @throws \LogicException
+     * @throws \UnexpectedValueException
+     */
+    protected function callEmitter($method, $arguments, $silent = FALSE) {
+      $report = !$silent;
+      $matches = array();
+      if (preg_match('(^(?P<call>on|once)(?P<event>[A-Z].*))i', $method, $matches)) {
+        try {
+          array_unshift($arguments, $matches['event']);
+          call_user_func_array(
+            array($this->events(), $matches['call']), $arguments
+          );
+          return TRUE;
+        } catch (\UnexpectedValueException $e) {
+          if ($report) {
+            throw $e;
+          }
+        }
+      } elseif ($report) {
+        throw new \LogicException(
+          sprintf('Unknown method call %s::%s()', get_class($this), $method)
+        );
+      }
+      return FALSE;
+    }
   }
 }
