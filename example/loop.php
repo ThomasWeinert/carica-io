@@ -5,10 +5,9 @@ use Carica\Io\Event\Loop;
 
 $loop = Loop\Factory::get();
 
-$i = 0;
-
 $loop->setInterval(
-  function () use (&$i) {
+  function () {
+    static $i = 0;
     echo $i++;
   },
   1000
