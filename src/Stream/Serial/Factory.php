@@ -6,34 +6,44 @@ namespace Carica\Io\Stream\Serial {
 
   class Factory {
 
-    /**
-     * Set use dio to false, by default dio is not a valid
-     * stream resource so it uses a interval listener on the
-     * event loop. It is no able to use a stream listener.
-     *
-     * @var boolean
-     */
-    private static $_useDio = FALSE;
+    const MODE_DEFAULT = 0;
+    const MODE_DIO = 1;
+    const MODE_GORILLA = 2;
 
-    public static function useDio($use = NULL) {
-      if (isset($use)) {
-        if ($use && extension_loaded('dio')) {
-          self::$_useDio = TRUE;
-        } elseif (!$use) {
-          self::$_useDio = FALSE;
-        } else {
-          throw new \LogicException('Extension "dio" not available.');
+    private static $_extensions = array(
+      self::MODE_GORILLA => 'gorilla',
+      //self::MODE_DIO => 'dio',
+    );
+
+    private static $_mode = NULL;
+
+    public static function mode($mode = NULL)
+    {
+      if (
+        isset($mode) &&
+        isset(self::$_extensions[$mode]) &&
+        extension_loaded(self::$_extensions[$mode])
+      ) {
+        self::$_mode = $mode;
+      } elseif (NULL == self::$_mode) {
+        foreach (self::$_extensions as $mode => $extension) {
+          if (extension_loaded($extension)) {
+            return self::$_mode = $mode;
+          }
         }
-      } elseif (NULL == self::$_useDio) {
-        self::$_useDio = extension_loaded('dio');
+        self::$_mode = self::MODE_DEFAULT;
       }
-      return self::$_useDio;
+      return self::$_mode;
     }
 
     public static function create($device) {
-      if (self::useDio()) {
-        return new Dio($device);
-      } else {
+      switch (self::mode()) {
+      case self::MODE_DIO :
+      return new Dio($device);
+      case self::MODE_GORILLA :
+        return new Gorilla($device);
+      case self::MODE_DEFAULT :
+      default :
         return new Stream\Serial($device);
       }
     }

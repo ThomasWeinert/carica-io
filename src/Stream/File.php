@@ -66,6 +66,11 @@ namespace Carica\Io\Stream {
       return NULL;
     }
 
+    public function isOpen()
+    {
+      return is_resource($this->resource());
+    }
+
     /**
      * Open file (nonblocking) and store resource
      *

@@ -4,7 +4,7 @@ namespace Carica\Io {
 
   interface Stream extends Event\HasEmitter {
 
-    function resource();
+    function isOpen();
 
     function open();
 

@@ -49,6 +49,11 @@ namespace Carica\Io\Stream {
       return NULL;
     }
 
+    public function isOpen()
+    {
+      return is_resource($this->resource());
+    }
+
     public function open() {
       $this->_device->setUp();
       $device = (string)$this->_device;

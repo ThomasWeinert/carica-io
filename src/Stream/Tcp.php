@@ -49,6 +49,11 @@ namespace Carica\Io\Stream {
       return NULL;
     }
 
+    public function isOpen()
+    {
+      return is_resource($this->resource());
+    }
+
     public function open() {
       $resource = @stream_socket_client('tcp://'.$this->_host.':'.$this->_port, $no, $string, 2);
       if ($resource) {

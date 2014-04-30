@@ -50,6 +50,11 @@ namespace Carica\Io\Stream\Serial {
       return NULL;
     }
 
+    public function isOpen()
+    {
+      return is_resource($this->resource());
+    }
+
     public function open()
     {
       $device = 'dio.serial://' . $this->_device;
@@ -81,7 +86,6 @@ namespace Carica\Io\Stream\Serial {
           )
         )
       );
-
     }
 
     public function close()
