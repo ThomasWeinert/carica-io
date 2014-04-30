@@ -59,7 +59,6 @@ namespace Carica\Io\Stream\Serial {
 
     public function open()
     {
-      var_dump($this->_device->getDevice());
       if ($port = new SerialPort($this->_device->getDevice())) {
         $port
           ->setFlowControl(SerialPort::FLOW_CONTROL_SOFT)
