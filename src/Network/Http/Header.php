@@ -72,6 +72,10 @@ namespace Carica\Io\Network\Http {
      * @return string
      */
     public function __toString() {
+      if (defined('HHVM_VERSION')) {
+        $values = (array)$this->_values;
+        return (string)end($values);
+      }
       /** @noinspection PhpParamsInspection */
       return (string)end($this->_values);
     }
@@ -100,6 +104,10 @@ namespace Carica\Io\Network\Http {
       case 'name' :
         return $this->_name;
       case 'value' :
+        if (defined('HHVM_VERSION')) {
+          $values = (array)$this->_values;
+          return (string)end($values);
+        }
         /** @noinspection PhpParamsInspection */
         return end($this->_values);
       case 'values' :

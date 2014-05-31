@@ -54,8 +54,12 @@ namespace Carica\Io\Event\Emitter {
 
   class Aggregation_TestProxy {
     use Aggregation {
+      Aggregation::callEmitter as protected;
       Aggregation::emitEvent as public;
-      Aggregation::callEmitter as __call;
+    }
+
+    public function __call($method, $arguments) {
+      $this->callEmitter($method, $arguments);
     }
   }
 }

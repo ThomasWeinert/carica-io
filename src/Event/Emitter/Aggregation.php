@@ -64,6 +64,19 @@ namespace Carica\Io\Event\Emitter {
       $matches = array();
       if (preg_match('(^(?P<call>on|once)(?P<event>[A-Z].*))i', $method, $matches)) {
         try {
+          if (
+            !(
+              isset($arguments) &&
+              is_array($arguments) &&
+              count($arguments) > 0 &&
+              is_callable($arguments[0])
+            )
+          ) {
+            throw new \InvalidArgumentException(
+              'No callable for event provided.'
+            );
+          }
+          $arguments = isset($arguments) ? $arguments : array(function(){});
           array_unshift($arguments, $matches['event']);
           call_user_func_array(
             array($this->events(), $matches['call']), $arguments
