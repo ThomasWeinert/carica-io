@@ -1,7 +1,7 @@
 Carica Io
 =========
 
-[![Build Status](https://travis-ci.org/ThomasWeinert/carica-io.svg?branch=master)](https://travis-ci.org/carica/io)
+[![Build Status](https://travis-ci.org/ThomasWeinert/carica-io.svg?branch=master)](https://travis-ci.org/ThomasWeinert/carica-io)
 [![HHVM Status](http://hhvm.h4cc.de/badge/carica/io.png)](http://hhvm.h4cc.de/package/carica/io)
 [![License](https://poser.pugx.org/carica/io/license.svg)](https://packagist.org/packages/carica/io)
 [![Total Downloads](https://poser.pugx.org/carica/io/downloads.svg)](https://packagist.org/packages/carica/io)
