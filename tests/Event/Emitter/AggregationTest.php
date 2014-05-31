@@ -43,23 +43,35 @@ namespace Carica\Io\Event\Emitter {
       $this->assertAttributeSame(NULL, '_eventEmitter', $aggregation);
     }
 
-    public function testAttachEventUsingMagicMethod() {
+    public function testAttachEventUsingImportedMagicMethod() {
       $aggregation = new Aggregation_TestProxy();
       $result = FALSE;
       $aggregation->onTest(function() use (&$result) { $result = TRUE; });
       $aggregation->emitEvent('test');
       $this->assertTrue($result);
     }
+
+    public function testAttachEventUsingOwnMagicMethod() {
+      $aggregation = new Aggregation_TestProxyWithCall();
+      $result = FALSE;
+      $aggregation->onTest(function() use (&$result) { $result = TRUE; });
+      $aggregation->events()->emit('test');
+      $this->assertTrue($result);
+    }
   }
 
   class Aggregation_TestProxy {
     use Aggregation {
-      Aggregation::callEmitter as protected;
+      Aggregation::__call as public;
       Aggregation::emitEvent as public;
     }
+  }
+
+  class Aggregation_TestProxyWithCall {
+    use Aggregation;
 
     public function __call($method, $arguments) {
-      $this->callEmitter($method, $arguments);
+      return $this->callEmitter($method, $arguments);
     }
   }
 }

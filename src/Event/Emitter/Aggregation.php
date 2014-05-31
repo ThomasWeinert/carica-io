@@ -94,5 +94,9 @@ namespace Carica\Io\Event\Emitter {
       }
       return FALSE;
     }
+
+    public function __call($method, $arguments) {
+      $this->callEmitter($method, $arguments);
+    }
   }
 }
