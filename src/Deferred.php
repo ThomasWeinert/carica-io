@@ -93,9 +93,11 @@ namespace Carica\Io {
     public function always(Callable $callback) {
       $this->_done->add($callback);
       $this->_failed->add($callback);
-      if ($this->_state != self::STATE_PENDING) {
-        call_user_func_array($callback, $this->_finishArguments);
-      }
+      $this->callIf(
+        $this->_state != self::STATE_PENDING,
+        $callback,
+        $this->_finishArguments
+      );
       return $this;
     }
 
@@ -107,9 +109,11 @@ namespace Carica\Io {
      */
     public function done(Callable $callback) {
       $this->_done->add($callback);
-      if ($this->_state == self::STATE_RESOLVED) {
-        call_user_func_array($callback, $this->_finishArguments);
-      }
+      $this->callIf(
+        $this->_state == self::STATE_RESOLVED,
+        $callback,
+        $this->_finishArguments
+      );
       return $this;
     }
 
@@ -121,9 +125,11 @@ namespace Carica\Io {
      */
     public function fail(Callable $callback) {
       $this->_failed->add($callback);
-      if ($this->_state == self::STATE_REJECTED) {
-        call_user_func_array($callback, $this->_finishArguments);
-      }
+      $this->callIf(
+        $this->_state == self::STATE_REJECTED,
+        $callback,
+        $this->_finishArguments
+      );
       return $this;
     }
 
@@ -171,30 +177,18 @@ namespace Carica\Io {
     ) {
       $defer = new Deferred();
       $this->done(
-        function () use ($defer, $doneFilter){
-          if ($doneFilter) {
-            $defer->resolve(call_user_func_array($doneFilter, func_get_args()));
-          } else {
-            call_user_func_array(array($defer, 'resolve'), func_get_args());
-          }
+        function () use ($defer, $doneFilter) {
+          $this->callFilter($doneFilter, array($defer, 'resolve'), func_get_args());
         }
       );
       $this->fail(
         function () use ($defer, $failFilter){
-          if ($failFilter) {
-            $defer->reject(call_user_func_array($failFilter, func_get_args()));
-          } else {
-            call_user_func_array(array($defer, 'reject'), func_get_args());
-          }
+          $this->callFilter($failFilter, array($defer, 'reject'), func_get_args());
         }
       );
       $this->progress(
         function () use ($defer, $progressFilter){
-          if ($progressFilter) {
-            $defer->notify(call_user_func_array($progressFilter, func_get_args()));
-          } else {
-            call_user_func_array(array($defer, 'notify'), func_get_args());
-          }
+          $this->callFilter($progressFilter, array($defer, 'notify'), func_get_args());
         }
       );
       return $defer->promise();
@@ -234,12 +228,7 @@ namespace Carica\Io {
      * @return Deferred
      */
     public function reject() {
-      if ($this->_state == self::STATE_PENDING) {
-        $this->_finishArguments = func_get_args();
-        $this->_state = self::STATE_REJECTED;
-        call_user_func_array($this->_failed, $this->_finishArguments);
-      }
-      return $this;
+      return $this->end(self::STATE_REJECTED, $this->_failed, func_get_args());
     }
 
     /**
@@ -249,10 +238,23 @@ namespace Carica\Io {
      * @return Deferred
      */
     public function resolve() {
+      return $this->end(self::STATE_RESOLVED, $this->_done, func_get_args());
+    }
+
+    /**
+     * Finalize the object if it is pending.
+     *
+     * @param string $state
+     * @param callable $callback
+     * @param array $arguments ;
+     * @return $this
+     */
+    private function end($state, callable $callback, array $arguments)
+    {
       if ($this->_state == self::STATE_PENDING) {
-        $this->_finishArguments = func_get_args();
-        $this->_state = self::STATE_RESOLVED;
-        call_user_func_array($this->_done, $this->_finishArguments);
+        $this->_finishArguments = $arguments;
+        $this->_state = $state;
+        call_user_func_array($callback, $this->_finishArguments);
       }
       return $this;
     }
@@ -299,6 +301,38 @@ namespace Carica\Io {
           $add($callback);
         }
       }
+    }
+
+    /**
+     * Execute the callback if the condition is true.
+     *
+     * @param boolean $condition
+     * @param callable $callback
+     * @param array $arguments
+     * @return bool
+     */
+    private function callIf($condition, callable $callback, array $arguments)
+    {
+      if ($condition) {
+        call_user_func_array($callback, $arguments);
+        return TRUE;
+      }
+      return FALSE;
+    }
+
+    /**
+     * Execute callback after using filter if defined.
+     *
+     * @param callable|NULL $filter
+     * @param callable $callback
+     * @param array $arguments
+     */
+    private function callFilter($filter, callable $callback, array $arguments)
+    {
+      if ($filter) {
+        $arguments = array(call_user_func_array($filter, $arguments));
+      }
+      call_user_func_array($callback, $arguments);
     }
 
     /**
