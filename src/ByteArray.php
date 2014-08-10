@@ -143,7 +143,7 @@ namespace Carica\Io {
     }
 
     /**
-     * Get the byte array as an hexdec string.
+     * Get the byte array as an hexadecimal encoded string.
      *
      * @param string $separator
      *
@@ -160,7 +160,7 @@ namespace Carica\Io {
     }
 
     /**
-     * Get the bytes as bit string seperated by spaces.
+     * Get the bytes as bit string separated by spaces.
      *
      * @return string
      */
@@ -263,9 +263,11 @@ namespace Carica\Io {
     /**
      * Reset an byte or bit
      *
-     * If the index spezifies a byte it is set to zero. If it spdifies and bit it is disabled.
+     * If the index specifies a byte it is set to zero. If it specifies
+     * and bit it is disabled.
      *
      * @see ArrayAccess::offsetUnset()
+     * @param integer $offset
      */
     public function offsetUnset($offset) {
       $this->offsetSet($offset, is_array($offset) ? FALSE : 0);

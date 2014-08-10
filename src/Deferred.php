@@ -75,7 +75,7 @@ namespace Carica\Io {
     private $_progressArguments = NULL;
 
     /**
-     * Create object and intialize callback lists
+     * Create object and initialize callback lists
      */
     public function __construct() {
       $this->_done = new Callbacks();
@@ -118,7 +118,7 @@ namespace Carica\Io {
     }
 
     /**
-     * Add a callback that will be eecuted if the object was rejected
+     * Add a callback that will be executed if the object was rejected
      *
      * @param Callable $callback
      * @return Deferred
@@ -134,7 +134,7 @@ namespace Carica\Io {
     }
 
     /**
-     * Validate if the object was finilized using reject.
+     * Validate if the object was finalized using reject.
      *
      * @return string
      */
@@ -143,7 +143,7 @@ namespace Carica\Io {
     }
 
     /**
-     * Validate if the object was finilized using resolve.
+     * Validate if the object was finalized using resolve.
      *
      * @return string
      */

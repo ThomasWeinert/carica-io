@@ -72,7 +72,7 @@ namespace Carica\Io\Stream {
     }
 
     /**
-     * Open file (nonblocking) and store resource
+     * Open file (non-blocking) and store resource
      *
      * @return boolean
      */

@@ -9,7 +9,7 @@ namespace Carica\Io\File\Access {
     private $_fileAccess = NULL;
 
     /**
-     * Create an return a File\Access instance, this is a factory proviing access
+     * Create an return a File\Access instance, this is a factory providing access
      * to file system objects.
      *
      * @param File\Access $fileAccess

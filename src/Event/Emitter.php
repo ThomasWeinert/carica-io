@@ -92,7 +92,7 @@ namespace Carica\Io\Event {
     }
 
     /**
-     * Remode the specified listenr from the event
+     * Remove the specified listener from the event
      *
      * @param string $event
      * @param \Callable|Emitter\Listener $listener

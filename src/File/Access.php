@@ -8,7 +8,7 @@ namespace Carica\Io\File {
    * It provides and object interface for several file system related function
    * and can create instances of splFileInfo and splFileObject for others.
    *
-   * The object is used in other classes to provide a tesable access to
+   * The object is used in other classes to provide a testable access to
    * the file system.
    */
   class Access {
@@ -36,7 +36,7 @@ namespace Carica\Io\File {
     }
 
     /**
-     * Create and return a splFileObject isntance for the filename
+     * Create and return a splFileObject instance for the filename
      *
      * @param string $filename
      * @param string $mode

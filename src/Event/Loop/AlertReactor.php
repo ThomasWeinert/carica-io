@@ -12,7 +12,8 @@ namespace Carica\Io\Event\Loop {
      */
     private $_reactor = NULL;
 
-    public function reactor(Alert\Reactor $loop = NULL) {
+    public function reactor(Alert\Reactor $reactor = NULL)
+    {
       if (isset($reactor)) {
         $this->_reactor = $reactor;
       } elseif (NULL === $this->_reactor) {
@@ -30,7 +31,7 @@ namespace Carica\Io\Event\Loop {
     }
 
     public function setStreamReader(Callable $callback, $stream) {
-      return $this->reactor()->onREadable($stream, $callback, TRUE);
+      return $this->reactor()->onReadable($stream, $callback, TRUE);
     }
 
     public function remove($watcherId) {

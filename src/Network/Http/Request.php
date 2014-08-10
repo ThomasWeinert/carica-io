@@ -93,6 +93,7 @@ namespace Carica\Io\Network\Http {
     }
 
     /**
+     * @param Response\Content $content
      * @return Response
      */
     public function createResponse(Response\Content $content = NULL) {

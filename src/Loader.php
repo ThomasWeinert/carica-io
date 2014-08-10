@@ -16,7 +16,7 @@ namespace Carica\Io {
     private static $_mappings = array();
 
     /**
-     * The actual autloader function that will be registered.
+     * The actual autoload function that will be registered.
      *
      * @param string $class
      * @return boolean
@@ -59,7 +59,7 @@ namespace Carica\Io {
     }
 
     /**
-     * Add mappings (namepace => directory) to the the internal mapping array
+     * Add mappings (namespace => directory) to the the internal mapping array
      *
      * @param array $mappings
      * @return array
@@ -100,7 +100,7 @@ namespace Carica\Io {
     }
 
     /**
-     * Register the autoloader function using SPL.
+     * Register the autoload function using SPL.
      *
      * @codeCoverageIgnore
      */

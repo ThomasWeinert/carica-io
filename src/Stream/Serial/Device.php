@@ -42,7 +42,7 @@ namespace Carica\Io\Stream\Serial {
         $pattern = '(^/dev/tty\w+\d+$)';
         $command = sprintf('stty -F %s %d', $device, $baud);
       } else {
-        throw new \LogicException(sprintf('Unsupport OS: "%s".', PHP_OS));
+        throw new \LogicException(sprintf('Unsupported OS: "%s".', PHP_OS));
       }
       if (!preg_match($pattern, $device)) {
         throw new \LogicException(sprintf('Invalid serial port: "%s".', $device));

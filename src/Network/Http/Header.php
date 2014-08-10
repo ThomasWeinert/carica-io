@@ -3,11 +3,11 @@
 namespace Carica\Io\Network\Http {
 
   /**
-   * An encaspulation to provide easier http header handling. Basically it allows to
+   * An encapsulation to provide easier http header handling. Basically it allows to
    * treat an http header as an string or an array. If i is treated as an string the first
    * element in the internal list is used.
    *
-   * This allows to handle http headers with mulitple values if need, without any syntactical
+   * This allows to handle http headers with multiple values if need, without any syntactical
    * overhead for the most cases.
    *
    * @property string $name

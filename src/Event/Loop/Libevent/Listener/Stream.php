@@ -70,7 +70,10 @@ namespace Carica\Io\Event\Loop\Libevent\Listener {
         if (is_null($this->_event)) {
           $this->_event = $event = event_new();
           $that = $this;
-          /** @noinspection PhpUnusedParameterInspection */
+          /**
+           * @param resource $stream
+           * @param resource[] $events
+           */
           $callback = function ($stream, $events) use ($event, $that, &$callback) {
             if (!$that->isCancelled()) {
               call_user_func($this->getCallback(), $events);

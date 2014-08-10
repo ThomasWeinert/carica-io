@@ -130,6 +130,7 @@ namespace Carica\Io\Event\Loop {
 
     /**
      * Run the global event loop
+     * @param Io\Deferred\Promise $for
      */
     public static function run(Io\Deferred\Promise $for = NULL) {
       self::get()->run($for);

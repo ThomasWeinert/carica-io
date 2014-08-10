@@ -41,7 +41,7 @@ namespace Carica\Io\Deferred {
     }
 
     /**
-     * Add a callback that will be eecuted if the object was rejected
+     * Add a callback that will be executed if the object was rejected
      *
      * @param Callable $callback
      * @return \Carica\Io\Deferred\Promise

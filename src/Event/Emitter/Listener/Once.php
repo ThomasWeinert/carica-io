@@ -7,7 +7,7 @@ namespace Carica\Io\Event\Emitter\Listener {
   /**
    * @property Event\Emitter $emitter
    * @property string $event
-   * qproperty Callable $callback
+   * @property callable $callback
    */
   class Once extends On {
 

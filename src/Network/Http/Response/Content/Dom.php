@@ -7,7 +7,7 @@ namespace Carica\Io\Network\Http\Response\Content {
   use Carica\Io\Network\Http\Response;
 
   /**
-   * An response thats filled using a DOM document
+   * An response that's filled using a DOM document
    *
    * @property \DOMDocument $document
    */
@@ -25,6 +25,7 @@ namespace Carica\Io\Network\Http\Response\Content {
       case 'document' :
         return $this->{'_'.$name};
       }
+      /** @noinspection PhpVoidFunctionResultUsedInspection */
       return parent::__get($name);
     }
   }

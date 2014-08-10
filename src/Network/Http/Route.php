@@ -5,7 +5,7 @@ namespace Carica\Io\Network\Http {
   use Carica\Io;
 
   /**
-   * Simple routing class allo to match a path against several targets
+   * Simple routing class allowing to match a path against several targets
    *
    */
   class Route implements \IteratorAggregate {

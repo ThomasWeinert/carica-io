@@ -6,9 +6,9 @@ namespace Carica\Io\Network\Http\Response {
 
   /**
    *
-   * @property-read string $type Mimetype
-   * @property-read string $encoding Character encoding
-   * @property-read integer $length Byte length
+   * @property-read string $type mimetype
+   * @property-read string $encoding character encoding
+   * @property-read integer $length byte length
    */
   abstract class Content {
 

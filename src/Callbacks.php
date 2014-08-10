@@ -47,7 +47,7 @@ namespace Carica\Io {
     }
 
     /**
-     * Remove all callables
+     * Remove all callbacks
      *
      * @return Callbacks
      */
@@ -70,7 +70,7 @@ namespace Carica\Io {
     }
 
     /**
-     * Lock the list, do now allow chanes any more.
+     * Lock the list, do now allow changes any more.
      *
      * @return Callbacks
      */
@@ -142,7 +142,7 @@ namespace Carica\Io {
     }
 
     /**
-     * Allow to fetch the methods of this object as anonymus functions
+     * Allow to fetch the methods of this object as anonymous functions
      *
      * @throws \LogicException
      * @param string $name
@@ -171,7 +171,7 @@ namespace Carica\Io {
     }
 
     /**
-     * IteratorAggregate interface for the stored callables
+     * IteratorAggregate interface for the stored callbacks
      *
      * @see IteratorAggregate::getIterator()
      * @return \Iterator
@@ -181,7 +181,7 @@ namespace Carica\Io {
     }
 
     /**
-     * Countable interface, return the number of stored callables
+     * Countable interface, return the number of stored callbacks
      *
      * @see Countable::count()
      * @return integer

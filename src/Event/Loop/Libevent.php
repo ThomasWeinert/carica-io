@@ -12,11 +12,11 @@ namespace Carica\Io\Event\Loop {
      */
     private $_base = NULL;
     /**
-     * @var array(string=>Libevent\Listener)
+     * @var Libevent\Listener[]
      */
     private $_timers = array();
     /**
-     * @var array(resource=>Libevent\Listener\Stream)
+     * @var Libevent\Listener\Stream[]
      */
     private $_streams = array();
 

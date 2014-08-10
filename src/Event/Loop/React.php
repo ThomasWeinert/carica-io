@@ -47,10 +47,10 @@ namespace Carica\Io\Event\Loop {
           $this->loop()->removeReadStream($listener->getData());
           break;
         default :
-          throw new \LogicException('Unknwon listener identifier type');
+          throw new \LogicException('Unknown listener identifier type');
         }
       } else {
-        throw new \LogicException('Listener is not a valid identifer');
+        throw new \LogicException('Listener is not a valid identifier');
       }
     }
 
