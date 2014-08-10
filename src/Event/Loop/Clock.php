@@ -17,7 +17,7 @@ namespace Carica\Io\Event\Loop {
     private $_streams = array();
 
     public function __construct($now = NULL, $resolution = 1) {
-      $this->_currentTime = isset($now) ? (int)$now : ceil(microtime(TRUE) * 1000);
+      $this->_currentTime = (int)(isset($now) ? $now : ceil(microtime(TRUE) * 1000));
       $this->_resolution = (int)$resolution;
     }
 

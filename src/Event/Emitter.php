@@ -67,7 +67,7 @@ namespace Carica\Io\Event {
      * Add a listener object. If a callable is added, it is wrapped into a listener
      *
      * @param string $event
-     * @param \Callable|Emitter\Listener $listener
+     * @param callable|Emitter\Listener $listener
      */
     public function on($event, $listener) {
       $event = $this->getName($event);
@@ -82,7 +82,7 @@ namespace Carica\Io\Event {
      * into a listener
      *
      * @param string $event
-     * @param \Callable|Emitter\Listener $listener
+     * @param callable|Emitter\Listener $listener
      */
     public function once($event, $listener) {
       $event = $this->getName($event);
@@ -95,7 +95,7 @@ namespace Carica\Io\Event {
      * Remove the specified listener from the event
      *
      * @param string $event
-     * @param \Callable|Emitter\Listener $listener
+     * @param callable|Emitter\Listener $listener
      */
     public function removeListener($event, $listener) {
       $event = $this->getName($event);
@@ -125,7 +125,7 @@ namespace Carica\Io\Event {
      * Return an list of a listeners attached to the event
      *
      * @param string $event
-     * @return array(\Callable|Emitter\Listener)
+     * @return callable[]|Emitter\Listener[]
      */
     public function listeners($event) {
       $event = $this->getName($event);

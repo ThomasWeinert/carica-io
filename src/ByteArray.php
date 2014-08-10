@@ -190,7 +190,7 @@ namespace Carica\Io {
      *
      * @see ArrayAccess::offsetExists()
      * @param integer|array(integer,integer) $offset
-     * @return integer|boolean
+     * @return boolean
      */
     public function offsetExists($offset) {
       try {

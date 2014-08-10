@@ -146,7 +146,7 @@ namespace Carica\Io {
      *
      * @throws \LogicException
      * @param string $name
-     * @return \Callable
+     * @return callable
      */
     public function __get($name) {
       if (method_exists($this, $name)) {
