@@ -242,7 +242,7 @@ namespace Carica\Io {
      *   $bytes[[0, 7]] = TRUE; // set the highest bit of the first byte
      *
      * @see ArrayAccess::offsetSet()
-     * @param integer|array(integer,integer) $offset
+     * @param integer|integer[] $offset
      * @param integer|boolean $value
      */
     public function offsetSet($offset, $value) {
@@ -255,8 +255,7 @@ namespace Carica\Io {
           $this->_bytes[$offset[0]] = $this->_bytes[$offset[0]] & ~$bit;
         }
       } else {
-        $this->validateValue($value);
-        $this->_bytes[$offset] = $value;
+        $this->_bytes[$offset] = $this->validateValue((int)$value);
       }
     }
 
@@ -296,7 +295,7 @@ namespace Carica\Io {
     /**
      * Validate the given offset is usable as bit offset
      *
-     * @param array(integer,integer) $offset
+     * @param int[] $offset
      * @throws \OutOfBoundsException
      */
     private function validateBitOffset(array $offset) {
@@ -320,8 +319,9 @@ namespace Carica\Io {
     /**
      * Validate the given value is a storeable in a single byte
      *
-     * @param integer $value
      * @throws \OutOfRangeException
+     * @param int $value
+     * @return int
      */
     private function validateValue($value) {
       if (($value < 0 || $value > 255)) {
@@ -329,6 +329,7 @@ namespace Carica\Io {
           sprintf('Byte value expected (0-255). Got "%d"', $value)
         );
       }
+      return $value;
     }
 
     /**
