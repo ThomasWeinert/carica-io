@@ -6,10 +6,10 @@ namespace Carica\Io\Device {
   {
 
     const MODE_UNKNOWN = 0;
-    const MODE_DIGITAL_INPUT = 1;
-    const MODE_DIGITAL_OUTPUT = 2;
-    const MODE_ANALOG_INPUT = 4;
-    const MODE_ANALOG_OUTPUT = 8;
+    const MODE_INPUT = 1;
+    const MODE_OUTPUT = 2;
+    const MODE_ANALOG = 4;
+    const MODE_PWM = 8;
     const MODE_SERVO = 16;
     const MODE_SHIFT = 32;
     const MODE_I2C = 64;
