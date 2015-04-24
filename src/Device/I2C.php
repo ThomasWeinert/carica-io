@@ -18,8 +18,8 @@ namespace Carica\Io\Device {
      *
      * @param int $slaveAddress
      * @param int $length
-     * @param callable $callback
+     * @return \Carica\Io\Deferred\Promise
      */
-    function read($slaveAddress, $length, callable $callback);
+    function read($slaveAddress, $length);
   }
 }
