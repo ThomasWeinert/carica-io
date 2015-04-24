@@ -52,22 +52,6 @@ namespace Carica\Io\Deferred {
     }
 
     /**
-     * Utility method to filter and/or chain Deferreds.
-     *
-     * @param Callable $doneFilter
-     * @param Callable $failFilter
-     * @param Callable $progressFilter
-     * @return \Carica\Io\Deferred\Promise
-     */
-    public function pipe(
-      Callable $doneFilter = NULL,
-      Callable $failFilter = NULL,
-      Callable $progressFilter = NULL
-    ) {
-      return $this->_defer->pipe($doneFilter, $failFilter, $progressFilter);
-    }
-
-    /**
      * Add a callback that will be executed if the object is notified about progress
      *
      * @param Callable $callback
@@ -88,18 +72,19 @@ namespace Carica\Io\Deferred {
     }
 
     /**
-     * Add handlers to be called when the Deferred object is resolved
-     * or rejected or notified about progress. Basically a shortcut for
-     * done(), fail() and progress().
+     * Filter and/or chain Deferreds.
      *
-     * @param Callable|array(Callable) $done
-     * @param Callable|array(Callable) $fail
-     * @param Callable|array(Callable) $progress
+     * @param Callable $doneFilter
+     * @param Callable $failFilter
+     * @param Callable $progressFilter
      * @return \Carica\Io\Deferred\Promise
      */
-    public function then($done = NULL, $fail = NULL, $progress = NULL) {
-      $this->_defer->then($done, $fail, $progress);
-      return $this;
+    public function then(
+      Callable $doneFilter = NULL,
+      Callable $failFilter = NULL,
+      Callable $progressFilter = NULL
+    ) {
+      return $this->_defer->then($doneFilter, $failFilter, $progressFilter);
     }
   }
 }

@@ -248,9 +248,9 @@ namespace Carica\Io {
     /**
      * @covers Carica\Io\Deferred
      */
-    public function testPipeWithDoneFilter() {
+    public function testThenWithDoneFilter() {
       $defer = new Deferred();
-      $filtered = $defer->pipe(
+      $filtered = $defer->then(
         function($value) {
           return $value * 2;
         }
@@ -268,9 +268,9 @@ namespace Carica\Io {
     /**
      * @covers Carica\Io\Deferred
      */
-    public function testPipeWithoutDoneFilter() {
+    public function testThenWithoutDoneFilter() {
       $defer = new Deferred();
-      $filtered = $defer->pipe();
+      $filtered = $defer->then();
       $calls = array();
       $filtered->done(
         function ($value) use (&$calls) {
@@ -284,9 +284,9 @@ namespace Carica\Io {
     /**
      * @covers Carica\Io\Deferred
      */
-    public function testPipeWithFailFilter() {
+    public function testThenWithFailFilter() {
       $defer = new Deferred();
-      $filtered = $defer->pipe(
+      $filtered = $defer->then(
         NULL,
         function($value) {
           return $value * 2;
@@ -305,9 +305,9 @@ namespace Carica\Io {
     /**
      * @covers Carica\Io\Deferred
      */
-    public function testPipeWithoutFailFilter() {
+    public function testThenWithoutFailFilter() {
       $defer = new Deferred();
-      $filtered = $defer->pipe();
+      $filtered = $defer->then();
       $calls = array();
       $filtered->fail(
           function ($value) use (&$calls) {
@@ -321,11 +321,11 @@ namespace Carica\Io {
     /**
      * @covers Carica\Io\Deferred
      */
-    public function testPipeWithNotifyFilter() {
+    public function testThenWithNotifyFilter() {
       $calls = array();
       $defer = new Deferred();
       $defer
-        ->pipe(
+        ->then(
           NULL,
           NULL,
           function() {
@@ -347,11 +347,11 @@ namespace Carica\Io {
     /**
      * @covers Carica\Io\Deferred
      */
-    public function testPipeWithoutNotifyFilter() {
+    public function testThenWithoutNotifyFilter() {
       $calls = array();
       $defer = new Deferred();
       $defer
-        ->pipe()
+        ->then()
         ->progress(
           function() use (&$calls) {
             $calls[] = func_get_args();
@@ -383,42 +383,6 @@ namespace Carica\Io {
         $defer = new Deferred()
       );
       $this->assertSame($promise, $defer->promise());
-    }
-
-    /**
-     * @covers Carica\Io\Deferred
-     */
-    public function testWhenWithOneArgumentThatsNotReferredReturnsResolvedPromise() {
-      $result = NULL;
-      Deferred::when(42)
-        ->then(
-          function ($argument) use (&$result) {
-            $result = $argument;
-          }
-        );
-      $this->assertEquals(42, $result);
-    }
-
-    /**
-     * @covers Carica\Io\Deferred
-     */
-    public function testWhenWithOneArgumentThatsAnArrayOfCallbacks() {
-      $result = array();
-      Deferred::when(42)
-        ->then(
-          array(
-            function ($argument) use (&$result) {
-              $result['first'] = $argument;
-            },
-            function ($argument) use (&$result) {
-              $result['second'] = $argument;
-            }
-          )
-        );
-      $this->assertEquals(
-        array('first' => 42, 'second' => 42),
-        $result
-      );
     }
 
     /**

@@ -163,38 +163,6 @@ namespace Carica\Io {
     }
 
     /**
-     * Utility method to filter and/or chain Deferreds.
-     *
-     * @param Callable $doneFilter
-     * @param Callable $failFilter
-     * @param Callable $progressFilter
-     * @return Deferred\Promise
-     */
-    public function pipe(
-      Callable $doneFilter = NULL,
-      Callable $failFilter = NULL,
-      Callable $progressFilter = NULL
-    ) {
-      $defer = new Deferred();
-      $this->done(
-        function () use ($defer, $doneFilter) {
-          $this->callFilter($doneFilter, array($defer, 'resolve'), func_get_args());
-        }
-      );
-      $this->fail(
-        function () use ($defer, $failFilter){
-          $this->callFilter($failFilter, array($defer, 'reject'), func_get_args());
-        }
-      );
-      $this->progress(
-        function () use ($defer, $progressFilter){
-          $this->callFilter($progressFilter, array($defer, 'notify'), func_get_args());
-        }
-      );
-      return $defer->promise();
-    }
-
-    /**
      * Add a callback that will be executed if the object is notified about progress
      *
      * @param Callable $callback
@@ -269,38 +237,35 @@ namespace Carica\Io {
     }
 
     /**
-     * Add handlers to be called when the Deferred object is resolved
-     * or rejected or notified about progress. Basically a shortcut for
-     * done(), fail() and progress().
+     * Filter and/or chain Deferreds.
      *
-     * @param Callable|array(Callable) $done
-     * @param Callable|array(Callable) $fail
-     * @param Callable|array(Callable) $progress
-     * @return Deferred
+     * @param Callable $doneFilter
+     * @param Callable $failFilter
+     * @param Callable $progressFilter
+     * @return Deferred\Promise
      */
-    public function then($done = NULL, $fail = NULL, $progress = NULL) {
-      $this->addCallbacksIfProvided(array($this, 'done'), $done);
-      $this->addCallbacksIfProvided(array($this, 'fail'), $fail);
-      $this->addCallbacksIfProvided(array($this, 'progress'), $progress);
-      return $this;
-    }
-
-    /**
-     * Check if $callbacks is a single callback or an array of callbacks.
-     * The $add parameter is the method used to add the actual callbacks to the
-     * deferred object.
-     *
-     * @param Callable $add
-     * @param Callable|array(Callable) $callbacks
-     */
-    private function addCallbacksIfProvided($add, $callbacks) {
-      if (is_callable($callbacks)) {
-        $add($callbacks);
-      } elseif (is_array($callbacks)) {
-        foreach ($callbacks as $callback) {
-          $add($callback);
+    public function then(
+      Callable $doneFilter = NULL,
+      Callable $failFilter = NULL,
+      Callable $progressFilter = NULL
+    ) {
+      $defer = new Deferred();
+      $this->done(
+        function () use ($defer, $doneFilter) {
+          $this->callFilter($doneFilter, array($defer, 'resolve'), func_get_args());
         }
-      }
+      );
+      $this->fail(
+        function () use ($defer, $failFilter){
+          $this->callFilter($failFilter, array($defer, 'reject'), func_get_args());
+        }
+      );
+      $this->progress(
+        function () use ($defer, $progressFilter){
+          $this->callFilter($progressFilter, array($defer, 'notify'), func_get_args());
+        }
+      );
+      return $defer->promise();
     }
 
     /**

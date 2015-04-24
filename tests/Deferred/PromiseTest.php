@@ -69,7 +69,7 @@ namespace Carica\Io\Deferred {
     /**
      * @covers Carica\Io\Deferred\Promise::pipe
      */
-    public function testPipeWithNullArguments() {
+    public function testThenWithNullArguments() {
       $promise = $this
         ->getMockBuilder('Carica\\Io\\Deferred\\Promise')
         ->disableOriginalConstructor()
@@ -77,12 +77,12 @@ namespace Carica\Io\Deferred {
       $defer = $this->getMock('Carica\\Io\\Deferred');
       $defer
         ->expects($this->once())
-        ->method('pipe')
+        ->method('then')
         ->with(NULL, NULL, NULL)
         ->will($this->returnValue($promise));
 
       $promise = new Promise($defer);
-      $filterPromise = $promise->pipe();
+      $filterPromise = $promise->then();
       $this->assertInstanceOf('Carica\\Io\\Deferred\\Promise', $filterPromise);
       $this->assertNotSame($filterPromise, $promise);
     }
@@ -90,7 +90,7 @@ namespace Carica\Io\Deferred {
     /**
      * @covers Carica\Io\Deferred\Promise::pipe
      */
-    public function testPipeWithFunctionArguments() {
+    public function testThenWithFunctionArguments() {
       $promise = $this
         ->getMockBuilder('Carica\\Io\\Deferred\\Promise')
         ->disableOriginalConstructor()
@@ -99,12 +99,12 @@ namespace Carica\Io\Deferred {
       $defer = $this->getMock('Carica\\Io\\Deferred');
       $defer
         ->expects($this->once())
-        ->method('pipe')
+        ->method('then')
         ->with($function, $function, $function)
         ->will($this->returnValue($promise));
 
       $promise = new Promise($defer);
-      $filterPromise = $promise->pipe($function, $function, $function);
+      $filterPromise = $promise->then($function, $function, $function);
       $this->assertInstanceOf('Carica\\Io\\Deferred\\Promise', $filterPromise);
       $this->assertNotSame($filterPromise, $promise);
     }
@@ -137,37 +137,6 @@ namespace Carica\Io\Deferred {
 
       $promise = new Promise($defer);
       $this->assertEquals(Io\Deferred::STATE_PENDING, $promise->state());
-    }
-
-    /**
-     * @covers Carica\Io\Deferred\Promise::then
-     */
-    public function testThenWithNullArguments() {
-      $defer = $this->getMock('Carica\\Io\\Deferred');
-      $defer
-        ->expects($this->once())
-        ->method('then')
-        ->with(NULL, NULL, NULL)
-        ->will($this->returnSelf());
-
-      $promise = new Promise($defer);
-      $this->assertSame($promise, $promise->then());
-    }
-
-    /**
-     * @covers Carica\Io\Deferred\Promise::then
-     */
-    public function testThenWithFunctionArguments() {
-      $function = function() {};
-      $defer = $this->getMock('Carica\\Io\\Deferred');
-      $defer
-        ->expects($this->once())
-        ->method('then')
-        ->with($function, $function, $function)
-        ->will($this->returnSelf());
-
-      $promise = new Promise($defer);
-      $this->assertSame($promise, $promise->then($function, $function, $function));
     }
   }
 }
