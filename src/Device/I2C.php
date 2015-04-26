@@ -21,5 +21,23 @@ namespace Carica\Io\Device {
      * @return \Carica\Io\Deferred\Promise
      */
     function read($slaveAddress, $length);
+
+
+
+    /**
+     * Start continuous reading, repeatingly calls the listener
+     *
+     * @param int $slaveAddress
+     * @param int $byteCount
+     * @param callable $listener
+     */
+    function startReading($slaveAddress, $byteCount, callable $listener);
+
+    /**
+     * Stop continuous reading on the specified address
+     *
+     * @param int $slaveAddress
+     */
+    function stopReading($slaveAddress);
   }
 }
