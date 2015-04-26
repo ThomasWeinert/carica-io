@@ -28,10 +28,10 @@ namespace Carica\Io\Device {
      * Start continuous reading, repeatingly calls the listener
      *
      * @param int $slaveAddress
-     * @param int $byteCount
+     * @param int $length
      * @param callable $listener
      */
-    function startReading($slaveAddress, $byteCount, callable $listener);
+    function startReading($slaveAddress, $length, callable $listener);
 
     /**
      * Stop continuous reading on the specified address
