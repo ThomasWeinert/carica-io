@@ -36,15 +36,15 @@ namespace Carica\Io\Stream\Serial {
       return self::$_mode;
     }
 
-    public static function create($device) {
+    public static function create($device, $baud = 57600) {
       switch (self::mode()) {
       case self::MODE_DIO :
-      return new Dio($device);
+      return new Dio($device, $baud);
       case self::MODE_GORILLA :
-        return new Gorilla($device);
+        return new Gorilla($device, $baud);
       case self::MODE_DEFAULT :
       default :
-        return new Stream\Serial($device);
+        return new Stream\Serial($device, $baud);
       }
     }
 
