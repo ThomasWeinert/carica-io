@@ -18,8 +18,6 @@ namespace Carica\Io\Stream {
     private $_resource = NULL;
     private $_listener = NULL;
 
-    private $_reading = FALSE;
-
     public function __construct($device, $baud = Device::BAUD_DEFAULT)
     {
       $this->_device = new Serial\Device($device, $baud);
@@ -78,7 +76,7 @@ namespace Carica\Io\Stream {
     }
 
     public function read($bytes = 1024) {
-      if ($this->_reading && ($resource = $this->resource())) {
+      if ($resource = $this->resource()) {
         $data = fread($resource, $bytes);
         if (is_string($data) && $data !== '') {
           $this->events()->emit('read-data', $data);
@@ -95,11 +93,6 @@ namespace Carica\Io\Stream {
           $writtenData = is_array($data) ? Io\encodeBinaryFromArray($data) : $data
         );
         $this->events()->emit('write-data', $writtenData);
-        // according to a php bug report, reading is only possible after writing some stuff
-        if (!$this->_reading) {
-          usleep(1000);
-          $this->_reading = TRUE;
-        }
       }
     }
   }
