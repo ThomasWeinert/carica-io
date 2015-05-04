@@ -4,6 +4,7 @@ namespace Carica\Io\Stream {
 
   use Carica\Io;
   use Carica\Io\Event;
+  use Carica\Io\Stream\Serial\Device;
 
   class Serial
     implements
@@ -19,7 +20,8 @@ namespace Carica\Io\Stream {
 
     private $_reading = FALSE;
 
-    public function __construct($device, $baud = 57600) {
+    public function __construct($device, $baud = Device::BAUD_DEFAULT)
+    {
       $this->_device = new Serial\Device($device, $baud);
     }
 

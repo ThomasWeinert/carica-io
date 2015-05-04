@@ -4,7 +4,7 @@ include(__DIR__.'/../../vendor/autoload.php');
 use Carica\Io;
 
 $port = 'COM7:';
-$baud = 57600;
+$baud = Io\Stream\Serial\Device::BAUD_57600;
 
 $serial = Io\Stream\Serial\Factory::create($port, $baud);
 

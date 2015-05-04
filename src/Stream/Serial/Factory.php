@@ -36,7 +36,8 @@ namespace Carica\Io\Stream\Serial {
       return self::$_mode;
     }
 
-    public static function create($device, $baud = 57600) {
+    public static function create($device, $baud = Device::BAUD_DEFAULT)
+    {
       switch (self::mode()) {
       case self::MODE_DIO :
       return new Dio($device, $baud);

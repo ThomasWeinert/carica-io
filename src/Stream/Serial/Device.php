@@ -4,27 +4,43 @@ namespace Carica\Io\Stream\Serial {
 
   class Device {
 
+    const BAUD_110 = 110;
+    const BAUD_150 = 150;
+    const BAUD_300 = 300;
+    const BAUD_600 = 600;
+    const BAUD_1200 = 1200;
+    const BAUD_2400 = 2400;
+    const BAUD_4800 = 4800;
+    const BAUD_9600 = 9600;
+    const BAUD_19200 = 19200;
+    const BAUD_38400 = 38400;
+    const BAUD_57600 = 57600;
+    const BAUD_115200 = 115200;
+
+    const BAUD_DEFAULT = self::BAUD_57600;
+
     private $_device = 0;
     private $_command = '';
-    private $_baud = 57600;
+    private $_baud = self::BAUD_DEFAULT;
 
     private $_baudRates = array (
-      110 => 11,
-      150 => 15,
-      300 => 30,
-      600 => 60,
-      1200 => 12,
-      2400 => 24,
-      4800 => 48,
-      9600 => 96,
-      19200 => 19,
-      38400 => 38400,
-      57600 => 57600,
-      115200 => 115200
+      self::BAUD_110 => 11,
+      self::BAUD_150 => 15,
+      self::BAUD_300 => 30,
+      self::BAUD_600 => 60,
+      self::BAUD_1200 => 12,
+      self::BAUD_2400 => 24,
+      self::BAUD_4800 => 48,
+      self::BAUD_9600 => 96,
+      self::BAUD_19200 => 19,
+      self::BAUD_38400 => 38400,
+      self::BAUD_57600 => 57600,
+      self::BAUD_115200 => 115200
     );
 
 
-    public function __construct($device, $baud = 57600) {
+    public function __construct($device, $baud = self::BAUD_DEFAULT)
+    {
       if (isset($this->_baudRates[$baud])) {
         $this->_baud = $baud;
       }

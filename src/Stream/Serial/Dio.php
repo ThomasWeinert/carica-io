@@ -17,7 +17,7 @@ namespace Carica\Io\Stream\Serial {
     private $_resource = NULL;
     private $_listener = NULL;
 
-    public function __construct($device, $baud = 57600)
+    public function __construct($device, $baud = Device::BAUD_DEFAULT)
     {
       $this->_device = new Device($device, $baud);
     }
