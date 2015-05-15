@@ -64,8 +64,8 @@ namespace Carica\Io\Device {
     /**
      * Add a callback that is executed if the pin value changes
      *
-     * @param callable $callback
+     * @param callable $listener
      */
-    function onChange(callable $callback);
+    function onChange(callable $listener);
   }
 }
