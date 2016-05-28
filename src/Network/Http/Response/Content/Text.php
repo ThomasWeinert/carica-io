@@ -5,7 +5,7 @@ namespace Carica\Io\Network\Http\Response\Content {
   use Carica\Io\Network;
   use Carica\Io\Network\Http\Response;
 
-  class String extends Response\Content {
+  class Text extends Response\Content {
 
     private $_data = '';
 

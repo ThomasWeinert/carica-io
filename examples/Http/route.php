@@ -8,7 +8,7 @@ $route->match(
   '/hello/{name}',
   function (Http\Request $request, $parameters) {
     $response = $request->createResponse(
-      new Http\Response\Content\String(
+      new Http\Response\Content\Text(
         "Hello ".$parameters['name']."!\n"
       )
     );
@@ -19,7 +19,7 @@ $route->match(
   '/agent',
   function (Http\Request $request) {
     $response = $request->createResponse(
-      new Http\Response\Content\String(
+      new Http\Response\Content\Text(
         $request->headers['User-Agent']
       )
     );

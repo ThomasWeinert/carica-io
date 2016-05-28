@@ -154,7 +154,7 @@ namespace Carica\Io\Network\Http {
       if (isset($content)) {
         $this->_content = $content;
       } elseif (NULL === $this->_content) {
-        $this->_content = new Response\Content\String('text/plain');
+        $this->_content = new Response\Content\Text('text/plain');
       }
       return $this->_content;
     }
