@@ -52,7 +52,7 @@ namespace Carica\Io\Stream\Serial {
           $this->_baudRates[$baud]
         );
       } elseif (substr(PHP_OS, 0, 6) === "Darwin") {
-        $pattern = '(^/dev/tty\.[^\s]+$)';
+        $pattern = '(^/dev/(?:tty|cu)\.[^\s]+$)';
         $command = sprintf('stty -f %s speed %d', $device, $baud);
       } elseif (substr(PHP_OS, 0, 5) === "Linux") {
         $pattern = '(^/dev/tty\w+\d+$)';
