@@ -14,6 +14,16 @@ namespace Carica\Io\Device {
     const MODE_SHIFT = 32;
     const MODE_I2C = 64;
 
+    const MODE_LABELS = [
+      self::MODE_UNKNOWN => 'unknown',
+      self::MODE_INPUT => 'input',
+      self::MODE_OUTPUT => 'output',
+      self::MODE_ANALOG => 'analog',
+      self::MODE_PWM => 'pwm',
+      self::MODE_SHIFT => 'shift',
+      self::MODE_I2C => 'i2c',
+    ];
+
     /**
      * Set the pin mode
      *
