@@ -9,8 +9,9 @@ namespace Carica\Io\Device {
      * Write data using shift out. This will call begin(), transfer($data), end()
      *
      * @param int|string|int[] $data
+     * @param bool $isBigEndian
      */
-    function write($data);
+    function write($data, $isBigEndian = TRUE);
 
     /**
      * Start transfer
@@ -21,8 +22,9 @@ namespace Carica\Io\Device {
      * Transfer data
      *
      * @param int|string|int[] $data
+     * @param bool $isBigEndian
      */
-    function transfer($data);
+    function transfer($data, $isBigEndian = TRUE);
 
     /**
      * End transfer
