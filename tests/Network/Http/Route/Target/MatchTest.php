@@ -5,11 +5,12 @@ namespace Carica\Io\Network\Http\Route\Target {
   include_once(__DIR__.'/../../../../Bootstrap.php');
 
   use Carica\Io\Network\Http;
+  use PHPUnit\Framework\TestCase;
 
-  class MatchTest extends \PHPUnit_Framework_TestCase {
+  class MatchTest extends TestCase {
 
     /**
-     * @covers Carica\Io\Network\Http\Route\Target\Match
+     * @covers \Carica\Io\Network\Http\Route\Target\Match
      */
     public function testWithInvalidMethod() {
       $result = FALSE;
@@ -23,7 +24,7 @@ namespace Carica\Io\Network\Http\Route\Target {
     }
 
     /**
-     * @covers Carica\Io\Network\Http\Route\Target\Match
+     * @covers \Carica\Io\Network\Http\Route\Target\Match
      * @dataProvider provideValidPaths
      */
     public function testWithValidPaths($path, $expectedParameters) {
@@ -49,7 +50,7 @@ namespace Carica\Io\Network\Http\Route\Target {
     }
 
     /**
-     * @covers Carica\Io\Network\Http\Route\Target\Match
+     * @covers \Carica\Io\Network\Http\Route\Target\Match
      * @dataProvider provideInvalidPaths
      */
     public function testWithInvalidPaths($path) {
@@ -73,7 +74,7 @@ namespace Carica\Io\Network\Http\Route\Target {
 
     private function getRequestFixture() {
       $request = $this
-        ->getMockBuilder('Carica\\Io\\Network\\Http\\Request')
+        ->getMockBuilder(Http\Request::class)
         ->disableOriginalConstructor()
         ->getMock();
       $request

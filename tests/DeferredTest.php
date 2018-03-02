@@ -2,20 +2,22 @@
 
 namespace Carica\Io {
 
+  use PHPUnit\Framework\TestCase;
+
   include_once(__DIR__.'/Bootstrap.php');
 
-  class DeferredTest extends \PHPUnit_Framework_TestCase {
+  class DeferredTest extends TestCase {
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testStaticFunctionCreate() {
       $defer = Deferred::create();
-      $this->assertInstanceOf('Carica\\Io\\Deferred', $defer);
+      $this->assertInstanceOf(\Carica\Io\Deferred::class, $defer);
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testResolve() {
       $literal = '';
@@ -30,7 +32,7 @@ namespace Carica\Io {
       $this->assertEquals('success', $literal);
     }
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testResolveTriggersDoneCallbacksOnAppend() {
       $literal = '';
@@ -46,7 +48,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testResolveCallsAlwaysCallbacks() {
       $literal = '';
@@ -62,7 +64,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testReject() {
       $literal = '';
@@ -78,7 +80,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testRejectTriggersFailCallbacksOnAppend() {
       $literal = '';
@@ -94,7 +96,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testRejectCallsAlwaysCallbacks() {
       $literal = '';
@@ -110,7 +112,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testRejectTriggersAlwaysCallbackOnRejectedObject() {
       $literal = '';
@@ -126,7 +128,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testNotifyTriggersProgressCallback() {
       $calls = array();
@@ -149,7 +151,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testProgressCallbackIsCalledWithStoredNotify() {
       $calls = array();
@@ -172,7 +174,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testIsResolvedExpectingTrue() {
       $defer = new Deferred();
@@ -181,7 +183,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testIsResolvedExpectingFalse() {
       $defer = new Deferred();
@@ -190,7 +192,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testIsRejectedExpectingTrue() {
       $defer = new Deferred();
@@ -199,7 +201,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testIsRejectedExpectingFalse() {
       $defer = new Deferred();
@@ -208,7 +210,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testStateExpectingPending() {
       $defer = new Deferred();
@@ -216,7 +218,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testStateExpectingResolved() {
       $defer = new Deferred();
@@ -225,7 +227,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testStateExpectingRejected() {
       $defer = new Deferred();
@@ -234,19 +236,19 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testPromise() {
       $defer = new Deferred();
       $promise = $defer->promise();
-      $this->assertInstanceOf('Carica\\Io\\Deferred\\Promise', $promise);
+      $this->assertInstanceOf(\Carica\Io\Deferred\Promise::class, $promise);
       $this->assertAttributeSame(
         $defer, '_defer', $promise
       );
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testThenWithDoneFilter() {
       $defer = new Deferred();
@@ -266,7 +268,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testThenWithoutDoneFilter() {
       $defer = new Deferred();
@@ -282,7 +284,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testThenWithFailFilter() {
       $defer = new Deferred();
@@ -303,7 +305,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testThenWithoutFailFilter() {
       $defer = new Deferred();
@@ -319,7 +321,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testThenWithNotifyFilter() {
       $calls = array();
@@ -345,7 +347,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testThenWithoutNotifyFilter() {
       $calls = array();
@@ -365,7 +367,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testWhenWithOnePromiseReturnsThisArgument() {
       $defer = new Deferred();
@@ -376,7 +378,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testWhenWithOneDeferredArgumentsReturnsThisArgumentsPromise() {
       $promise = Deferred::when(
@@ -386,7 +388,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testWhenWithTwoDeferredArguments() {
       $result = NULL;
@@ -407,7 +409,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testWhenWithTwoArgumentsButOnlyOneDeferred() {
       $result = NULL;
@@ -427,7 +429,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testWhenWithRejectedDefer() {
       $calls = array();
@@ -450,16 +452,16 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testWhenWihtoutArgumentsReturnsResolvedPromise() {
       $promise = Deferred::when();
-      $this->assertInstanceOf('Carica\\Io\\Deferred\\Promise', $promise);
+      $this->assertInstanceOf(\Carica\Io\Deferred\Promise::class, $promise);
       $this->assertEquals(Deferred::STATE_RESOLVED, $promise->state());
     }
 
     /**
-     * @covers Carica\Io\Deferred
+     * @covers \Carica\Io\Deferred
      */
     public function testWhenWithSeveralScalarArgumentsReturnsResolvedPromise() {
       $calls = array();
@@ -470,7 +472,7 @@ namespace Carica\Io {
             $calls[] = func_get_args();
           }
         );
-      $this->assertInstanceOf('Carica\\Io\\Deferred\\Promise', $promise);
+      $this->assertInstanceOf(\Carica\Io\Deferred\Promise::class, $promise);
       $this->assertEquals(Deferred::STATE_RESOLVED, $promise->state());
       $this->assertEquals(
         array(

@@ -2,12 +2,14 @@
 
 namespace Carica\Io\File {
 
+  use PHPUnit\Framework\TestCase;
+
   include_once(__DIR__.'/../Bootstrap.php');
 
-  class FileAccessTest extends \PHPUnit_Framework_TestCase {
+  class FileAccessTest extends TestCase {
 
     /**
-     * @covers Carica\Io\File\Access::getInfo
+     * @covers \Carica\Io\File\Access::getInfo
      */
     public function testGetInfo() {
       $fileSystem = new Access();
@@ -20,7 +22,7 @@ namespace Carica\Io\File {
     }
 
     /**
-     * @covers Carica\Io\File\Access::getFile
+     * @covers \Carica\Io\File\Access::getFile
      */
     public function testGetFile() {
       $fileSystem = new Access();
@@ -29,7 +31,7 @@ namespace Carica\Io\File {
     }
 
     /**
-     * @covers Carica\Io\File\Access::getFile
+     * @covers \Carica\Io\File\Access::getFile
      */
     public function testGetFileWithContext() {
       $fileSystem = new Access();
@@ -38,7 +40,7 @@ namespace Carica\Io\File {
     }
 
     /**
-     * @covers Carica\Io\File\Access::getFileResource
+     * @covers \Carica\Io\File\Access::getFileResource
      */
     public function testGetFileResource() {
       $fileSystem = new Access();
@@ -47,7 +49,7 @@ namespace Carica\Io\File {
     }
 
     /**
-     * @covers Carica\Io\File\Access::getFileResource
+     * @covers \Carica\Io\File\Access::getFileResource
      */
     public function testGetFileResourceWithContext() {
       $fileSystem = new Access();
@@ -59,7 +61,7 @@ namespace Carica\Io\File {
     }
 
     /**
-     * @covers Carica\Io\File\Access::getMimeType
+     * @covers \Carica\Io\File\Access::getMimeType
      */
     public function testGetMimeTypeExpectingPhp() {
       if (!function_exists('mime_content_type')) {
@@ -72,7 +74,7 @@ namespace Carica\Io\File {
     }
 
     /**
-     * @covers Carica\Io\File\Access::getMimeType
+     * @covers \Carica\Io\File\Access::getMimeType
      */
     public function testGetMimeTypeUsingExtensionMapping() {
       $fileSystem = new Access();
@@ -82,7 +84,7 @@ namespace Carica\Io\File {
     }
 
     /**
-     * @covers Carica\Io\File\Access::getRealPath
+     * @covers \Carica\Io\File\Access::getRealPath
      */
     public function testGetRealPath() {
       $fileSystem = new Access();

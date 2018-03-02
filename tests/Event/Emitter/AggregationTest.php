@@ -2,29 +2,32 @@
 
 namespace Carica\Io\Event\Emitter {
 
+  use Carica\Io\Event\Emitter;
+  use PHPUnit\Framework\TestCase;
+
   include_once(__DIR__.'/../../Bootstrap.php');
 
-  class AggregationTest extends \PHPUnit_Framework_TestCase {
+  class AggregationTest extends TestCase {
 
     /**
-     * @covers Carica\Io\Event\Emitter\Aggregation::events
+     * @covers \Carica\Io\Event\Emitter\Aggregation::events
      */
     public function testGetEventsAfterSet() {
       $aggregation = new Aggregation_TestProxy();
-      $aggregation->events($events = $this->getMock('Carica\\Io\\Event\\Emitter'));
+      $aggregation->events($events = $this->createMock(Emitter::class));
       $this->assertSame($events, $aggregation->events());
     }
 
     /**
-     * @covers Carica\Io\Event\Emitter\Aggregation::events
+     * @covers \Carica\Io\Event\Emitter\Aggregation::events
      */
     public function testGetEventsImplicitCreate() {
       $aggregation = new Aggregation_TestProxy();
-      $this->assertInstanceOf('Carica\\Io\\Event\\Emitter', $aggregation->events());
+      $this->assertInstanceOf(Emitter::class, $aggregation->events());
     }
 
     /**
-     * @covers Carica\Io\Event\Emitter\Aggregation::emitEvent
+     * @covers \Carica\Io\Event\Emitter\Aggregation::emitEvent
      */
     public function testEmitEvent() {
       $aggregation = new Aggregation_TestProxy();
@@ -35,7 +38,7 @@ namespace Carica\Io\Event\Emitter {
     }
 
     /**
-     * @covers Carica\Io\Event\Emitter\Aggregation::emitEvent
+     * @covers \Carica\Io\Event\Emitter\Aggregation::emitEvent
      */
     public function testEmitEventDoesNotImplicitCreateEmitter() {
       $aggregation = new Aggregation_TestProxy();

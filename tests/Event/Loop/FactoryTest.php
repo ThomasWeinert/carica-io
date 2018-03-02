@@ -2,15 +2,16 @@
 
 namespace Carica\Io\Event\Loop {
 
-  include_once(__DIR__.'/../../Bootstrap.php');
+  use Carica\Io\Event\Loop;
+  use PHPUnit\Framework\TestCase;
 
-  use Carica\Io\Event;
+  include_once(__DIR__.'/../../Bootstrap.php');
 
 
   /**
-   * @covers Carica\Io\Event\Loop\Factory
+   * @covers \Carica\Io\Event\Loop\Factory
    */
-  class FactoryTest extends \PHPUnit_Framework_TestCase {
+  class FactoryTest extends TestCase {
 
     public function tearDown() {
       Factory::reset();
@@ -18,27 +19,27 @@ namespace Carica\Io\Event\Loop {
 
     public function testCreate() {
       $loop = Factory::create();
-      $this->assertInstanceOf('Carica\\Io\\Event\\Loop', $loop);
+      $this->assertInstanceOf(Loop::class, $loop);
     }
 
     public function testCreateStreamSelectExplicit() {
       $loop = Factory::create(array());
-      $this->assertInstanceOf('Carica\\Io\\Event\\Loop\\StreamSelect', $loop);
+      $this->assertInstanceOf(StreamSelect::class, $loop);
     }
 
     public function testGetAfterSet() {
-      $loop = $this->getMock('Carica\\Io\\Event\\Loop');
+      $loop = $this->createMock(Loop::class);
       Factory::set($loop);
       $this->assertSame($loop, Factory::get());
     }
 
     public function testGetImplicitCreate() {
       $loop = Factory::get();
-      $this->assertInstanceOf('Carica\\Io\\Event\\Loop', $loop);
+      $this->assertInstanceOf(Loop::class, $loop);
     }
 
     public function testRun() {
-      $loop = $this->getMock('Carica\\Io\\Event\\Loop');
+      $loop = $this->createMock(Loop::class);
       $loop
         ->expects($this->once())
         ->method('run');

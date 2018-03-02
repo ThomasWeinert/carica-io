@@ -2,12 +2,14 @@
 
 namespace Carica\Io {
 
+  use PHPUnit\Framework\TestCase;
+
   include_once(__DIR__.'/Bootstrap.php');
 
-  class CallbacksTest extends \PHPUnit_Framework_TestCase {
+  class CallbacksTest extends TestCase {
 
     /**
-     * @covers Carica\Io\Callbacks
+     * @covers \Carica\Io\Callbacks
      */
     public function testAdd() {
       $callbacks = new Callbacks();
@@ -19,7 +21,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Callbacks
+     * @covers \Carica\Io\Callbacks
      */
     public function testAddWithTwoCalls() {
       $callbacks = new Callbacks();
@@ -33,7 +35,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Callbacks
+     * @covers \Carica\Io\Callbacks
      */
     public function testAddWithAnonymusFunction() {
       $callbacks = new Callbacks();
@@ -45,7 +47,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Callbacks
+     * @covers \Carica\Io\Callbacks
      */
     public function testAddWithCallableObject() {
       $callbacks = new Callbacks();
@@ -57,7 +59,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Callbacks
+     * @covers \Carica\Io\Callbacks
      */
     public function testAddWithCallbackArray() {
       $callbacks = new Callbacks();
@@ -69,7 +71,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Callbacks
+     * @covers \Carica\Io\Callbacks
      */
     public function testRemove() {
       $callbacks = new Callbacks();
@@ -84,7 +86,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Callbacks
+     * @covers \Carica\Io\Callbacks
      */
     public function testClearAfterAddingOneFunction() {
       $callbacks = new Callbacks();
@@ -99,7 +101,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Callbacks
+     * @covers \Carica\Io\Callbacks
      */
     public function testHasExpectingTrue() {
       $callbacks = new Callbacks();
@@ -110,7 +112,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Callbacks
+     * @covers \Carica\Io\Callbacks
      */
     public function testHasExpectingFalse() {
       $callbacks = new Callbacks();
@@ -120,7 +122,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Callbacks
+     * @covers \Carica\Io\Callbacks
      */
     public function testLockBlocksAdd() {
       $callbacks = new Callbacks();
@@ -134,7 +136,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Callbacks
+     * @covers \Carica\Io\Callbacks
      */
     public function testLockBlocksRemove() {
       $callbacks = new Callbacks();
@@ -149,7 +151,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Callbacks
+     * @covers \Carica\Io\Callbacks
      */
     public function testLockBlocksClear() {
       $callbacks = new Callbacks();
@@ -164,7 +166,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Callbacks
+     * @covers \Carica\Io\Callbacks
      */
     public function testLockedExpectingTrue() {
       $callbacks = new Callbacks();
@@ -175,7 +177,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Callbacks
+     * @covers \Carica\Io\Callbacks
      */
     public function testLockedExpectingFalse() {
       $callbacks = new Callbacks();
@@ -185,7 +187,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Callbacks
+     * @covers \Carica\Io\Callbacks
      */
     public function testFireWithTwoFunctions() {
       $foo = new \stdClass();
@@ -207,7 +209,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Callbacks
+     * @covers \Carica\Io\Callbacks
      */
     public function testFiredExpectingTrue() {
       $callbacks = new Callbacks();
@@ -218,7 +220,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Callbacks
+     * @covers \Carica\Io\Callbacks
      */
     public function testFiredExpectingFalse() {
       $callbacks = new Callbacks();
@@ -228,7 +230,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Callbacks
+     * @covers \Carica\Io\Callbacks
      */
     public function testDisableBlocksExecution() {
       $foo = new \stdClass();
@@ -245,7 +247,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Callbacks
+     * @covers \Carica\Io\Callbacks
      */
     public function testDisabledExpectingTrue() {
       $callbacks = new Callbacks();
@@ -256,7 +258,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Callbacks
+     * @covers \Carica\Io\Callbacks
      */
     public function testDisabledExpectingFalse() {
       $callbacks = new Callbacks();
@@ -266,7 +268,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Callbacks
+     * @covers \Carica\Io\Callbacks
      */
     public function testCountWithThreeFunctions() {
       $callbacks = new Callbacks();
@@ -278,7 +280,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Callbacks
+     * @covers \Carica\Io\Callbacks
      */
     public function testUseAddMethodAsAnonymusFunction() {
       $callbacks = new Callbacks();
@@ -288,20 +290,20 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\Callbacks
+     * @covers \Carica\Io\Callbacks
      */
     public function testMagicGetWithInvalidPropertyExpectingException() {
       $callbacks = new Callbacks();
-      $this->setExpectedException('LogicException');
+      $this->expectException(\LogicException::class);
       $dummy = $callbacks->invalidProperty;
     }
 
     /**
-     * @covers Carica\Io\Callbacks
+     * @covers \Carica\Io\Callbacks
      */
     public function testMagicSetExpectingException() {
       $callbacks = new Callbacks();
-      $this->setExpectedException('LogicException');
+      $this->expectException(\LogicException::class);
       $callbacks->add = 'fail';
     }
   }

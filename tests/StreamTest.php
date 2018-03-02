@@ -2,12 +2,14 @@
 
 namespace Carica\Io {
 
+  use PHPUnit\Framework\TestCase;
+
   include_once(__DIR__.'/Bootstrap.php');
 
-  class StreamTest extends \PHPUnit_Framework_TestCase {
+  class StreamTest extends TestCase {
 
     public function setUp() {
-      class_exists('Carica\\Io\\Stream');
+      class_exists(\Carica\Io\Stream::class);
     }
 
     function testEncodeBinaryFromArray() {

@@ -2,18 +2,20 @@
 
 namespace Carica\Io\Event {
 
+  use PHPUnit\Framework\TestCase;
+
   include_once(__DIR__.'/../Bootstrap.php');
 
-  class EmitterTest extends \PHPUnit_Framework_TestCase {
+  class EmitterTest extends TestCase {
 
     public $emittedEvents = array();
 
     /**
-     * @covers Carica\Io\Event\Emitter::on
+     * @covers \Carica\Io\Event\Emitter::on
      */
     public function testOnAddListener() {
       $event = $this
-        ->getMockBuilder('Carica\\Io\\Event\\Emitter\\Listener\\On')
+        ->getMockBuilder(Emitter\Listener\On::class)
         ->disableOriginalConstructor()
         ->getMock();
       $emitter = new Emitter();
@@ -24,7 +26,7 @@ namespace Carica\Io\Event {
     }
 
     /**
-     * @covers Carica\Io\Event\Emitter::on
+     * @covers \Carica\Io\Event\Emitter::on
      */
     public function testOnWrapsFunction() {
       $emitter = new Emitter();
@@ -34,17 +36,17 @@ namespace Carica\Io\Event {
       );
       $events = $emitter->listeners('foo');
       $this->assertInstanceOf(
-        'Carica\\Io\\Event\\Emitter\\Listener\\On',
+        Emitter\Listener\On::class,
         $events[0]
       );
     }
 
     /**
-     * @covers Carica\Io\Event\Emitter::once
+     * @covers \Carica\Io\Event\Emitter::once
      */
     public function testOnceAddListener() {
       $event = $this
-        ->getMockBuilder('Carica\\Io\\Event\\Emitter\\Listener\\Once')
+        ->getMockBuilder(Emitter\Listener\Once::class)
         ->disableOriginalConstructor()
         ->getMock();
       $emitter = new Emitter();
@@ -55,7 +57,7 @@ namespace Carica\Io\Event {
     }
 
     /**
-     * @covers Carica\Io\Event\Emitter::once
+     * @covers \Carica\Io\Event\Emitter::once
      */
     public function testOnceWrapsFunction() {
       $emitter = new Emitter();
@@ -65,16 +67,16 @@ namespace Carica\Io\Event {
       );
       $events = $emitter->listeners('foo');
       $this->assertInstanceOf(
-        'Carica\\Io\\Event\\Emitter\\Listener\\Once',
+        Emitter\Listener\Once::class,
         $events[0]
       );
     }
 
     /**
-     * @covers Carica\Io\Event\Emitter::removeListener
+     * @covers \Carica\Io\Event\Emitter::removeListener
      */
     public function testRemoveListener() {
-      $listener = $this->getMock('Carica\\Io\\Event\\Emitter\\Listener');
+      $listener = $this->createMock(Emitter\Listener::class);
       $emitter = new Emitter();
       $emitter->on('foo', $listener);
       $emitter->removeListener('foo', $listener);
@@ -82,18 +84,18 @@ namespace Carica\Io\Event {
     }
 
     /**
-     * @covers Carica\Io\Event\Emitter::removeAllListeners
+     * @covers \Carica\Io\Event\Emitter::removeAllListeners
      */
     public function testRemoveAllListeners() {
       $emitter = new Emitter();
-      $emitter->on('foo', $this->getMock('Carica\\Io\\Event\\Emitter\\Listener'));
-      $emitter->on('foo', $this->getMock('Carica\\Io\\Event\\Emitter\\Listener'));
+      $emitter->on('foo', $this->createMock(Emitter\Listener::class));
+      $emitter->on('foo', $this->createMock(Emitter\Listener::class));
       $emitter->removeAllListeners('foo');
       $this->assertCount(0, $emitter->listeners('foo'));
     }
 
     /**
-     * @covers Carica\Io\Event\Emitter::listeners
+     * @covers \Carica\Io\Event\Emitter::listeners
      */
     public function testListernersReturnsEmptyArrayByDefault() {
       $emitter = new Emitter();
@@ -101,17 +103,17 @@ namespace Carica\Io\Event {
     }
 
     /**
-     * @covers Carica\Io\Event\Emitter::listeners
+     * @covers \Carica\Io\Event\Emitter::listeners
      */
     public function testListernersReturnsListenersForSpecifiedEvent() {
       $emitter = new Emitter();
-      $emitter->on('foo', $this->getMock('Carica\\Io\\Event\\Emitter\\Listener'));
-      $emitter->on('bar', $this->getMock('Carica\\Io\\Event\\Emitter\\Listener'));
+      $emitter->on('foo', $this->createMock(Emitter\Listener::class));
+      $emitter->on('bar', $this->createMock(Emitter\Listener::class));
       $this->assertCount(1, $emitter->listeners('bar'));
     }
 
     /**
-     * @covers Carica\Io\Event\Emitter::emit
+     * @covers \Carica\Io\Event\Emitter::emit
      */
     public function testEmitWithOneListener() {
       $that = $this;
@@ -127,7 +129,7 @@ namespace Carica\Io\Event {
     }
 
     /**
-     * @covers Carica\Io\Event\Emitter::emit
+     * @covers \Carica\Io\Event\Emitter::emit
      */
     public function testEmitWithTwoListeners() {
       $that = $this;
@@ -149,7 +151,7 @@ namespace Carica\Io\Event {
     }
 
     /**
-     * @covers Carica\Io\Event\Emitter::emit
+     * @covers \Carica\Io\Event\Emitter::emit
      */
     public function testEmitWithTwoListenersfordifferentEvents() {
       $that = $this;
@@ -171,7 +173,7 @@ namespace Carica\Io\Event {
     }
 
     /**
-     * @covers Carica\Io\Event\Emitter
+     * @covers \Carica\Io\Event\Emitter
      */
     public function testCallEventAfterDefining() {
       $that = $this;
@@ -188,7 +190,7 @@ namespace Carica\Io\Event {
     }
 
     /**
-     * @covers Carica\Io\Event\Emitter
+     * @covers \Carica\Io\Event\Emitter
      */
     public function testCallEventAfterDefiningUsingAlias() {
       $that = $this;
@@ -205,7 +207,7 @@ namespace Carica\Io\Event {
     }
 
     /**
-     * @covers Carica\Io\Event\Emitter
+     * @covers \Carica\Io\Event\Emitter
      */
     public function testCallEventAfterDefiningUsingSecondAlias() {
       $that = $this;
@@ -222,12 +224,12 @@ namespace Carica\Io\Event {
     }
 
     /**
-     * @covers Carica\Io\Event\Emitter
+     * @covers \Carica\Io\Event\Emitter
      */
     public function testEventAfterDefinitionWithUndefinedEventExpectingException() {
       $emitter = new Emitter();
       $emitter->defineEvents(array('foo' => 'bar'));
-      $this->setExpectedException('UnexpectedValueException');
+      $this->expectException(\UnexpectedValueException::class);
       $emitter->on('invalid', function() {});
     }
   }

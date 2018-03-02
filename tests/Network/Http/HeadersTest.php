@@ -2,12 +2,14 @@
 
 namespace Carica\Io\Network\Http {
 
+  use PHPUnit\Framework\TestCase;
+
   include_once(__DIR__.'/../../Bootstrap.php');
 
-  class HeadersTest extends \PHPUnit_Framework_TestCase {
+  class HeadersTest extends TestCase {
 
     /**
-     * @covers Carica\Io\Network\Http\Headers::count
+     * @covers \Carica\Io\Network\Http\Headers::count
      */
     public function testCountExpectingZero() {
       $headers = new Headers();
@@ -15,7 +17,7 @@ namespace Carica\Io\Network\Http {
     }
 
     /**
-     * @covers Carica\Io\Network\Http\Headers::count
+     * @covers \Carica\Io\Network\Http\Headers::count
      */
     public function testCountExpectingTwo() {
       $headers = new Headers();
@@ -25,7 +27,7 @@ namespace Carica\Io\Network\Http {
     }
 
     /**
-     * @covers Carica\Io\Network\Http\Headers::getIterator
+     * @covers \Carica\Io\Network\Http\Headers::getIterator
      */
     public function testIteratorWithTwoElements() {
       $headers = new Headers();
@@ -41,8 +43,8 @@ namespace Carica\Io\Network\Http {
     }
 
     /**
-     * @covers Carica\Io\Network\Http\Headers::offsetExists
-     * @covers Carica\Io\Network\Http\Headers::prepareKey
+     * @covers \Carica\Io\Network\Http\Headers::offsetExists
+     * @covers \Carica\Io\Network\Http\Headers::prepareKey
      */
     public function testArrayAccessOffsetExistsExpectingTrue() {
       $headers = new Headers();
@@ -51,8 +53,8 @@ namespace Carica\Io\Network\Http {
     }
 
     /**
-     * @covers Carica\Io\Network\Http\Headers::offsetExists
-     * @covers Carica\Io\Network\Http\Headers::prepareKey
+     * @covers \Carica\Io\Network\Http\Headers::offsetExists
+     * @covers \Carica\Io\Network\Http\Headers::prepareKey
      */
     public function testArrayAccessOffsetExistsExpectingFalse() {
       $headers = new Headers();
@@ -61,9 +63,9 @@ namespace Carica\Io\Network\Http {
     }
 
     /**
-     * @covers Carica\Io\Network\Http\Headers::offsetGet
-     * @covers Carica\Io\Network\Http\Headers::offsetSet
-     * @covers Carica\Io\Network\Http\Headers::prepareKey
+     * @covers \Carica\Io\Network\Http\Headers::offsetGet
+     * @covers \Carica\Io\Network\Http\Headers::offsetSet
+     * @covers \Carica\Io\Network\Http\Headers::prepareKey
      */
     public function testArrayAccessOffsetGetAfterOffsetSet() {
       $headers = new Headers();
@@ -75,9 +77,9 @@ namespace Carica\Io\Network\Http {
     }
 
     /**
-     * @covers Carica\Io\Network\Http\Headers::offsetGet
-     * @covers Carica\Io\Network\Http\Headers::offsetSet
-     * @covers Carica\Io\Network\Http\Headers::prepareKey
+     * @covers \Carica\Io\Network\Http\Headers::offsetGet
+     * @covers \Carica\Io\Network\Http\Headers::offsetSet
+     * @covers \Carica\Io\Network\Http\Headers::prepareKey
      */
     public function testArrayAccessOffsetSetWithHeaderObject() {
       $headers = new Headers();
@@ -89,9 +91,9 @@ namespace Carica\Io\Network\Http {
     }
 
     /**
-     * @covers Carica\Io\Network\Http\Headers::offsetGet
-     * @covers Carica\Io\Network\Http\Headers::offsetSet
-     * @covers Carica\Io\Network\Http\Headers::prepareKey
+     * @covers \Carica\Io\Network\Http\Headers::offsetGet
+     * @covers \Carica\Io\Network\Http\Headers::offsetSet
+     * @covers \Carica\Io\Network\Http\Headers::prepareKey
      */
     public function testArrayAccessOffsetSetWithHeaderObjectButNoName() {
       $headers = new Headers();
@@ -103,9 +105,9 @@ namespace Carica\Io\Network\Http {
     }
 
     /**
-     * @covers Carica\Io\Network\Http\Headers::offsetGet
-     * @covers Carica\Io\Network\Http\Headers::offsetSet
-     * @covers Carica\Io\Network\Http\Headers::prepareKey
+     * @covers \Carica\Io\Network\Http\Headers::offsetGet
+     * @covers \Carica\Io\Network\Http\Headers::offsetSet
+     * @covers \Carica\Io\Network\Http\Headers::prepareKey
      */
     public function testArrayAccessSetUsingStringNameAndValue() {
       $headers = new Headers();
@@ -117,9 +119,9 @@ namespace Carica\Io\Network\Http {
     }
 
     /**
-     * @covers Carica\Io\Network\Http\Headers::offsetGet
-     * @covers Carica\Io\Network\Http\Headers::offsetSet
-     * @covers Carica\Io\Network\Http\Headers::prepareKey
+     * @covers \Carica\Io\Network\Http\Headers::offsetGet
+     * @covers \Carica\Io\Network\Http\Headers::offsetSet
+     * @covers \Carica\Io\Network\Http\Headers::prepareKey
      */
     public function testArrayAccessSetAddsValuesToExistingHeader() {
       $headers = new Headers();
@@ -133,26 +135,26 @@ namespace Carica\Io\Network\Http {
     }
 
     /**
-     * @covers Carica\Io\Network\Http\Headers::prepareKey
+     * @covers \Carica\Io\Network\Http\Headers::prepareKey
      */
     public function testArrayAccessOffsetGetWithEmptyKey() {
       $headers = new Headers();
-      $this->setExpectedException('InvalidArgumentException');
+      $this->expectException(\InvalidArgumentException::class);
       $dummy = $headers['   '];
     }
 
     /**
-     * @covers Carica\Io\Network\Http\Headers::prepareKey
+     * @covers \Carica\Io\Network\Http\Headers::prepareKey
      */
     public function testArrayAccessOffsetGetWithInvalidKey() {
       $headers = new Headers();
-      $this->setExpectedException('InvalidArgumentException');
+      $this->expectException(\InvalidArgumentException::class);
       $dummy = $headers['123-nogood'];
     }
 
     /**
-     * @covers Carica\Io\Network\Http\Headers::offsetUnset
-     * @covers Carica\Io\Network\Http\Headers::prepareKey
+     * @covers \Carica\Io\Network\Http\Headers::offsetUnset
+     * @covers \Carica\Io\Network\Http\Headers::prepareKey
      */
     public function testArrayAccessOffsetUnset() {
       $headers = new Headers();

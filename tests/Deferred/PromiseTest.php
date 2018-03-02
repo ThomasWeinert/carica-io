@@ -5,25 +5,26 @@ namespace Carica\Io\Deferred {
   include_once(__DIR__.'/../Bootstrap.php');
 
   use Carica\Io;
+  use PHPUnit\Framework\TestCase;
 
-  class PromiseTest extends \PHPUnit_Framework_TestCase {
+  class PromiseTest extends TestCase {
 
     /**
-     * @covers Carica\Io\Deferred\Promise::__construct
+     * @covers \Carica\Io\Deferred\Promise::__construct
      */
     public function testConstructor() {
-      $defer = $this->getMock('Carica\\Io\\Deferred');
+      $defer = $this->createMock(Io\Deferred::class);
       $promise = new Promise($defer);
       $this->assertAttributeSame($defer, '_defer', $promise);
     }
 
     /**
-     * @covers Carica\Io\Deferred\Promise::always
+     * @covers \Carica\Io\Deferred\Promise::always
      */
     public function testAlways() {
       $function = function() {
       };
-      $defer = $this->getMock('Carica\\Io\\Deferred');
+      $defer = $this->createMock(Io\Deferred::class);
       $defer
         ->expects($this->once())
         ->method('always')
@@ -35,11 +36,11 @@ namespace Carica\Io\Deferred {
     }
 
     /**
-     * @covers Carica\Io\Deferred\Promise::done
+     * @covers \Carica\Io\Deferred\Promise::done
      */
     public function testDone() {
       $function = function() {};
-      $defer = $this->getMock('Carica\\Io\\Deferred');
+      $defer = $this->createMock(Io\Deferred::class);
       $defer
         ->expects($this->once())
         ->method('done')
@@ -51,11 +52,11 @@ namespace Carica\Io\Deferred {
     }
 
     /**
-     * @covers Carica\Io\Deferred\Promise::fail
+     * @covers \Carica\Io\Deferred\Promise::fail
      */
     public function testFail() {
       $function = function() {};
-      $defer = $this->getMock('Carica\\Io\\Deferred');
+      $defer = $this->createMock(Io\Deferred::class);
       $defer
         ->expects($this->once())
         ->method('fail')
@@ -67,14 +68,14 @@ namespace Carica\Io\Deferred {
     }
 
     /**
-     * @covers Carica\Io\Deferred\Promise::pipe
+     * @covers \Carica\Io\Deferred\Promise::pipe
      */
     public function testThenWithNullArguments() {
       $promise = $this
-        ->getMockBuilder('Carica\\Io\\Deferred\\Promise')
+        ->getMockBuilder(Promise::class)
         ->disableOriginalConstructor()
         ->getMock();
-      $defer = $this->getMock('Carica\\Io\\Deferred');
+      $defer = $this->createMock(Io\Deferred::class);
       $defer
         ->expects($this->once())
         ->method('then')
@@ -83,20 +84,20 @@ namespace Carica\Io\Deferred {
 
       $promise = new Promise($defer);
       $filterPromise = $promise->then();
-      $this->assertInstanceOf('Carica\\Io\\Deferred\\Promise', $filterPromise);
+      $this->assertInstanceOf(Promise::class, $filterPromise);
       $this->assertNotSame($filterPromise, $promise);
     }
 
     /**
-     * @covers Carica\Io\Deferred\Promise::pipe
+     * @covers \Carica\Io\Deferred\Promise::pipe
      */
     public function testThenWithFunctionArguments() {
       $promise = $this
-        ->getMockBuilder('Carica\\Io\\Deferred\\Promise')
+        ->getMockBuilder(Promise::class)
         ->disableOriginalConstructor()
         ->getMock();
       $function = function() {};
-      $defer = $this->getMock('Carica\\Io\\Deferred');
+      $defer = $this->createMock(Io\Deferred::class);
       $defer
         ->expects($this->once())
         ->method('then')
@@ -105,16 +106,16 @@ namespace Carica\Io\Deferred {
 
       $promise = new Promise($defer);
       $filterPromise = $promise->then($function, $function, $function);
-      $this->assertInstanceOf('Carica\\Io\\Deferred\\Promise', $filterPromise);
+      $this->assertInstanceOf(Promise::class, $filterPromise);
       $this->assertNotSame($filterPromise, $promise);
     }
 
     /**
-     * @covers Carica\Io\Deferred\Promise::progress
+     * @covers \Carica\Io\Deferred\Promise::progress
      */
     public function testProgress() {
       $function = function() {};
-      $defer = $this->getMock('Carica\\Io\\Deferred');
+      $defer = $this->createMock(Io\Deferred::class);
       $defer
         ->expects($this->once())
         ->method('progress')
@@ -126,10 +127,10 @@ namespace Carica\Io\Deferred {
     }
 
     /**
-     * @covers Carica\Io\Deferred\Promise::state
+     * @covers \Carica\Io\Deferred\Promise::state
      */
     public function testState() {
-      $defer = $this->getMock('Carica\\Io\\Deferred');
+      $defer = $this->createMock(Io\Deferred::class);
       $defer
         ->expects($this->once())
         ->method('state')

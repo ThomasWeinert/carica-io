@@ -2,12 +2,16 @@
 
 namespace Carica\Io\Stream {
 
+  use Carica\Io\Event\Emitter;
+  use Carica\Io\Event\Loop;
+  use PHPUnit\Framework\TestCase;
+
   include_once(__DIR__.'/../Bootstrap.php');
 
-  class FileTest extends \PHPUnit_Framework_TestCase {
+  class FileTest extends TestCase {
 
     /**
-     * @covers Carica\Io\Stream\File
+     * @covers \Carica\Io\Stream\File
      */
     public function testConstructor() {
       $file = new File('sample.txt');
@@ -20,10 +24,10 @@ namespace Carica\Io\Stream {
     }
 
     /**
-     * @covers Carica\Io\Stream\File
+     * @covers \Carica\Io\Stream\File
      */
     public function testOpen() {
-      $loop = $this->getMock('Carica\\Io\\Event\\Loop');
+      $loop = $this->createMock(Loop::class);
       $loop
         ->expects($this->once())
         ->method('setStreamReader')
@@ -36,11 +40,11 @@ namespace Carica\Io\Stream {
     }
 
     /**
-     * @covers Carica\Io\Stream\File
+     * @covers \Carica\Io\Stream\File
      */
     public function testOpenExpectingError() {
       $events = $this
-        ->getMockBuilder('Carica\\Io\\Event\\Emitter')
+        ->getMockBuilder(Emitter::class)
         ->disableOriginalConstructor()
         ->getMock();
       $events
@@ -55,17 +59,17 @@ namespace Carica\Io\Stream {
     }
 
     /**
-     * @covers Carica\Io\Stream\File
+     * @covers \Carica\Io\Stream\File
      */
     public function testRead() {
-      $loop = $this->getMock('Carica\\Io\\Event\\Loop');
+      $loop = $this->createMock(Loop::class);
       $loop
         ->expects($this->once())
         ->method('setStreamReader')
         ->with($this->isType('callable'), $this->isType('resource'));
 
       $events = $this
-        ->getMockBuilder('Carica\\Io\\Event\\Emitter')
+        ->getMockBuilder(Emitter::class)
         ->disableOriginalConstructor()
         ->getMock();
       $events
@@ -81,7 +85,7 @@ namespace Carica\Io\Stream {
     }
 
     /**
-     * @covers Carica\Io\Stream\File
+     * @covers \Carica\Io\Stream\File
      */
     public function testReadWithoutResource() {
       $file = new File(__DIR__.'/TestData/sample.txt');
@@ -89,7 +93,7 @@ namespace Carica\Io\Stream {
     }
 
     /**
-     * @covers Carica\Io\Stream\File
+     * @covers \Carica\Io\Stream\File
      */
     public function testWriteWithoutResource() {
       $file = new File(__DIR__.'/TestData/sample.txt');

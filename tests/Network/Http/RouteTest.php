@@ -2,12 +2,14 @@
 
 namespace Carica\Io\Network\Http {
 
+  use PHPUnit\Framework\TestCase;
+
   include_once(__DIR__.'/../../Bootstrap.php');
 
-  class RouteTest extends \PHPUnit_Framework_TestCase {
+  class RouteTest extends TestCase {
 
     /**
-     * @covers Carica\Io\Network\Http\Route
+     * @covers \Carica\Io\Network\Http\Route
      */
     public function testAny() {
       $route = new Route();
@@ -21,7 +23,7 @@ namespace Carica\Io\Network\Http {
     }
 
     /**
-     * @covers Carica\Io\Network\Http\Route
+     * @covers \Carica\Io\Network\Http\Route
      */
     public function testMatch() {
       $route = new Route();
@@ -35,7 +37,7 @@ namespace Carica\Io\Network\Http {
     }
 
     /**
-     * @covers Carica\Io\Network\Http\Route
+     * @covers \Carica\Io\Network\Http\Route
      */
     public function testStartsWith() {
       $route = new Route();
@@ -49,15 +51,15 @@ namespace Carica\Io\Network\Http {
     }
 
     /**
-     * @covers Carica\Io\Network\Http\Route
+     * @covers \Carica\Io\Network\Http\Route
      */
     public function testRoutingOneMatchingTarget() {
       $request = $this
-        ->getMockBuilder('Carica\\Io\\Network\\Http\\Request')
+        ->getMockBuilder(Request::class)
         ->disableOriginalConstructor()
         ->getMock();
       $response = $this
-        ->getMockBuilder('Carica\\Io\\Network\\Http\\Response')
+        ->getMockBuilder(Response::class)
         ->disableOriginalConstructor()
         ->getMock();
 
@@ -71,11 +73,11 @@ namespace Carica\Io\Network\Http {
     }
 
     /**
-     * @covers Carica\Io\Network\Http\Route
+     * @covers \Carica\Io\Network\Http\Route
      */
     public function testRoutingNoMatchingTarget() {
       $request = $this
-        ->getMockBuilder('Carica\\Io\\Network\\Http\\Request')
+        ->getMockBuilder(Request::class)
         ->disableOriginalConstructor()
         ->getMock();
 

@@ -4,12 +4,13 @@ namespace Carica\Io\Network\Http\Route\Target {
 
   include_once(__DIR__.'/../../../../Bootstrap.php');
 
-  use Carica\Io\Network\Http;
+  use Carica\Io\Network\Http\Request;
+  use PHPUnit\Framework\TestCase;
 
-  class AnyTest extends \PHPUnit_Framework_TestCase {
+  class AnyTest extends TestCase {
 
     /**
-     * @covers Carica\Io\Network\Http\Route\Target\Any
+     * @covers \Carica\Io\Network\Http\Route\Target\Any
      */
     public function testWithoutLimitation() {
       $result = FALSE;
@@ -21,7 +22,7 @@ namespace Carica\Io\Network\Http\Route\Target {
     }
 
     /**
-     * @covers Carica\Io\Network\Http\Route\Target\Any
+     * @covers \Carica\Io\Network\Http\Route\Target\Any
      */
     public function testMethodsIncludeCurrent() {
       $result = FALSE;
@@ -34,7 +35,7 @@ namespace Carica\Io\Network\Http\Route\Target {
     }
 
     /**
-     * @covers Carica\Io\Network\Http\Route\Target\Any
+     * @covers \Carica\Io\Network\Http\Route\Target\Any
      */
     public function testMethodsNotIncludeCurrent() {
       $result = FALSE;
@@ -47,20 +48,20 @@ namespace Carica\Io\Network\Http\Route\Target {
     }
 
     /**
-     * @covers Carica\Io\Network\Http\Route\Target\Any
+     * @covers \Carica\Io\Network\Http\Route\Target\Any
      */
     public function testMethodsWithInvalidValue() {
       $result = FALSE;
       $target = new Any(
         function() use (&$result) { $result = TRUE; }
       );
-      $this->setExpectedException('InvalidArgumentException');
+      $this->expectException(\InvalidArgumentException::class);
       $target->methods('123');
     }
 
     private function getRequestFixture($method = 'GET') {
       $request = $this
-        ->getMockBuilder('Carica\\Io\\Network\\Http\\Request')
+        ->getMockBuilder(Request::class)
         ->disableOriginalConstructor()
         ->getMock();
       $request

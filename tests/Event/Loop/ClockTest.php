@@ -4,12 +4,12 @@ namespace Carica\Io\Event\Loop {
 
   include_once(__DIR__.'/../../Bootstrap.php');
 
-  use Carica\Io\Event;
+  use PHPUnit\Framework\TestCase;
 
   /**
-   * @covers Carica\Io\Event\Loop\Clock
+   * @covers \Carica\Io\Event\Loop\Clock
    */
-  class ClockTest extends \PHPUnit_Framework_TestCase {
+  class ClockTest extends TestCase {
 
     public function testSetTimeout() {
       $loop = new Clock();

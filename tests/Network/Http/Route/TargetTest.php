@@ -5,11 +5,12 @@ namespace Carica\Io\Network\Http\Route {
   include_once(__DIR__.'/../../../Bootstrap.php');
 
   use Carica\Io\Network\Http;
+  use PHPUnit\Framework\TestCase;
 
-  class TargetTest extends \PHPUnit_Framework_TestCase {
+  class TargetTest extends TestCase {
 
     /**
-     * @covers Carica\Io\Network\Http\Route\Target
+     * @covers \Carica\Io\Network\Http\Route\Target
      */
     public function testConstructor() {
       $target = new Target_TestProxy($callback = function() {});
@@ -17,11 +18,11 @@ namespace Carica\Io\Network\Http\Route {
     }
 
     /**
-     * @covers Carica\Io\Network\Http\Route\Target
+     * @covers \Carica\Io\Network\Http\Route\Target
      */
     public function testCallableInterfaceVaildationSuccessful() {
       $request = $this
-        ->getMockBuilder('Carica\\Io\\Network\\Http\\Request')
+        ->getMockBuilder(Http\Request::class)
         ->disableOriginalConstructor()
         ->getMock();
       $target = new Target_TestProxy(
@@ -33,11 +34,11 @@ namespace Carica\Io\Network\Http\Route {
       $this->assertTrue($target($request));
     }
     /**
-     * @covers Carica\Io\Network\Http\Route\Target
+     * @covers \Carica\Io\Network\Http\Route\Target
      */
     public function testCallableInterfaceVaildationFailed() {
       $request = $this
-        ->getMockBuilder('Carica\\Io\\Network\\Http\\Request')
+        ->getMockBuilder(Http\Request::class)
         ->disableOriginalConstructor()
         ->getMock();
       $target = new Target_TestProxy(

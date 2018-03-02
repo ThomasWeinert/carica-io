@@ -2,12 +2,14 @@
 
 namespace Carica\Io {
 
+  use PHPUnit\Framework\TestCase;
+
   include_once(__DIR__.'/Bootstrap.php');
 
-  class ByteArrayTest extends \PHPUnit_Framework_TestCase {
+  class ByteArrayTest extends TestCase {
 
     /**
-     * @covers Carica\Io\ByteArray::__construct
+     * @covers \Carica\Io\ByteArray::__construct
      */
     public function testConstructor() {
       $bytes = new ByteArray(3);
@@ -16,17 +18,16 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::__construct
+     * @covers \Carica\Io\ByteArray::__construct
      */
     public function testConstructorWithInvalidLengthExpectingException() {
-      $this->setExpectedException(
-        'OutOfRangeException', 'Zero or negative length is not possible'
-      );
+      $this->expectException(\OutOfRangeException::class);
+      $this->expectExceptionMessage('Zero or negative length is not possible');
       new ByteArray(-3);
     }
 
     /**
-     * @covers Carica\Io\ByteArray::setLength
+     * @covers \Carica\Io\ByteArray::setLength
      */
     public function testSetLengthIncreaseFrom3To6() {
       $bytes = new ByteArray(3);
@@ -36,7 +37,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::setLength
+     * @covers \Carica\Io\ByteArray::setLength
      */
     public function testSetLengthDecreaseFrom6To3() {
       $bytes = new ByteArray(6);
@@ -46,18 +47,17 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::setLength
+     * @covers \Carica\Io\ByteArray::setLength
      */
     public function testSetLengthWithInvalidLengthExpectingException() {
       $bytes = new ByteArray(6);
-      $this->setExpectedException(
-        'OutOfRangeException', 'Zero or negative length is not possible'
-      );
+      $this->expectException(\OutOfRangeException::class);
+      $this->expectExceptionMessage('Zero or negative length is not possible');
       $bytes->setLength(-23);
     }
 
     /**
-     * @covers Carica\Io\ByteArray::getLength
+     * @covers \Carica\Io\ByteArray::getLength
      */
     public function testGetLength() {
       $bytes = new ByteArray(6);
@@ -65,8 +65,8 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::__toString
-     * @covers Carica\Io\ByteArray::fromString
+     * @covers \Carica\Io\ByteArray::__toString
+     * @covers \Carica\Io\ByteArray::fromString
      * @dataProvider provideBinarySamples
      */
     public function testStringInOut($binary) {
@@ -76,17 +76,17 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::fromString
+     * @covers \Carica\Io\ByteArray::fromString
      */
     public function testFromStringWithInvalidLengthExpectingException() {
       $bytes = new ByteArray(42);
-      $this->setExpectedException('OutOfBoundsException');
+      $this->expectException(\OutOfBoundsException::class);
       $bytes->fromString(pack('C*', 255, 255, 255));
     }
 
     /**
-     * @covers Carica\Io\ByteArray::__toString
-     * @covers Carica\Io\ByteArray::fromString
+     * @covers \Carica\Io\ByteArray::__toString
+     * @covers \Carica\Io\ByteArray::fromString
      */
     public function testFromStringWithAutomaticLengthIncrease() {
       $bytes = new ByteArray(1);
@@ -95,8 +95,8 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::__toString
-     * @covers Carica\Io\ByteArray::fromString
+     * @covers \Carica\Io\ByteArray::__toString
+     * @covers \Carica\Io\ByteArray::fromString
      */
     public function testFromStringWithAutomaticLengthDecrease() {
       $bytes = new ByteArray(10);
@@ -105,8 +105,8 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::fromHexString
-     * @covers Carica\Io\ByteArray::asHex
+     * @covers \Carica\Io\ByteArray::fromHexString
+     * @covers \Carica\Io\ByteArray::asHex
      * @dataProvider provideHexSamples
      */
     public function testHexStringInOut($string, $binaryString, $length) {
@@ -116,17 +116,17 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::fromHexString
+     * @covers \Carica\Io\ByteArray::fromHexString
      */
     public function testFromHexStringWithInvalidLengthExpectingException() {
       $bytes = new ByteArray(42);
-      $this->setExpectedException('OutOfBoundsException');
+      $this->expectException(\OutOfBoundsException::class);
       $bytes->fromHexString('FFF0FF', FALSE);
     }
 
     /**
-     * @covers Carica\Io\ByteArray::asHex
-     * @covers Carica\Io\ByteArray::fromHexString
+     * @covers \Carica\Io\ByteArray::asHex
+     * @covers \Carica\Io\ByteArray::fromHexString
      */
     public function testFromHexStringWithAutomaticLengthIncrease() {
       $bytes = new ByteArray(1);
@@ -135,8 +135,8 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::asHex
-     * @covers Carica\Io\ByteArray::fromHexString
+     * @covers \Carica\Io\ByteArray::asHex
+     * @covers \Carica\Io\ByteArray::fromHexString
      */
     public function testFromHexStringWithAutomaticLengthDecrease() {
       $bytes = new ByteArray(10);
@@ -145,7 +145,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::fromArray
+     * @covers \Carica\Io\ByteArray::fromArray
      */
     public function testFromArray() {
       $bytes = new ByteArray(2);
@@ -154,16 +154,16 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::fromArray
+     * @covers \Carica\Io\ByteArray::fromArray
      */
     public function testFromArrayWithInvalidLengthExpectingException() {
       $bytes = new ByteArray(42);
-      $this->setExpectedException('OutOfBoundsException');
+      $this->expectException(\OutOfBoundsException::class);
       $bytes->fromArray([0xFF, 0xF0, 0xFF], FALSE);
     }
 
     /**
-     * @covers Carica\Io\ByteArray::fromArray
+     * @covers \Carica\Io\ByteArray::fromArray
      */
     public function testFromArrayWithAutomaticLengthIncrease() {
       $bytes = new ByteArray(1);
@@ -172,7 +172,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::fromArray
+     * @covers \Carica\Io\ByteArray::fromArray
      */
     public function testFromArrayWithAutomaticLengthDecrease() {
       $bytes = new ByteArray(10);
@@ -181,7 +181,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::asHex
+     * @covers \Carica\Io\ByteArray::asHex
      * @dataProvider provideHexSamples
      */
     public function testAsHex($expected, $binaryString, $length) {
@@ -191,7 +191,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::asBitString
+     * @covers \Carica\Io\ByteArray::asBitString
      * @dataProvider provideBitStringSamples
      */
     public function testAsBitString($expected, $binaryString, $length) {
@@ -201,7 +201,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::asArray
+     * @covers \Carica\Io\ByteArray::asArray
      */
     public function testAsArray() {
       $bytes = new ByteArray();
@@ -210,9 +210,9 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::offsetExists
-     * @covers Carica\Io\ByteArray::validateOffset
-     * @covers Carica\Io\ByteArray::validateBitOffset
+     * @covers \Carica\Io\ByteArray::offsetExists
+     * @covers \Carica\Io\ByteArray::validateOffset
+     * @covers \Carica\Io\ByteArray::validateBitOffset
      */
     public function testBitExistsExpectingTrue() {
       $bytes = new ByteArray(3);
@@ -220,9 +220,9 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::offsetExists
-     * @covers Carica\Io\ByteArray::validateOffset
-     * @covers Carica\Io\ByteArray::validateBitOffset
+     * @covers \Carica\Io\ByteArray::offsetExists
+     * @covers \Carica\Io\ByteArray::validateOffset
+     * @covers \Carica\Io\ByteArray::validateBitOffset
      */
     public function testBitExistsExpectingFalse() {
       $bytes = new ByteArray(3);
@@ -230,19 +230,19 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::offsetExists
-     * @covers Carica\Io\ByteArray::validateOffset
-     * @covers Carica\Io\ByteArray::validateBitOffset
+     * @covers \Carica\Io\ByteArray::offsetExists
+     * @covers \Carica\Io\ByteArray::validateOffset
+     * @covers \Carica\Io\ByteArray::validateBitOffset
      */
     public function testBitExistsWithInvalidOffsetExpectingException() {
       $bytes = new ByteArray(3);
-      $this->setExpectedException('OutOfBoundsException');
+      $this->expectException(\OutOfBoundsException::class);
       $dummy = $bytes[[23, 23, 23]];
     }
 
     /**
-     * @covers Carica\Io\ByteArray::offsetExists
-     * @covers Carica\Io\ByteArray::validateOffset
+     * @covers \Carica\Io\ByteArray::offsetExists
+     * @covers \Carica\Io\ByteArray::validateOffset
      */
     public function testByteExistsExpectingTrue() {
       $bytes = new ByteArray(3);
@@ -250,8 +250,8 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::offsetExists
-     * @covers Carica\Io\ByteArray::validateOffset
+     * @covers \Carica\Io\ByteArray::offsetExists
+     * @covers \Carica\Io\ByteArray::validateOffset
      */
     public function testByteExistsExpectingFalse() {
       $bytes = new ByteArray(3);
@@ -259,7 +259,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::offsetSet
+     * @covers \Carica\Io\ByteArray::offsetSet
      */
     public function testSetLowestBit() {
       $bytes = new ByteArray(1);
@@ -268,7 +268,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::offsetSet
+     * @covers \Carica\Io\ByteArray::offsetSet
      */
     public function testDisableLowestBit() {
       $bytes = new ByteArray(1);
@@ -278,7 +278,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::offsetSet
+     * @covers \Carica\Io\ByteArray::offsetSet
      */
     public function testSetHighestBit() {
       $bytes = new ByteArray(1);
@@ -287,7 +287,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::offsetSet
+     * @covers \Carica\Io\ByteArray::offsetSet
      */
     public function testDisableHighestBit() {
       $bytes = new ByteArray(1);
@@ -297,7 +297,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::offsetUnset
+     * @covers \Carica\Io\ByteArray::offsetUnset
      */
     public function testUnsetLowestBit() {
       $bytes = new ByteArray(1);
@@ -307,8 +307,8 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::offsetSet
-     * @covers Carica\Io\ByteArray::offsetGet
+     * @covers \Carica\Io\ByteArray::offsetSet
+     * @covers \Carica\Io\ByteArray::offsetGet
      * @dataProvider provideBitOffsetSamples
      */
     public function testBitGetAfterSet($expected, $byte, $bit, $status) {
@@ -320,9 +320,9 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::offsetSet
-     * @covers Carica\Io\ByteArray::offsetGet
-     * @covers Carica\Io\ByteArray::validateValue
+     * @covers \Carica\Io\ByteArray::offsetSet
+     * @covers \Carica\Io\ByteArray::offsetGet
+     * @covers \Carica\Io\ByteArray::validateValue
      * @dataProvider provideByteOffsetSamples
      */
     public function testByteGetAfterSet($expected, $byte, $value) {
@@ -334,28 +334,28 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::validateOffset
-     * @covers Carica\Io\ByteArray::validateBitOffset
+     * @covers \Carica\Io\ByteArray::validateOffset
+     * @covers \Carica\Io\ByteArray::validateBitOffset
      * @dataProvider provideInvalidOffsets
      */
     public function testValidateIndexExpectingException($position) {
       $bytes = new ByteArray(2);
-      $this->setExpectedException('OutOfBoundsException');
+      $this->expectException(\OutOfBoundsException::class);
       $bytes[$position] = 1;
     }
 
     /**
-     * @covers Carica\Io\ByteArray::validateValue
+     * @covers \Carica\Io\ByteArray::validateValue
      * @dataProvider provideInvalidValues
      */
     public function testValidateValueExpectingException($value) {
       $bytes = new ByteArray(1);
-      $this->setExpectedException('OutOfRangeException');
+      $this->expectException(\OutOfRangeException::class);
       $bytes[0] = $value;
     }
 
     /**
-     * @covers Carica\Io\ByteArray::getIterator
+     * @covers \Carica\Io\ByteArray::getIterator
      */
     public function testGetIteratorOnEmptyByteArrayWithDefinedLength() {
       $bytes = new ByteArray(3);
@@ -366,7 +366,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::getIterator
+     * @covers \Carica\Io\ByteArray::getIterator
      */
     public function testGetIteratorOnLoadedBytes() {
       $bytes = new ByteArray();
@@ -378,7 +378,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::count
+     * @covers \Carica\Io\ByteArray::count
      */
     public function testCountOnEmptyByteArrayWithDefinedLength() {
       $bytes = new ByteArray(42);
@@ -388,7 +388,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::count
+     * @covers \Carica\Io\ByteArray::count
      */
     public function testCountLoadedBytes() {
       $bytes = new ByteArray();
@@ -399,7 +399,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::createFromHex
+     * @covers \Carica\Io\ByteArray::createFromHex
      */
     public function testCreateFromHexString() {
       $bytes = ByteArray::createFromHex('FFF0F1');
@@ -409,7 +409,7 @@ namespace Carica\Io {
     }
 
     /**
-     * @covers Carica\Io\ByteArray::createFromArray
+     * @covers \Carica\Io\ByteArray::createFromArray
      */
     public function testCreateFromArray() {
       $bytes = ByteArray::createFromArray([0x00, 0xF0, 0xFF]);

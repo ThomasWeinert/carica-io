@@ -5,8 +5,9 @@ namespace Carica\Io\Deferred {
   include_once(__DIR__.'/../Bootstrap.php');
 
   use Carica\Io;
+  use PHPUnit\Framework\TestCase;
 
-  class MySQLTest extends \PHPUnit_Framework_TestCase {
+  class MySQLTest extends TestCase {
 
     public function setUp() {
       if (!defined('MYSQLI_ASYNC')) {
@@ -15,7 +16,7 @@ namespace Carica\Io\Deferred {
     }
 
     /**
-     * @covers Carica\Io\Deferred\MySQL
+     * @covers \Carica\Io\Deferred\MySQL
      */
     public function testCreatingPromiseThatGetsRejected() {
       $mysql = new MySQL($this->getMySQLConnectionFixture(FALSE));
@@ -25,7 +26,7 @@ namespace Carica\Io\Deferred {
     }
 
     /**
-     * @covers Carica\Io\Deferred\MySQL
+     * @covers \Carica\Io\Deferred\MySQL
      */
     public function testCreatingPromiseThatGetsResolved() {
       $mysql = new MySQL($this->getMySQLConnectionFixture(TRUE));
@@ -35,7 +36,7 @@ namespace Carica\Io\Deferred {
     }
 
     public function getLoopFixture() {
-      $loop = $this->getMock('Carica\\Io\\Event\\Loop');
+      $loop = $this->createMock(Io\Event\Loop::class);
       $loop
         ->expects($this->once())
         ->method('setInterval')
