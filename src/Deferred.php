@@ -154,9 +154,9 @@ namespace Carica\Io {
     /**
      * Notify the object about the progress
      */
-    public function notify() {
+    public function notify(...$arguments) {
       if ($this->_state == self::STATE_PENDING) {
-        $this->_progressArguments = func_get_args();
+        $this->_progressArguments = $arguments;
         call_user_func_array($this->_progress, $this->_progressArguments);
       }
       return $this;
@@ -195,8 +195,8 @@ namespace Carica\Io {
      *
      * @return Deferred
      */
-    public function reject() {
-      return $this->end(self::STATE_REJECTED, $this->_failed, func_get_args());
+    public function reject(...$arguments) {
+      return $this->end(self::STATE_REJECTED, $this->_failed, $arguments);
     }
 
     /**
@@ -205,8 +205,8 @@ namespace Carica\Io {
      *
      * @return Deferred
      */
-    public function resolve() {
-      return $this->end(self::STATE_RESOLVED, $this->_done, func_get_args());
+    public function resolve(...$arguments) {
+      return $this->end(self::STATE_RESOLVED, $this->_done, $arguments);
     }
 
     /**
@@ -251,18 +251,18 @@ namespace Carica\Io {
     ) {
       $defer = new Deferred();
       $this->done(
-        function () use ($defer, $doneFilter) {
-          $this->callFilter($doneFilter, array($defer, 'resolve'), func_get_args());
+        function (...$arguments) use ($defer, $doneFilter) {
+          $this->callFilter($doneFilter, array($defer, 'resolve'), $arguments);
         }
       );
       $this->fail(
-        function () use ($defer, $failFilter){
-          $this->callFilter($failFilter, array($defer, 'reject'), func_get_args());
+        function (...$arguments) use ($defer, $failFilter){
+          $this->callFilter($failFilter, array($defer, 'reject'), $arguments);
         }
       );
       $this->progress(
-        function () use ($defer, $progressFilter){
-          $this->callFilter($progressFilter, array($defer, 'notify'), func_get_args());
+        function (...$arguments) use ($defer, $progressFilter){
+          $this->callFilter($progressFilter, array($defer, 'notify'), $arguments);
         }
       );
       return $defer->promise();
@@ -315,10 +315,9 @@ namespace Carica\Io {
      *
      * @return Deferred\Promise
      */
-    public static function when() {
-      $arguments = func_get_args();
+    public static function when(...$arguments) {
       $counter = count($arguments);
-      if ($counter == 1) {
+      if ($counter === 1) {
         $argument = $arguments[0];
         if ($argument instanceOf Deferred) {
           return $argument->promise();
@@ -339,8 +338,8 @@ namespace Carica\Io {
           if ($argument instanceOf Deferred || $argument instanceOf Deferred\Promise) {
             $argument
               ->done(
-                function() use ($master, $index, &$counter, &$resolveArguments) {
-                  $resolveArguments[$index] = func_get_args();
+                function(...$arguments) use ($master, $index, &$counter, &$resolveArguments) {
+                  $resolveArguments[$index] = $arguments;
                   if (--$counter == 0) {
                     ksort($resolveArguments);
                     call_user_func_array(array($master, 'resolve'), $resolveArguments);
@@ -348,8 +347,8 @@ namespace Carica\Io {
                 }
               )
               ->fail(
-                function() use ($master) {
-                  call_user_func_array(array($master, 'reject'), func_get_args());
+                function(...$arguments) use ($master) {
+                  call_user_func_array(array($master, 'reject'), $arguments);
                 }
               );
           } else {

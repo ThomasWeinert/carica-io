@@ -18,8 +18,8 @@ namespace Carica\Io\Deferred {
       $this->_mysqli = $mysqli;
     }
 
-    public function __invoke() {
-      return call_user_func_array(array($this, 'query'), func_get_args());
+    public function __invoke(...$arguments) {
+      return $this->query(...$arguments);
     }
 
     public function query($sql) {

@@ -50,8 +50,8 @@ namespace Carica\Io\Network\Http\Route {
       return '';
     }
 
-    public function __invoke() {
-      return call_user_func_array(array($this, 'call'), func_get_args());
+    public function __invoke(...$arguments) {
+      $this->call(...$arguments);
     }
 
     public function call(Http\Request $request) {

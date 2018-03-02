@@ -135,8 +135,8 @@ namespace Carica\Io {
       $defer = new Deferred();
       $defer
         ->progress(
-          function() use (&$calls) {
-            $calls[] = func_get_args();
+          function(...$arguments) use (&$calls) {
+            $calls[] = $arguments;
           }
         )
         ->notify(1)
@@ -159,8 +159,8 @@ namespace Carica\Io {
       $defer
         ->notify(1)
         ->progress(
-          function() use (&$calls) {
-            $calls[] = func_get_args();
+          function(...$arguments) use (&$calls) {
+            $calls[] = $arguments;
           }
         )
         ->notify(2, 3);
@@ -241,7 +241,7 @@ namespace Carica\Io {
     public function testPromise() {
       $defer = new Deferred();
       $promise = $defer->promise();
-      $this->assertInstanceOf(\Carica\Io\Deferred\Promise::class, $promise);
+      $this->assertInstanceOf(Deferred\Promise::class, $promise);
       $this->assertAttributeSame(
         $defer, '_defer', $promise
       );
@@ -330,8 +330,8 @@ namespace Carica\Io {
         ->then(
           NULL,
           NULL,
-          function() {
-            return array_sum(func_get_args());
+          function(...$arguments) {
+            return array_sum($arguments);
           }
         )
         ->progress(
@@ -355,8 +355,8 @@ namespace Carica\Io {
       $defer
         ->then()
         ->progress(
-          function() use (&$calls) {
-            $calls[] = func_get_args();
+          function(...$arguments) use (&$calls) {
+            $calls[] = $arguments;
           }
         );
       $defer->notify(1, 2, 4);
@@ -439,8 +439,8 @@ namespace Carica\Io {
         42,
         $defer
       )->fail(
-        function () use (&$calls) {
-          $calls[] = func_get_args();
+        function (...$arguments) use (&$calls) {
+          $calls[] = $arguments;
         }
       );
       $this->assertEquals(
@@ -454,9 +454,9 @@ namespace Carica\Io {
     /**
      * @covers \Carica\Io\Deferred
      */
-    public function testWhenWihtoutArgumentsReturnsResolvedPromise() {
+    public function testWhenWithoutArgumentsReturnsResolvedPromise() {
       $promise = Deferred::when();
-      $this->assertInstanceOf(\Carica\Io\Deferred\Promise::class, $promise);
+      $this->assertInstanceOf(Deferred\Promise::class, $promise);
       $this->assertEquals(Deferred::STATE_RESOLVED, $promise->state());
     }
 
@@ -468,11 +468,11 @@ namespace Carica\Io {
       $promise = Deferred::when('foo', 'bar', '42');
       $promise
         ->done(
-          function() use (&$calls) {
-            $calls[] = func_get_args();
+          function(...$arguments) use (&$calls) {
+            $calls[] = $arguments;
           }
         );
-      $this->assertInstanceOf(\Carica\Io\Deferred\Promise::class, $promise);
+      $this->assertInstanceOf(Deferred\Promise::class, $promise);
       $this->assertEquals(Deferred::STATE_RESOLVED, $promise->state());
       $this->assertEquals(
         array(

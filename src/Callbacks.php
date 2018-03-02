@@ -112,12 +112,11 @@ namespace Carica\Io {
      *
      * @param mixed [$argument,...]
      */
-    public function fire() {
+    public function fire(...$arguments) {
       if (!$this->_disabled) {
         $this->_fired = TRUE;
-        $arguments = func_get_args();
         foreach ($this->_callbacks as $callback) {
-          call_user_func_array($callback, $arguments);
+          $callback(...$arguments);
         }
       }
     }
@@ -137,8 +136,8 @@ namespace Carica\Io {
      * @param mixed [$argument,...]
      * @return mixed
      */
-    public function __invoke() {
-      return call_user_func_array(array($this, 'fire'), func_get_args());
+    public function __invoke(...$arguments) {
+      return $this->fire(...$arguments);
     }
 
     /**
@@ -151,11 +150,19 @@ namespace Carica\Io {
     public function __get($name) {
       if (method_exists($this, $name)) {
         $callback = array($this, $name);
-        return function() use ($callback) {
-          call_user_func_array($callback, func_get_args());
+        return function(...$arguments) use ($callback) {
+          $callback(...$arguments);
         };
       }
       throw new \LogicException('Unknown property: '.$name);
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function __isset($name) {
+      return method_exists($this, $name);
     }
 
     /**

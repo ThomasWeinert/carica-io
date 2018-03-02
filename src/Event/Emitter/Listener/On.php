@@ -73,8 +73,9 @@ namespace Carica\Io\Event\Emitter\Listener  {
       throw new \LogicException(sprintf('%s is immutable.', get_class($this)));
     }
 
-    public function __invoke() {
-      call_user_func_array($this->_callback, func_get_args());
+    public function __invoke(...$arguments) {
+      $callback = $this->_callback;
+      $callback(...$arguments);
     }
 
     /**

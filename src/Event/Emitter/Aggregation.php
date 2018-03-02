@@ -41,9 +41,9 @@ namespace Carica\Io\Event\Emitter {
      *
      * @param $event
      */
-    protected function emitEvent($event) {
+    protected function emitEvent($event, ...$arguments) {
       if (isset($this->_eventEmitter) && !empty($event)) {
-        call_user_func_array(array($this->_eventEmitter, 'emit'), func_get_args());
+        $this->_eventEmitter->emit($event, ...$arguments);
       }
     }
 

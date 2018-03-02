@@ -138,13 +138,11 @@ namespace Carica\Io\Event {
      * @param string $event
      * @param mixed [$argument,...]
      */
-    public function emit($event) {
+    public function emit($event, ...$arguments) {
       $event = $this->getName($event);
-      $arguments = func_get_args();
-      array_shift($arguments);
       if (isset($this->_events[$event])) {
         foreach ($this->_events[$event] as $listener) {
-          call_user_func_array($listener, $arguments);
+          $listener(...$arguments);
         }
       }
     }
