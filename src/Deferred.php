@@ -13,19 +13,19 @@ namespace Carica\Io {
      * Default state - not yet finalized
      * @var string
      */
-    const STATE_PENDING = 'pending';
+    public const STATE_PENDING = 'pending';
     /**
      * Final state, object was resolved, the action was successful
      * @var string
      */
-    const STATE_RESOLVED = 'resolved';
+    public const STATE_RESOLVED = 'resolved';
 
     /**
      * Final state, object was rejected, the action failed
      *
      * @var string
      */
-    const STATE_REJECTED = 'rejected';
+    public const STATE_REJECTED = 'rejected';
 
     /**
      * current state
@@ -38,26 +38,26 @@ namespace Carica\Io {
      * .
      * @var Deferred\Promise
      */
-    private $_promise = NULL;
+    private $_promise;
 
     /**
      * Callbacks if the object is resolved
      * .
      * @var Callable|Callbacks
      */
-    private $_done = NULL;
+    private $_done;
     /**
      * Callbacks if the object is rejected
      * .
      * @var Callable|Callbacks
      */
-    private $_failed = NULL;
+    private $_failed;
     /**
      * Callbacks if the object is notified about a progress
      * .
      * @var Callable|Callbacks
      */
-    private $_progress = NULL;
+    private $_progress;
 
     /**
      * buffer for the arguments of the resolve/reject function,
@@ -65,14 +65,14 @@ namespace Carica\Io {
      * .
      * @var array
      */
-    private $_finishArguments = array();
+    private $_finishArguments = [];
     /**
      * Buffer for the last progress notification arguments, used
      * to bring new callback up to date.
      * .
      * @var NULL|array
      */
-    private $_progressArguments = NULL;
+    private $_progressArguments;
 
     /**
      * Create object and initialize callback lists
@@ -90,16 +90,17 @@ namespace Carica\Io {
      * @param Callable $callback
      * @return Deferred
      */
-    public function always(Callable $callback) {
+    public function always(Callable $callback): Deferred {
       $this->_done->add($callback);
       $this->_failed->add($callback);
       $this->callIf(
-        $this->_state != self::STATE_PENDING,
+        $this->_state !== self::STATE_PENDING,
         $callback,
         $this->_finishArguments
       );
       return $this;
     }
+
 
     /**
      * Add a callback that will be executed if the object is resolved
@@ -107,10 +108,10 @@ namespace Carica\Io {
      * @param Callable $callback
      * @return Deferred
      */
-    public function done(Callable $callback) {
+    public function done(Callable $callback): Deferred {
       $this->_done->add($callback);
       $this->callIf(
-        $this->_state == self::STATE_RESOLVED,
+        $this->_state === self::STATE_RESOLVED,
         $callback,
         $this->_finishArguments
       );
@@ -123,10 +124,10 @@ namespace Carica\Io {
      * @param Callable $callback
      * @return Deferred
      */
-    public function fail(Callable $callback) {
+    public function fail(Callable $callback): Deferred {
       $this->_failed->add($callback);
       $this->callIf(
-        $this->_state == self::STATE_REJECTED,
+        $this->_state === self::STATE_REJECTED,
         $callback,
         $this->_finishArguments
       );
@@ -136,28 +137,31 @@ namespace Carica\Io {
     /**
      * Validate if the object was finalized using reject.
      *
-     * @return string
+     * @return bool
      */
-    public function isRejected() {
-      return $this->_state == self::STATE_REJECTED;
+    public function isRejected(): bool {
+      return $this->_state === self::STATE_REJECTED;
     }
 
     /**
      * Validate if the object was finalized using resolve.
      *
-     * @return string
+     * @return bool
      */
-    public function isResolved() {
-      return $this->_state == self::STATE_RESOLVED;
+    public function isResolved(): bool {
+      return $this->_state === self::STATE_RESOLVED;
     }
 
     /**
      * Notify the object about the progress
+     * @param array $arguments
+     * @return Deferred
      */
-    public function notify(...$arguments) {
-      if ($this->_state == self::STATE_PENDING) {
+    public function notify(...$arguments): Deferred {
+      if ($this->_state === self::STATE_PENDING) {
         $this->_progressArguments = $arguments;
-        call_user_func_array($this->_progress, $this->_progressArguments);
+        $callback = $this->_progress;
+        $callback(...$this->_progressArguments);
       }
       return $this;
     }
@@ -168,10 +172,10 @@ namespace Carica\Io {
      * @param Callable $callback
      * @return Deferred
      */
-    public function progress(Callable $callback) {
+    public function progress(Callable $callback): Deferred {
       $this->_progress->add($callback);
       if (NULL !== $this->_progressArguments) {
-        call_user_func_array($callback, $this->_progressArguments);
+        $callback(...$this->_progressArguments);
       }
       return $this;
     }
@@ -182,7 +186,7 @@ namespace Carica\Io {
      *
      * @return Deferred\Promise
      */
-    public function promise() {
+    public function promise(): Deferred\Promise {
       if (NULL === $this->_promise) {
         $this->_promise = new Deferred\Promise($this);
       }
@@ -193,9 +197,10 @@ namespace Carica\Io {
      * Finalize the object and set the status to rejected - the action has failed.
      * This will execute all callbacks attached with fail() or always()
      *
+     * @param array $arguments
      * @return Deferred
      */
-    public function reject(...$arguments) {
+    public function reject(...$arguments): Deferred {
       return $this->end(self::STATE_REJECTED, $this->_failed, $arguments);
     }
 
@@ -203,9 +208,10 @@ namespace Carica\Io {
      * Finalize the object and set the status to rejected - the action was successful.
      * This will execute all callbacks attached with done() or always()
      *
+     * @param array $arguments
      * @return Deferred
      */
-    public function resolve(...$arguments) {
+    public function resolve(...$arguments): Deferred {
       return $this->end(self::STATE_RESOLVED, $this->_done, $arguments);
     }
 
@@ -214,15 +220,14 @@ namespace Carica\Io {
      *
      * @param string $state
      * @param callable $callback
-     * @param array $arguments ;
+     * @param array $arguments
      * @return $this
      */
-    private function end($state, callable $callback, array $arguments)
-    {
-      if ($this->_state == self::STATE_PENDING) {
+    private function end($state, callable $callback, array $arguments): self {
+      if ($this->_state === self::STATE_PENDING) {
         $this->_finishArguments = $arguments;
         $this->_state = $state;
-        call_user_func_array($callback, $this->_finishArguments);
+        $callback(...$this->_finishArguments);
       }
       return $this;
     }
@@ -232,7 +237,7 @@ namespace Carica\Io {
      *
      * @return string
      */
-    public function state() {
+    public function state(): string {
       return $this->_state;
     }
 
@@ -248,7 +253,7 @@ namespace Carica\Io {
       Callable $doneFilter = NULL,
       Callable $failFilter = NULL,
       Callable $progressFilter = NULL
-    ) {
+    ): Deferred\Promise {
       $defer = new Deferred();
       $this->done(
         function (...$arguments) use ($defer, $doneFilter) {
@@ -276,10 +281,9 @@ namespace Carica\Io {
      * @param array $arguments
      * @return bool
      */
-    private function callIf($condition, callable $callback, array $arguments)
-    {
+    private function callIf($condition, callable $callback, array $arguments): bool {
       if ($condition) {
-        call_user_func_array($callback, $arguments);
+        $callback(...$arguments);
         return TRUE;
       }
       return FALSE;
@@ -292,12 +296,11 @@ namespace Carica\Io {
      * @param callable $callback
      * @param array $arguments
      */
-    private function callFilter($filter, callable $callback, array $arguments)
-    {
+    private function callFilter($filter, callable $callback, array $arguments): void {
       if ($filter) {
-        $arguments = array(call_user_func_array($filter, $arguments));
+        $arguments = array($filter(...$arguments));
       }
-      call_user_func_array($callback, $arguments);
+      $callback(...$arguments);
     }
 
     /**
@@ -305,7 +308,7 @@ namespace Carica\Io {
      *
      * @return Deferred
      */
-    public static function create() {
+    public static function create(): Deferred {
       return new Deferred();
     }
 
@@ -313,58 +316,59 @@ namespace Carica\Io {
      * Provides a way to execute callback functions based on one or more
      * objects, usually Deferred objects that represent asynchronous events.
      *
+     * @param array $arguments
      * @return Deferred\Promise
      */
-    public static function when(...$arguments) {
-      $counter = count($arguments);
+    public static function when(...$arguments): Deferred\Promise {
+      $counter = \count($arguments);
       if ($counter === 1) {
         $argument = $arguments[0];
-        if ($argument instanceOf Deferred) {
+        if ($argument instanceOf self) {
           return $argument->promise();
-        } elseif ($argument instanceOf Deferred\Promise) {
-          return $argument;
-        } else {
-          $defer = new Deferred();
-          $defer->resolve($argument);
-          return $defer->promise();
         }
-      } elseif ($counter > 0) {
+        if ($argument instanceOf Deferred\Promise) {
+          return $argument;
+        }
+        $defer = new Deferred();
+        $defer->resolve($argument);
+        return $defer->promise();
+      }
+      if ($counter > 0) {
         $master = new Deferred();
         $resolveArguments = array();
         foreach ($arguments as $index => $argument) {
           /**
            * @var Deferred\Promise $argument
            */
-          if ($argument instanceOf Deferred || $argument instanceOf Deferred\Promise) {
+          if ($argument instanceOf self || $argument instanceOf Deferred\Promise) {
             $argument
               ->done(
                 function(...$arguments) use ($master, $index, &$counter, &$resolveArguments) {
                   $resolveArguments[$index] = $arguments;
-                  if (--$counter == 0) {
+                  if (--$counter === 0) {
                     ksort($resolveArguments);
-                    call_user_func_array(array($master, 'resolve'), $resolveArguments);
+                    $master->resolve(...$resolveArguments);
                   }
                 }
               )
               ->fail(
                 function(...$arguments) use ($master) {
-                  call_user_func_array(array($master, 'reject'), $arguments);
+                  $master->reject(...$arguments);
                 }
               );
           } else {
             $resolveArguments[$index] = array($argument);
-            if (--$counter == 0) {
+            if (--$counter === 0) {
               ksort($resolveArguments);
-              call_user_func_array(array($master, 'resolve'), $resolveArguments);
+              $master->resolve(...$resolveArguments);
             }
           }
         }
         return $master->promise();
-      } else {
-        $defer = new Deferred();
-        $defer->resolve();
-        return $defer->promise();
       }
+      $defer = new Deferred();
+      $defer->resolve();
+      return $defer->promise();
     }
   }
 }
