@@ -5,11 +5,11 @@ namespace Carica\Io {
   /**
    * Manage a list Callable elements, the list can be uses as one callable, too.
    *
-   * @property Callable add
-   * @property Callable remove
-   * @property Callable fire
-   * @property Callable lock
-   * @property Callable disable
+   * @property-read Callable add
+   * @property-read Callable remove
+   * @property-read Callable fire
+   * @property-read Callable lock
+   * @property-read Callable disable
    */
   class Callbacks implements \IteratorAggregate, \Countable {
 
@@ -22,9 +22,9 @@ namespace Carica\Io {
      * Add a new callable, and return itself for chaining
      *
      * @param callable $callback
-     * @return Callbacks
+     * @return $this
      */
-    public function add(Callable $callback) {
+    public function add(Callable $callback): self {
       $hash = $this->getCallableHash($callback);
       if (!($this->_locked || isset($this->_callbacks[$hash]))) {
         $this->_callbacks[$hash] = $callback;
@@ -36,9 +36,9 @@ namespace Carica\Io {
      * Remove an callable, and return itself for chaining
      *
      * @param callable $callback
-     * @return Callbacks
+     * @return $this
      */
-    public function remove(Callable $callback) {
+    public function remove(Callable $callback): self {
       $hash = $this->getCallableHash($callback);
       if (!$this->_locked && isset($this->_callbacks[$hash])) {
         unset($this->_callbacks[$hash]);
@@ -49,9 +49,9 @@ namespace Carica\Io {
     /**
      * Remove all callbacks
      *
-     * @return Callbacks
+     * @return $this
      */
-    public function clear() {
+    public function clear(): self {
       if (!$this->_locked) {
         $this->_callbacks = array();
       }
@@ -64,7 +64,7 @@ namespace Carica\Io {
      * @param callable $callback
      * @return boolean
      */
-    public function has(Callable $callback) {
+    public function has(Callable $callback): bool {
       $hash = $this->getCallableHash($callback);
       return isset($this->_callbacks[$hash]);
     }
@@ -72,9 +72,9 @@ namespace Carica\Io {
     /**
      * Lock the list, do now allow changes any more.
      *
-     * @return Callbacks
+     * @return $this
      */
-    public function lock() {
+    public function lock(): self {
       $this->_locked = TRUE;
       return $this;
     }
@@ -82,18 +82,18 @@ namespace Carica\Io {
     /**
      * Validate if the list is locked
      *
-     * @return boolean
+     * @return bool
      */
-    public function locked() {
+    public function locked(): bool {
       return $this->_locked;
     }
 
     /**
      * Disable the execution of the callbacks in the list
      *
-     * @return Callbacks
+     * @return $this
      */
-    public function disable() {
+    public function disable(): self {
       $this->_disabled = TRUE;
       return $this;
     }
@@ -101,9 +101,9 @@ namespace Carica\Io {
     /**
      * Validate if the callbacks are disabled
      *
-     * @return boolean
+     * @return bool
      */
-    public function disabled() {
+    public function disabled(): bool {
       return $this->_disabled;
     }
 
@@ -124,9 +124,9 @@ namespace Carica\Io {
     /**
      * Validate if the callbacks were executed at least once
      *
-     * @return boolean
+     * @return bool
      */
-    public function fired() {
+    public function fired(): bool {
       return $this->_fired;
     }
 
@@ -183,7 +183,7 @@ namespace Carica\Io {
      * @see IteratorAggregate::getIterator()
      * @return \Iterator
      */
-    public function getIterator() {
+    public function getIterator(): \Iterator {
       return new \ArrayIterator(array_values($this->_callbacks));
     }
 
@@ -191,10 +191,10 @@ namespace Carica\Io {
      * Countable interface, return the number of stored callbacks
      *
      * @see Countable::count()
-     * @return integer
+     * @return int
      */
-    public function count() {
-      return count($this->_callbacks);
+    public function count(): int {
+      return \count($this->_callbacks);
     }
 
     /**
@@ -204,9 +204,9 @@ namespace Carica\Io {
      * @return string
      */
     private function getCallableHash($callable) {
-      if (is_object($callable)) {
+      if (\is_object($callable)) {
         return spl_object_hash($callable);
-      } elseif (is_array($callable)) {
+      } elseif (\is_array($callable)) {
         return md5($this->getCallableHash($callable[0]), $callable[1]);
       } else {
         return md5((string)$callable);
