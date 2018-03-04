@@ -68,7 +68,7 @@ namespace Carica\Io\Deferred {
     }
 
     /**
-     * @covers \Carica\Io\Deferred\Promise::pipe
+     * @covers \Carica\Io\Deferred\Promise::then
      */
     public function testThenWithNullArguments() {
       $promise = $this
@@ -89,7 +89,7 @@ namespace Carica\Io\Deferred {
     }
 
     /**
-     * @covers \Carica\Io\Deferred\Promise::pipe
+     * @covers \Carica\Io\Deferred\Promise::then
      */
     public function testThenWithFunctionArguments() {
       $promise = $this
