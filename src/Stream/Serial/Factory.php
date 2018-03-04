@@ -6,29 +6,27 @@ namespace Carica\Io\Stream\Serial {
 
   class Factory {
 
-    const MODE_DEFAULT = 0;
-    const MODE_DIO = 1;
-    const MODE_GORILLA = 2;
+    public const MODE_DEFAULT = 0;
+    public const MODE_DIO = 1;
+    public const MODE_GORILLA = 2;
 
     private static $_extensions = array(
       self::MODE_GORILLA => 'gorilla',
       //self::MODE_DIO => 'dio',
     );
 
-    private static $_mode = NULL;
+    private static $_mode;
 
-    public static function mode($mode = NULL)
-    {
+    public static function mode(int $mode = NULL) {
       if (
-        isset($mode) &&
-        isset(self::$_extensions[$mode]) &&
-        extension_loaded(self::$_extensions[$mode])
+        isset($mode, self::$_extensions[$mode]) &&
+        \extension_loaded(self::$_extensions[$mode])
       ) {
         self::$_mode = $mode;
-      } elseif (NULL == self::$_mode) {
-        foreach (self::$_extensions as $mode => $extension) {
-          if (extension_loaded($extension)) {
-            return self::$_mode = $mode;
+      } elseif (NULL === self::$_mode) {
+        foreach (self::$_extensions as $extensionMode => $extension) {
+          if (\extension_loaded($extension)) {
+            return self::$_mode = $extensionMode;
           }
         }
         self::$_mode = self::MODE_DEFAULT;
@@ -36,11 +34,16 @@ namespace Carica\Io\Stream\Serial {
       return self::$_mode;
     }
 
-    public static function create($device, $baud = Device::BAUD_DEFAULT)
-    {
+    /**
+     * @param string $device
+     * @param int $baud
+     * @return Stream\Serial|Dio|Gorilla
+     * @throws \LogicException
+     */
+    public static function create(string $device, $baud = Device::BAUD_DEFAULT) {
       switch (self::mode()) {
       case self::MODE_DIO :
-      return new Dio($device, $baud);
+        return new Dio($device, $baud);
       case self::MODE_GORILLA :
         return new Gorilla($device, $baud);
       case self::MODE_DEFAULT :

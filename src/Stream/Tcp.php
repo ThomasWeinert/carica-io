@@ -13,12 +13,12 @@ namespace Carica\Io\Stream {
     use Event\Emitter\Aggregation;
     use Event\Loop\Aggregation;
 
-    private $_host = '';
-    private $_port = 0;
-    private $_resource = NULL;
-    private $_listener = NULL;
+    private $_host;
+    private $_port;
+    private $_resource;
+    private $_listener;
 
-    public function __construct($host = '127.0.0.1', $port = 5333) {
+    public function __construct(string $host = '127.0.0.1', int $port = 5333) {
       $this->_host = $host;
       $this->_port = (int)$port;
     }
@@ -30,7 +30,8 @@ namespace Carica\Io\Stream {
     public function resource($resource = NULL) {
       if ($resource === FALSE) {
         $this->_resource = NULL;
-      } elseif (isset($resource)) {
+      }
+      if (NULL !== $resource) {
         $this->_resource = $resource;
         $that = $this;
         $this->_listener = $this->loop()->setStreamReader(
@@ -40,38 +41,40 @@ namespace Carica\Io\Stream {
           $resource
         );
       }
-      if (is_resource($this->_resource)) {
+      if (\is_resource($this->_resource)) {
         return $this->_resource;
-      } elseif (isset($this->_listener)) {
+      }
+      if (NULL !== $this->_listener) {
         $this->loop()->remove($this->_listener);
         $this->_listener = NULL;
       }
       return NULL;
     }
 
-    public function isOpen()
+    public function isOpen(): bool
     {
-      return is_resource($this->resource());
+      return \is_resource($this->resource());
     }
 
-    public function open() {
-      $resource = @stream_socket_client('tcp://'.$this->_host.':'.$this->_port, $no, $string, 2);
+    public function open(): bool {
+      $resource = @\stream_socket_client(
+        'tcp://'.$this->_host.':'.$this->_port, $no, $string, 2
+      );
       if ($resource) {
-        stream_set_blocking($resource, 0);
-        stream_set_read_buffer($resource, 0);
-        stream_set_write_buffer($resource, 0);
-        stream_set_timeout($resource, 10000);
+        \stream_set_blocking($resource, 0);
+        \stream_set_read_buffer($resource, 0);
+        \stream_set_write_buffer($resource, 0);
+        \stream_set_timeout($resource, 10000);
         $this->resource($resource);
         return TRUE;
-      } else {
-        $this
-          ->events()
-          ->emit(
-            'error',
-            sprintf('Can not open tcp server: "%s:%d".', $this->_host, $this->_port)
-          );
-        return FALSE;
       }
+      $this
+        ->events()
+        ->emit(
+          'error',
+          sprintf('Can not open tcp server: "%s:%d".', $this->_host, $this->_port)
+        );
+      return FALSE;
     }
 
     public function close() {
@@ -83,10 +86,10 @@ namespace Carica\Io\Stream {
       }
     }
 
-    public function read($bytes = 1024) {
+    public function read(int $bytes = 1024): ?string {
       if ($resource = $this->resource()) {
-        $data = stream_socket_recvfrom($resource, $bytes);
-        if (is_string($data) && $data !== '') {
+        $data = \stream_socket_recvfrom($resource, $bytes);
+        if (\is_string($data) && $data !== '') {
           $this->events()->emit('read-data', $data);
           return $data;
         }
@@ -94,20 +97,21 @@ namespace Carica\Io\Stream {
       return NULL;
     }
 
-    public function write($data) {
+    public function write($data): bool {
       if ($resource = $this->resource()) {
         $bytesSent = @stream_socket_sendto(
           $resource,
-          $writtenData = is_array($data) ? Io\encodeBinaryFromArray($data) : $data
+          $writtenData = \is_array($data) ? Io\encodeBinaryFromArray($data) : $data
         );
-        if ($bytesSent != -1) {
+        if ($bytesSent !== -1) {
           $this->events()->emit('write-data', $writtenData);
-        } else {
-          $this->events()->emit(
-            'error', 'Socket sent to failed.'
-          );
+          return TRUE;
         }
+        $this->events()->emit(
+          'error', 'Socket sent to failed.'
+        );
       }
+      return FALSE;
     }
   }
 }

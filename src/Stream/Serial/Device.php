@@ -4,23 +4,23 @@ namespace Carica\Io\Stream\Serial {
 
   class Device {
 
-    const BAUD_110 = 110;
-    const BAUD_150 = 150;
-    const BAUD_300 = 300;
-    const BAUD_600 = 600;
-    const BAUD_1200 = 1200;
-    const BAUD_2400 = 2400;
-    const BAUD_4800 = 4800;
-    const BAUD_9600 = 9600;
-    const BAUD_19200 = 19200;
-    const BAUD_38400 = 38400;
-    const BAUD_57600 = 57600;
-    const BAUD_115200 = 115200;
+    public const BAUD_110 = 110;
+    public const BAUD_150 = 150;
+    public const BAUD_300 = 300;
+    public const BAUD_600 = 600;
+    public const BAUD_1200 = 1200;
+    public const BAUD_2400 = 2400;
+    public const BAUD_4800 = 4800;
+    public const BAUD_9600 = 9600;
+    public const BAUD_19200 = 19200;
+    public const BAUD_38400 = 38400;
+    public const BAUD_57600 = 57600;
+    public const BAUD_115200 = 115200;
 
-    const BAUD_DEFAULT = self::BAUD_57600;
+    public const BAUD_DEFAULT = self::BAUD_57600;
 
-    private $_device = 0;
-    private $_command = '';
+    private $_device;
+    private $_command;
     private $_baud = self::BAUD_DEFAULT;
 
     private $_baudRates = array (
@@ -39,7 +39,7 @@ namespace Carica\Io\Stream\Serial {
     );
 
 
-    public function __construct($device, $baud = self::BAUD_DEFAULT)
+    public function __construct(string $device, int $baud = self::BAUD_DEFAULT)
     {
       if (isset($this->_baudRates[$baud])) {
         $this->_baud = $baud;
@@ -51,10 +51,10 @@ namespace Carica\Io\Stream\Serial {
           strtolower($device),
           $this->_baudRates[$baud]
         );
-      } elseif (substr(PHP_OS, 0, 6) === "Darwin") {
+      } elseif (0 === strpos(PHP_OS, "Darwin")) {
         $pattern = '(^/dev/(?:tty|cu)\.[^\s]+$)';
         $command = sprintf('stty -f %s speed %d', $device, $baud);
-      } elseif (substr(PHP_OS, 0, 5) === "Linux") {
+      } elseif (0 === strpos(PHP_OS, "Linux")) {
         $pattern = '(^/dev/tty\w+\d+$)';
         $command = sprintf('stty -F %s %d', $device, $baud);
       } else {
@@ -67,24 +67,24 @@ namespace Carica\Io\Stream\Serial {
       $this->_command = $command;
     }
 
-    public function getCommand() {
+    public function getCommand(): string {
       return $this->_command;
     }
 
-    public function getDevice() {
+    public function getDevice(): string {
       return $this->_device;
     }
 
-    public function getBaud() {
+    public function getBaud(): int {
       return $this->_baud;
     }
 
-    public function setUp() {
+    public function setUp(): void {
       exec($this->getCommand());
     }
 
-    public function __toString() {
-      return (string)$this->getDevice();
+    public function __toString(): string {
+      return $this->getDevice();
     }
   }
 }

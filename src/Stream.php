@@ -4,25 +4,25 @@ namespace Carica\Io {
 
   interface Stream extends Event\HasEmitter {
 
-    function isOpen();
+    public function isOpen(): bool;
 
-    function open();
+    public function open(): bool;
 
-    function close();
+    public function close();
 
-    function read($bytes = 1024);
+    public function read(int $bytes = 1024): ?string;
 
-    function write($data);
+    public function write($data): bool;
 
   }
 
-  function encodeBinaryFromArray(array $data) {
+  function encodeBinaryFromArray(array $data): string {
     array_unshift($data, 'C*');
-    return call_user_func_array('pack', $data);
+    return pack(...$data);
   }
 
-  function decodeBinaryToArray($data) {
-    return array_slice(unpack("C*", "\0".$data), 1);
+  function decodeBinaryToArray(string $data): array {
+    return \array_slice(\unpack('C*', "\0".$data), 1);
   }
 
 }

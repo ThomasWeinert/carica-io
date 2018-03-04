@@ -9,31 +9,33 @@ namespace Carica\Io\Stream\Serial {
   class Gorilla
     implements
     Io\Stream,
-    Io\Event\HasLoop
-  {
+    Io\Event\HasLoop {
 
     use Event\Emitter\Aggregation;
     use Event\Loop\Aggregation;
 
-    private $_device = 0;
-    private $_port = NULL;
-    private $_listener = NULL;
+    private $_device;
+    private $_port;
+    private $_listener;
 
-    public function __construct($device, $baud = Device::BAUD_DEFAULT)
-    {
+    /**
+     * Gorilla constructor.
+     * @param string $device
+     * @param int $baud
+     * @throws \LogicException
+     */
+    public function __construct(string $device, int $baud = Device::BAUD_DEFAULT) {
       $this->_device = new Device($device, $baud);
     }
 
-    public function __destruct()
-    {
+    public function __destruct() {
       $this->close();
     }
 
-    public function port($port = NULL)
-    {
+    public function port($port = NULL): ?SerialPort {
       if ($port === FALSE) {
         $this->_port = NULL;
-      } elseif (isset($port)) {
+      } elseif ($port instanceof SerialPort) {
         $this->_port = $port;
         $that = $this;
         $this->_listener = $this->loop()->setInterval(
@@ -45,20 +47,19 @@ namespace Carica\Io\Stream\Serial {
       }
       if ($this->_port instanceof SerialPort) {
         return $this->_port;
-      } elseif (isset($this->_listener)) {
+      }
+      if (NULL !== $this->_listener) {
         $this->loop()->remove($this->_listener);
         $this->_listener = NULL;
       }
       return NULL;
     }
 
-    public function isOpen()
-    {
+    public function isOpen(): bool {
       return $this->port() instanceof SerialPort;
     }
 
-    public function open()
-    {
+    public function open(): bool {
       if ($port = new SerialPort($this->_device->getDevice())) {
         $port
           ->setFlowControl(SerialPort::FLOW_CONTROL_SOFT)
@@ -69,7 +70,6 @@ namespace Carica\Io\Stream\Serial {
         $this->port($port);
         return TRUE;
       }
-
       $this->events()->emit(
         'error',
         sprintf('Can not open serial port: "%s".', $this->_device->getDevice())
@@ -78,16 +78,14 @@ namespace Carica\Io\Stream\Serial {
 
     }
 
-    public function close()
-    {
+    public function close() {
       if ($port = $this->port()) {
         $this->port(FALSE);
         $port->close();
       }
     }
 
-    public function read($bytes = 1024)
-    {
+    public function read(int $bytes = 1024): ?string {
       if ($port = $this->port()) {
         $data = $port->read($bytes);
         if (is_string($data) && $data !== '') {
@@ -98,14 +96,15 @@ namespace Carica\Io\Stream\Serial {
       return NULL;
     }
 
-    public function write($data)
-    {
+    public function write($data): bool {
       if ($port = $this->port()) {
         $port->write(
           $writtenData = is_array($data) ? Io\encodeBinaryFromArray($data) : $data
         );
         $this->events()->emit('write-data', $writtenData);
+        return TRUE;
       }
+      return FALSE;
     }
   }
 }

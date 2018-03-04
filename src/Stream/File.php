@@ -41,13 +41,13 @@ namespace Carica\Io\Stream {
      * Read/Write the file resource, if it is an valid resource attach
      * the an event listener to the loop, that calls read on new data
      *
-     * @param string $resource
+     * @param resource|FALSE $resource
      * @return NULL|resource
      */
     public function resource($resource = NULL) {
       if ($resource === FALSE) {
         $this->_resource = NULL;
-      } elseif (isset($resource)) {
+      } elseif (NULL !== $resource) {
         $this->_resource = $resource;
         $that = $this;
         $this->_listener = $this->loop()->setStreamReader(
@@ -57,34 +57,33 @@ namespace Carica\Io\Stream {
           $resource
         );
       }
-      if (is_resource($this->_resource)) {
+      if (\is_resource($this->_resource)) {
         return $this->_resource;
-      } elseif (isset($this->_listener)) {
+      }
+      if (NULL !== $this->_listener) {
         $this->loop()->remove($this->_listener);
         $this->_listener = NULL;
       }
       return NULL;
     }
 
-    public function isOpen()
-    {
-      return is_resource($this->resource());
+    public function isOpen(): bool {
+      return \is_resource($this->resource());
     }
 
     /**
      * Open file (non-blocking) and store resource
      *
-     * @return boolean
+     * @return bool
      */
-    public function open() {
-      if ($resource = @fopen($this->_filename, $this->_mode)) {
-        stream_set_blocking($resource, 0);
+    public function open(): bool {
+      if ($resource = @\fopen($this->_filename, $this->_mode)) {
+        \stream_set_blocking($resource, 0);
         $this->resource($resource);
         return TRUE;
-      } else {
-        $this->events()->emit('error', sprintf('Can not open file: "%s".', $this->_filename));
-        return FALSE;
       }
+      $this->events()->emit('error', sprintf('Can not open file: "%s".', $this->_filename));
+      return FALSE;
     }
 
     /**
@@ -103,10 +102,10 @@ namespace Carica\Io\Stream {
      * @param integer $bytes
      * @return string|NULL
      */
-    public function read($bytes = 1024) {
+    public function read(int $bytes = 1024): ?string {
       if ($resource = $this->resource()) {
-        $data = fread($resource, $bytes);
-        if (is_string($data) && $data !== '') {
+        $data = \fread($resource, $bytes);
+        if (\is_string($data) && $data !== '') {
           $this->events()->emit('read-data', $data);
           return $data;
         }
@@ -120,7 +119,7 @@ namespace Carica\Io\Stream {
      * @param string|array(integer) $data
      * @return bool
      */
-    public function write($data) {
+    public function write($data): bool {
       if ($resource = $this->resource()) {
         fwrite(
           $resource,
