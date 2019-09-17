@@ -18,7 +18,7 @@ namespace Carica\Io\Event\Loop {
      * @param Event\Loop $loop
      * @return Event\Loop
      */
-    public function loop(Event\Loop $loop = NULL) {
+    public function loop(Event\Loop $loop = NULL): Event\Loop {
       if (NULL !== $loop) {
         $this->_eventLoop = $loop;
       } elseif (NULL === $this->_eventLoop) {

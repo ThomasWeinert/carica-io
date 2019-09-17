@@ -8,7 +8,7 @@ namespace Carica\Io {
 
   class StreamTest extends TestCase {
 
-    public function setUp() {
+    public function setUp(): void {
       class_exists(\Carica\Io\Stream::class);
     }
 

@@ -4,7 +4,7 @@ namespace Carica\Io\Event\Loop {
 
   use Carica\Io;
   use Carica\Io\Event;
-  use Carica\Io\Event\Loop\StreamSelect\Listener;
+  use Carica\Io\Event\Loop\Listener;
 
   class StreamSelect implements Event\Loop {
 
@@ -20,37 +20,35 @@ namespace Carica\Io\Event\Loop {
     );
     private $_hasResources = FALSE;
 
-    public function setTimeout(Callable $callback, $milliseconds) {
-      $listener = new Listener\Timeout($this, $callback, $milliseconds);
+    public function setTimeout(Callable $callback, int $milliseconds): \Carica\Io\Event\Loop\Listener {
+      $listener = new StreamSelect\Listener\Timeout($this, $callback, $milliseconds);
       return $this->_timers[spl_object_hash($listener)] = $listener;
     }
 
-    public function setInterval(Callable $callback, $milliseconds) {
-      $listener = new Listener\Interval($this, $callback, $milliseconds);
+    public function setInterval(Callable $callback, int $milliseconds): \Carica\Io\Event\Loop\Listener {
+      $listener = new StreamSelect\Listener\Interval($this, $callback, $milliseconds);
       return $this->_timers[spl_object_hash($listener)] = $listener;
     }
 
-    public function setStreamReader(Callable $callback, $stream) {
-      $listener = new Listener\StreamReader($this, $callback, $stream);
+    public function setStreamReader(Callable $callback, $stream): \Carica\Io\Event\Loop\Listener {
+      $listener = new StreamSelect\Listener\StreamReader($this, $callback, $stream);
       $this->_streams[spl_object_hash($listener)] = $listener;
       $this->_resources['read'][spl_object_hash($listener)] = $stream;
       $this->updateStreamStatus();
       return $this->_streams[spl_object_hash($listener)] = $listener;
     }
 
-    public function remove($listener) {
-      if (is_object($listener)) {
-        $key = spl_object_hash($listener);
-        if (isset($this->_timers[$key])) {
-          unset($this->_timers[$key]);
-        }
-        if (isset($this->_streams[$key])) {
-          unset($this->_streams[$key]);
-        }
-        foreach ($this->_resources as &$group) {
-          if (isset($group[$key])) {
-            unset($group[$key]);
-          }
+    public function remove(\Carica\Io\Event\Loop\Listener $listener): void {
+      $key = spl_object_hash($listener);
+      if (isset($this->_timers[$key])) {
+        unset($this->_timers[$key]);
+      }
+      if (isset($this->_streams[$key])) {
+        unset($this->_streams[$key]);
+      }
+      foreach ($this->_resources as &$group) {
+        if (isset($group[$key])) {
+          unset($group[$key]);
         }
       }
       $this->updateStreamStatus();
@@ -63,7 +61,7 @@ namespace Carica\Io\Event\Loop {
      *
      * @param Io\Deferred\Promise $for
      */
-    public function run(Io\Deferred\Promise $for = NULL) {
+    public function run(Io\Deferred\Promise $for = NULL): void {
       $this->_running = TRUE;
       if (isset($for) &&
           $for->state() === Io\Deferred::STATE_PENDING) {
@@ -79,7 +77,7 @@ namespace Carica\Io\Event\Loop {
       }
     }
 
-    public function stop() {
+    public function stop(): void {
       $this->_running = FALSE;
     }
 

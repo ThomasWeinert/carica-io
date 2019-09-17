@@ -5,11 +5,12 @@ namespace Carica\Io\Deferred {
   include_once(__DIR__.'/../Bootstrap.php');
 
   use Carica\Io;
+  use phpDocumentor\Reflection\Types\This;
   use PHPUnit\Framework\TestCase;
 
   class MySQLTest extends TestCase {
 
-    public function setUp() {
+    public function setUp(): void {
       if (!defined('MYSQLI_ASYNC')) {
         $this->markTestSkipped('MySQL async not available in this PHP.');
       }
@@ -40,12 +41,11 @@ namespace Carica\Io\Deferred {
       $loop
         ->expects($this->once())
         ->method('setInterval')
-        ->will(
-          $this->returnCallback(
-            function ($callback) {
-              $callback();
-            }
-          )
+        ->willReturnCallback(
+          function ($callback) {
+            $callback();
+            return $this->createMock(\Carica\Io\Event\Loop\Listener::class);
+          }
         );
       return $loop;
     }

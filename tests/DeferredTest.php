@@ -238,18 +238,6 @@ namespace Carica\Io {
     /**
      * @covers \Carica\Io\Deferred
      */
-    public function testPromise() {
-      $defer = new Deferred();
-      $promise = $defer->promise();
-      $this->assertInstanceOf(Deferred\Promise::class, $promise);
-      $this->assertAttributeSame(
-        $defer, '_defer', $promise
-      );
-    }
-
-    /**
-     * @covers \Carica\Io\Deferred
-     */
     public function testThenWithDoneFilter() {
       $defer = new Deferred();
       $filtered = $defer->then(

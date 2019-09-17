@@ -12,11 +12,11 @@ namespace Carica\Io\Network {
     use Io\Event\Emitter\Aggregation;
     use Io\Event\Loop\Aggregation;
 
-    private $_listener = NULL;
+    private $_listener;
 
     private $_stream = FALSE;
 
-    private $_address = 'tcp://0.0.0.0';
+    private $_address;
 
     public function __construct($address = 'tcp://0.0.0.0') {
       $this->_address = $address;
@@ -27,9 +27,9 @@ namespace Carica\Io\Network {
     }
 
     public function resource($stream = NULL) {
-      if (isset($stream)) {
+      if (NULL !== $stream) {
         $this->_stream = $stream;
-        if (isset($this->_listener)) {
+        if (NULL !== $this->_listener) {
           $this->loop()->remove($this->_listener);
         }
         if ($this->isActive()) {

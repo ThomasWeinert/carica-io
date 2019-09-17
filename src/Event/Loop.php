@@ -3,20 +3,21 @@
 namespace Carica\Io\Event {
 
   use Carica\Io;
+  use Carica\Io\Event\Loop\Listener;
 
   interface Loop extends \Countable {
 
-    function setTimeout(Callable $callback, $milliseconds);
+    public function setTimeout(Callable $callback, int $milliseconds): Listener;
 
-    function setInterval(Callable $callback, $milliseconds);
+    public function setInterval(Callable $callback, int $milliseconds): Listener;
 
-    function setStreamReader(Callable $callback, $stream);
+    public function setStreamReader(Callable $callback, $stream): Listener;
 
-    function remove($listener);
+    public function remove(Listener $listener): void;
 
-    function run(Io\Deferred\Promise $for = NULL);
+    public function run(Io\Deferred\Promise $for = NULL): void;
 
-    function stop();
+    public function stop(): void;
 
   }
 

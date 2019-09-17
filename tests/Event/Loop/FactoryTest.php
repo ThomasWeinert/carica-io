@@ -13,7 +13,7 @@ namespace Carica\Io\Event\Loop {
    */
   class FactoryTest extends TestCase {
 
-    public function tearDown() {
+    public function tearDown(): void {
       Factory::reset();
     }
 

@@ -13,8 +13,8 @@ namespace Carica\Io {
      */
     public function testConstructor() {
       $bytes = new ByteArray(3);
-      $this->assertAttributeSame(array(0,0,0), '_bytes', $bytes);
-      $this->assertAttributeEquals(3, '_length', $bytes);
+      $this->assertSame(array(0,0,0), iterator_to_array($bytes));
+      $this->assertSame(3, $bytes->getLength());
     }
 
     /**
@@ -32,8 +32,8 @@ namespace Carica\Io {
     public function testSetLengthIncreaseFrom3To6() {
       $bytes = new ByteArray(3);
       $bytes->setLength(6);
-      $this->assertAttributeSame(array(0,0,0,0,0,0), '_bytes', $bytes);
-      $this->assertAttributeEquals(6, '_length', $bytes);
+      $this->assertSame([0,0,0,0,0,0], iterator_to_array($bytes));
+      $this->assertSame(6, $bytes->getLength());
     }
 
     /**
@@ -42,8 +42,8 @@ namespace Carica\Io {
     public function testSetLengthDecreaseFrom6To3() {
       $bytes = new ByteArray(6);
       $bytes->setLength(3);
-      $this->assertAttributeSame(array(0,0,0), '_bytes', $bytes);
-      $this->assertAttributeEquals(3, '_length', $bytes);
+      $this->assertSame([0,0,0], iterator_to_array($bytes));
+      $this->assertSame(3, $bytes->getLength());
     }
 
     /**

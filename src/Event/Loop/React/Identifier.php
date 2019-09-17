@@ -2,21 +2,27 @@
 
 namespace Carica\Io\Event\Loop\React {
 
-  class Identifier {
+  use Carica\Io\Event\Loop\Listener;
 
-    const TYPE_TIMEOUT = 1;
-    const TYPE_INTERVAL = 2;
-    const TYPE_STREAMREADER = 3;
+  class Identifier implements Listener {
 
-    private $_type = 0;
-    private $_data = NULL;
+    public const TYPE_TIMEOUT = 1;
+    public const TYPE_INTERVAL = 2;
+    public const TYPE_STREAMREADER = 3;
 
-    public function __construct($type, $data) {
+    /**
+     * @var int
+     */
+    private $_type;
+
+    private $_data;
+
+    public function __construct(int $type, $data) {
       $this->_type = $type;
       $this->_data = $data;
     }
 
-    public function getType() {
+    public function getType(): int {
       return $this->_type;
     }
 

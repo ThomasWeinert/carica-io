@@ -13,19 +13,6 @@ namespace Carica\Io\Stream {
     /**
      * @covers \Carica\Io\Stream\File
      */
-    public function testConstructor() {
-      $file = new File('sample.txt');
-      $this->assertAttributeEquals(
-        'sample.txt', '_filename', $file
-      );
-      $this->assertAttributeEquals(
-        'r', '_mode', $file
-      );
-    }
-
-    /**
-     * @covers \Carica\Io\Stream\File
-     */
     public function testOpen() {
       $loop = $this->createMock(Loop::class);
       $loop
@@ -36,7 +23,7 @@ namespace Carica\Io\Stream {
       $file = new File(__DIR__.'/TestData/sample.txt');
       $file->loop($loop);
       $this->assertTrue($file->open());
-      $this->assertInternalType('resource', $file->resource());
+      $this->assertIsResource($file->resource());
     }
 
     /**

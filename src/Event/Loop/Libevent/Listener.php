@@ -4,12 +4,24 @@ namespace Carica\Io\Event\Loop\Libevent {
 
   use Carica\Io\Event;
 
-  abstract class Listener {
+  abstract class Listener implements Event\Loop\Listener {
 
-    private $_loop = NULL;
+    /**
+     * @var Event\Loop\Libevent
+     */
+    private $_loop;
+    /**
+     * @var bool
+     */
     private $_isCancelled = FALSE;
-    private $_callback = FALSE;
-    protected $_event = NULL;
+    /**
+     * @var callable
+     */
+    private $_callback;
+    /**
+     * @var NULL|resource
+     */
+    protected $_event;
 
     public function __construct(Event\Loop\Libevent $loop, Callable $callback) {
       $this->_loop = $loop;

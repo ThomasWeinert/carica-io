@@ -44,7 +44,7 @@ namespace Carica\Io\File {
      */
     public function testGetFileResource() {
       $fileSystem = new Access();
-      $this->assertInternalType('resource', $fh = $fileSystem->getFileResource(__FILE__));
+      $this->assertIsResource($fh = $fileSystem->getFileResource(__FILE__));
       fclose($fh);
     }
 
@@ -53,8 +53,7 @@ namespace Carica\Io\File {
      */
     public function testGetFileResourceWithContext() {
       $fileSystem = new Access();
-      $this->assertInternalType(
-        'resource',
+      $this->assertIsResource(
         $fh = $fileSystem->getFileResource(__FILE__, 'r', stream_context_create(array()))
       );
       fclose($fh);

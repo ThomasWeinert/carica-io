@@ -43,7 +43,13 @@ namespace Carica\Io\Event\Emitter {
     public function testEmitEventDoesNotImplicitCreateEmitter() {
       $aggregation = new Aggregation_TestProxy();
       $aggregation->emitEvent('dummy');
-      $this->assertAttributeSame(NULL, '_eventEmitter', $aggregation);
+      $reflection = new \ReflectionClass($aggregation);
+      $property = $reflection->getProperty('_eventEmitter');
+      $property->setAccessible(true);
+      $this->assertNull($property->getValue($aggregation));
+      $aggregation->events();
+      $this->assertNotNull($property->getValue($aggregation));
+
     }
 
     public function testAttachEventUsingImportedMagicMethod() {

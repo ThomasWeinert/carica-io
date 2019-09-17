@@ -4,11 +4,14 @@ namespace Carica\Io\Event\Loop\StreamSelect {
 
   use Carica\Io\Event;
 
-  abstract class Listener {
+  abstract class Listener implements Event\Loop\Listener {
 
-    private $_loop = NULL;
+    /**
+     * @var Event\Loop
+     */
+    private $_loop;
 
-    abstract function tick();
+    abstract public function tick();
 
     public function __construct(Event\Loop $loop) {
       $this->_loop = $loop;

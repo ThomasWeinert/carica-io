@@ -10,15 +10,6 @@ namespace Carica\Io\Deferred {
   class PromiseTest extends TestCase {
 
     /**
-     * @covers \Carica\Io\Deferred\Promise::__construct
-     */
-    public function testConstructor() {
-      $defer = $this->createMock(Io\Deferred::class);
-      $promise = new Promise($defer);
-      $this->assertAttributeSame($defer, '_defer', $promise);
-    }
-
-    /**
      * @covers \Carica\Io\Deferred\Promise::always
      */
     public function testAlways() {
