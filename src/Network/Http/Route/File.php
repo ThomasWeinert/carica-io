@@ -32,7 +32,7 @@ namespace Carica\Io\Network\Http\Route {
     }
 
     public function __invoke(...$arguments) {
-      $this->call(...$arguments);
+      return $this->call(...$arguments);
     }
 
     public function call(Http\Request $request) {
