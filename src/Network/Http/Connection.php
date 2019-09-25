@@ -67,7 +67,7 @@ namespace Carica\Io\Network\Http {
           return $result;
         case " " :
         case "\t" :
-          continue;
+          break;
         default :
           $this->_bufferOffset = $offset;
           return $result;
