@@ -198,7 +198,7 @@ namespace Carica\Io {
      * This will execute all callbacks attached with fail() or always()
      *
      * @param array $arguments
-     * @return Deferred
+     * @return $this
      */
     public function reject(...$arguments): Deferred {
       return $this->end(self::STATE_REJECTED, $this->_failed, $arguments);
@@ -209,10 +209,21 @@ namespace Carica\Io {
      * This will execute all callbacks attached with done() or always()
      *
      * @param array $arguments
-     * @return Deferred
+     * @return $this
      */
     public function resolve(...$arguments): Deferred {
       return $this->end(self::STATE_RESOLVED, $this->_done, $arguments);
+    }
+
+    /**
+     * Reset state to pending
+     * @return $this
+     */
+    public function restart(): self {
+      if ($this->_state !== self::STATE_PENDING) {
+        $this->_state = self::STATE_PENDING;
+      }
+      return $this;
     }
 
     /**
