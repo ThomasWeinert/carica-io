@@ -76,7 +76,7 @@ namespace Carica\Io\Network\Http\Route {
 
     /**
      * @param Http\Request $request
-     * @return \SplFileInfo
+     * @return \SplFileInfo|FALSE
      */
     private function getFileInfo(Http\Request $request) {
       if ($localFile = $this->fileAccess()->getRealPath($this->_documentRoot.$request->path)) {
