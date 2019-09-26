@@ -25,7 +25,7 @@ namespace Carica\Io\Network\Http {
     /**
      * @var \ArrayObject
      */
-    private $_values = NULL;
+    private $_values;
 
     /**
      * @param string $name
@@ -43,7 +43,7 @@ namespace Carica\Io\Network\Http {
      * @throws \UnexpectedValueException
      */
     public function setName($name) {
-      if (trim($name) == '') {
+      if (trim($name) === '') {
         throw new \UnexpectedValueException(
           sprintf('Property %s::$name can not be empty', __CLASS__)
         );
@@ -54,7 +54,7 @@ namespace Carica\Io\Network\Http {
     /**
      * Set the header data, can be a single value or an array
      *
-     * @param string|array|Traversable
+     * @param string|array|\Traversable
      */
     public function setData($data) {
       $this->_values = new \ArrayObject;
@@ -72,12 +72,8 @@ namespace Carica\Io\Network\Http {
      * @return string
      */
     public function __toString() {
-      if (defined('HHVM_VERSION')) {
-        $values = (array)$this->_values;
-        return (string)end($values);
-      }
-      /** @noinspection PhpParamsInspection */
-      return (string)end($this->_values);
+      $values = (array)$this->_values;
+      return (string)end($values);
     }
 
     /**
@@ -104,12 +100,8 @@ namespace Carica\Io\Network\Http {
       case 'name' :
         return $this->_name;
       case 'value' :
-        if (defined('HHVM_VERSION')) {
-          $values = (array)$this->_values;
-          return (string)end($values);
-        }
-        /** @noinspection PhpParamsInspection */
-        return end($this->_values);
+        $values = (array)$this->_values;
+        return (string)end($values);
       case 'values' :
         return $this->_values;
       }
