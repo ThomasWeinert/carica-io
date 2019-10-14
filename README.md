@@ -9,7 +9,7 @@ Carica Io
 
 License:   [The MIT License](http://www.opensource.org/licenses/mit-license.php)
 
-Copyright: 2013-2018 Thomas Weinert <thomas@weinert.info>
+Copyright: 2013-2019 Thomas Weinert <thomas@weinert.info>
 
 Carica Io is a collection of experimental php classes and scripts
 for non-blocking I/O.
@@ -28,3 +28,21 @@ Firmata
 
 Originally a Firmata client library was part of this project. It is now an
 separate project called [Carica Firmata](https://github.com/ThomasWeinert/carica-firmata)
+
+Usage
+-----
+
+You will need to get the loop instance from the factory, 
+attach events and run it.
+
+```php
+$loop = Carica\Io\Event\Loop\Factory::get();
+$loop->setInterval(
+  static function () {
+    static $i = 0;
+    echo $i++;
+  },
+  1000
+);
+$loop->run();
+```

@@ -9,7 +9,7 @@
     {"name": "Thomas Weinert", "email": "thomas@weinert.info"}
   ],
   "require": {
-    "php": ">=7.2"
+    "php": ">=7.3"
   },
   "autoload": {
     "psr-4": {
