@@ -1,24 +1,25 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Event {
 
   use Carica\Io;
-  use Carica\Io\Event\Loop\Listener;
+  use Carica\Io\Event\Loop\Listener as EventLoopListener;
 
-  interface Loop extends \Countable {
+  interface Loop {
 
-    public function setTimeout(Callable $callback, int $milliseconds): Listener;
+    public function setTimeout(Callable $callback, int $milliseconds): EventLoopListener;
 
-    public function setInterval(Callable $callback, int $milliseconds): Listener;
+    public function setInterval(Callable $callback, int $milliseconds): EventLoopListener;
 
-    public function setStreamReader(Callable $callback, $stream): Listener;
+    public function setStreamReader(Callable $callback, $stream): EventLoopListener;
 
-    public function remove(Listener $listener): void;
+    public function remove(EventLoopListener $listener): void;
 
     public function run(Io\Deferred\Promise $for = NULL): void;
 
     public function stop(): void;
 
+    public static function create(): self;
   }
-
 }

@@ -32,7 +32,6 @@ $server->listen(8080);
 $loop = Carica\Io\Event\Loop\Factory::get();
 $loop->setInterval(
   function() use ($loop) {
-    echo "Current event count: ", $loop->count(), "\n";
     gc_collect_cycles();
   },
   5000

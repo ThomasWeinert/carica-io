@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Event\Loop\StreamSelect\Listener {
 
@@ -7,27 +8,32 @@ namespace Carica\Io\Event\Loop\StreamSelect\Listener {
 
   class Interval extends StreamSelect\Listener {
 
-    private $_interval = 0;
-    private $_next = 0;
+    private $_interval;
+    private $_next;
+
+    /**
+     * @var callable
+     */
+    private $_callback;
 
     public function __construct(Event\Loop $loop, Callable $callback, $milliseconds) {
       parent::__construct($loop);
-      $this->_interval = $milliseconds;
+      $this->_interval = (int)$milliseconds;
       $this->_callback = $callback;
       $this->_next = $this->getNow() + $milliseconds;
     }
 
-    public function tick() {
+    public function tick(): bool {
       $now = $this->getNow();
       if ($now >= $this->_next) {
         $this->reset();
-        call_user_func($this->_callback);
+        ($this->_callback)();
         return TRUE;
       }
       return FALSE;
     }
 
-    public function reset() {
+    public function reset(): void {
       $this->_next = $this->getNow() + $this->_interval;
     }
 

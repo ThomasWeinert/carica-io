@@ -1,15 +1,16 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Event {
 
-  use \Carica\Io\Event;
+  use \Carica\Io\Event\Loop as EventLoop;
 
   interface HasLoop {
 
     /**
-     * @param Event\Loop $loop
-     * @return Event\Loop
+     * @param EventLoop $loop
+     * @return EventLoop
      */
-    function loop(Event\Loop $loop = NULL);
+    public function loop(EventLoop $loop = NULL): EventLoop;
   }
 }

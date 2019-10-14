@@ -1,11 +1,13 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Event\Loop {
 
-  use Carica\Io;
-  use Carica\Io\Event\Loop\Listener;
+  use Carica\Io\Deferred\Promise;
+  use Carica\Io\Event\Loop as EventLoop;
+  use Carica\Io\Event\Loop\Listener as EventLoopListener;
 
-  class Clock implements Io\Event\Loop {
+  class Clock implements EventLoop {
 
     /**
      * @var bool
@@ -31,26 +33,30 @@ namespace Carica\Io\Event\Loop {
     private $_streams = [];
 
     public function __construct(int $now = NULL, int $resolution = 1) {
-      $this->_currentTime = (int)($now ?? ceil(microtime(TRUE) * 1000));
+      $this->_currentTime = ($now ?? (int)ceil(microtime(TRUE) * 1000));
       $this->_resolution = $resolution;
     }
 
-    public function setTimeout(Callable $callback, int $milliseconds): Listener {
+    public static function create(): EventLoop {
+      return new self();
+    }
+
+    public function setTimeout(Callable $callback, int $milliseconds): EventLoopListener {
       $listener = new StreamSelect\Listener\Timeout($this, $callback, $milliseconds);
       return $this->_timers[spl_object_hash($listener)] = $listener;
     }
 
-    public function setInterval(Callable $callback, int $milliseconds): Listener {
+    public function setInterval(Callable $callback, int $milliseconds): EventLoopListener {
       $listener = new StreamSelect\Listener\Interval($this, $callback, $milliseconds);
       return $this->_timers[spl_object_hash($listener)] = $listener;
     }
 
-    public function setStreamReader(Callable $callback, $stream): Listener {
+    public function setStreamReader(Callable $callback, $stream): EventLoopListener {
       $listener = new StreamSelect\Listener\StreamReader($this, function() {}, $stream);
       return $this->_streams[spl_object_hash($listener)] = $listener;
     }
 
-    public function remove(Listener $listener): void {
+    public function remove(EventLoopListener $listener): void {
       $key = spl_object_hash($listener);
       if (isset($this->_timers[$key])) {
         unset($this->_timers[$key]);
@@ -60,7 +66,7 @@ namespace Carica\Io\Event\Loop {
       }
     }
 
-    public function run(Io\Deferred\Promise $for = NULL): void {
+    public function run(Promise $for = NULL): void {
       $this->_running = TRUE;
     }
 
@@ -72,7 +78,7 @@ namespace Carica\Io\Event\Loop {
       $stop = $this->_currentTime + $milliseconds;
       while ($this->_currentTime < $stop) {
         $this->_currentTime += $this->_resolution;
-        /** @var Listener $listener */
+        /** @var EventLoopListener $listener */
         foreach ($this->_timers as $listener) {
           $listener->tick();
         }
