@@ -21,5 +21,13 @@ namespace Carica\Io\Event {
     public function stop(): void;
 
     public static function create(): self;
+
+    /**
+     * Return the global event loop instance stored in the
+     * loop factory.
+     *
+     * @return static
+     */
+    public static function get(): self;
   }
 }

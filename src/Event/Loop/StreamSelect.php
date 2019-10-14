@@ -27,6 +27,14 @@ namespace Carica\Io\Event\Loop {
       return new self();
     }
 
+    public static function get(): EventLoop {
+      return EventLoop\Factory::get(
+        static function() {
+          return self::create();
+        }
+      );
+    }
+
     public function setTimeout(Callable $callback, int $milliseconds): EventLoopListener {
       $listener = new StreamSelect\Listener\Timeout($this, $callback, $milliseconds);
       return $this->_timers[spl_object_hash($listener)] = $listener;
