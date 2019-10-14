@@ -8,11 +8,11 @@ namespace Carica\Io\Stream {
 
   include_once(__DIR__.'/../Bootstrap.php');
 
-  class FileTest extends TestCase {
+  /**
+   * @covers \Carica\Io\Stream\FileStream
+   */
+  class FileStreamTest extends TestCase {
 
-    /**
-     * @covers \Carica\Io\Stream\File
-     */
     public function testOpen() {
       $loop = $this->createMock(Loop::class);
       $loop
@@ -20,16 +20,13 @@ namespace Carica\Io\Stream {
         ->method('setStreamReader')
         ->with($this->isType('callable'), $this->isType('resource'));
 
-      $file = new File(__DIR__.'/TestData/sample.txt');
-      $file->loop($loop);
+      $file = new FileStream($loop, __DIR__.'/TestData/sample.txt');
       $this->assertTrue($file->open());
       $this->assertIsResource($file->resource());
     }
 
-    /**
-     * @covers \Carica\Io\Stream\File
-     */
     public function testOpenExpectingError() {
+      $loop = $this->createMock(Loop::class);
       $events = $this
         ->getMockBuilder(Emitter::class)
         ->disableOriginalConstructor()
@@ -39,15 +36,12 @@ namespace Carica\Io\Stream {
         ->method('emit')
         ->with('error', $this->stringStartsWith('Can not open file: '));
 
-      $file = new File(__DIR__.'/TestData/NON_EXISTING_FILE.txt');
+      $file = new FileStream($loop, __DIR__.'/TestData/NON_EXISTING_FILE.txt');
       $file->events($events);
       $this->assertFalse($file->open());
       $this->assertNull($file->resource());
     }
 
-    /**
-     * @covers \Carica\Io\Stream\File
-     */
     public function testRead() {
       $loop = $this->createMock(Loop::class);
       $loop
@@ -64,26 +58,21 @@ namespace Carica\Io\Stream {
         ->method('emit')
         ->with('read-data', 'Hello World!');
 
-      $file = new File(__DIR__.'/TestData/sample.txt');
-      $file->loop($loop);
+      $file = new FileStream($loop, __DIR__.'/TestData/sample.txt');
       $file->events($events);
       $file->open();
       $this->assertEquals('Hello World!', $file->read());
     }
 
-    /**
-     * @covers \Carica\Io\Stream\File
-     */
     public function testReadWithoutResource() {
-      $file = new File(__DIR__.'/TestData/sample.txt');
+      $loop = $this->createMock(Loop::class);
+      $file = new FileStream($loop, __DIR__.'/TestData/sample.txt');
       $this->assertEquals('', $file->read());
     }
 
-    /**
-     * @covers \Carica\Io\Stream\File
-     */
     public function testWriteWithoutResource() {
-      $file = new File(__DIR__.'/TestData/sample.txt');
+      $loop = $this->createMock(Loop::class);
+      $file = new FileStream($loop, __DIR__.'/TestData/sample.txt');
       $this->assertFalse($file->write('foobar'));
     }
   }

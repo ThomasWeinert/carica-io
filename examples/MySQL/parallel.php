@@ -6,7 +6,7 @@ use Carica\Io;
 $mysqlOne = new Io\Deferred\MySQL(new mysqli('localhost'));
 $mysqlTwo = new Io\Deferred\MySQL(new mysqli('localhost'));
 $time = microtime(TRUE);
-$debug = function($result) use ($time) {
+$debug = static function($result) use ($time) {
   var_dump(iterator_to_array($result));
   var_dump(microtime(TRUE) - $time);
 };

@@ -2,16 +2,12 @@
 
 namespace Carica\Io\Network\Http\Response\Content {
 
-  use Carica\Io;
   use Carica\Io\Network;
-  use Carica\Io\Network\Http\Response;
 
   /**
    * An xml response content
-   *
-   * @property \DOMDocument $document
    */
-  class Xml extends Dom {
+  class XML extends DOM {
 
     public function __construct($type = 'application/xml; charset=utf-8') {
       parent::__construct($type);
@@ -22,7 +18,7 @@ namespace Carica\Io\Network\Http\Response\Content {
       return TRUE;
     }
 
-    public function getLength() {
+    public function getLength(): int {
       return strlen($this->document->saveXml());
     }
   }

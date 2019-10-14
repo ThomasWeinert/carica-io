@@ -136,14 +136,14 @@ namespace Carica\Io\Network\Http {
       }
     }
 
-    public function connection(Connection $connection = NULL) {
+    public function connection(Connection $connection = NULL): ?Connection {
       if (isset($connection)) {
         $this->_connection = $connection;
       }
       return $this->_connection;
     }
 
-    public function headers(Headers $headers = NULL) {
+    public function headers(Headers $headers = NULL): ?Headers {
       if (isset($headers)) {
         $this->_headers = $headers;
       }

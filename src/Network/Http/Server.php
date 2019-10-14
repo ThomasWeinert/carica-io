@@ -2,26 +2,32 @@
 
 namespace Carica\Io\Network\Http {
 
+  use Carica\Io\Event\Loop as EventLoop;
   use Carica\Io\Network;
 
   class Server extends Network\Server {
 
-    private $_route = NULL;
+    public const EVENT_CONNECTION_RECEIVED = 'connection';
 
-    public function __construct(Callable $route, $address = 'tcp://0.0.0.0') {
-      parent::__construct($address);
+    /**
+     * @var callable
+     */
+    private $_route;
+
+    public function __construct(EventLoop $loop, Callable $route, $address = 'tcp://0.0.0.0') {
+      parent::__construct($loop, $address);
       $this->_route = $route;
     }
 
     public function listen($port = 8080) {
       $route = $this->_route;
       $this->events()->on(
-        'connection',
+        self::EVENT_CONNECTION_RECEIVED,
         function ($stream) use ($route) {
-          $request = new Connection($stream);
+          $request = new Connection($this->loop(), $stream);
           $request->events()->on(
-            'request',
-            function ($request) use ($route) {
+            Connection::EVENT_REQUEST_RECEIVED,
+            static function ($request) use ($route) {
               echo $request->method.' '.$request->url."\n";
               if (!($response = $route($request))) {
                 $response = new Response\Error(
@@ -31,8 +37,10 @@ namespace Carica\Io\Network\Http {
               $response
                 ->send()
                 ->always(
-                  function () use ($response) {
-                    $response->connection()->close();
+                  static function () use ($response) {
+                    if ($connection = $response->connection()) {
+                      $connection->close();
+                    }
                   }
                 );
             }

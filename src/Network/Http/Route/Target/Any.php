@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Network\Http\Route\Target {
 
@@ -8,7 +9,7 @@ namespace Carica\Io\Network\Http\Route\Target {
 
     private $_methods = array();
 
-    public function methods($methods) {
+    public function methods($methods): void {
       $this->_methods = array();
       if (is_string($methods)) {
         $methods = explode(' ', $methods);
@@ -27,10 +28,10 @@ namespace Carica\Io\Network\Http\Route\Target {
       }
     }
 
-    protected function validateMethod($method) {
+    protected function validateMethod($method): bool {
       return (
         empty($this->_methods) ||
-        in_array(strToUpper($method), $this->_methods)
+        in_array(strToUpper($method), $this->_methods, TRUE)
       );
     }
 

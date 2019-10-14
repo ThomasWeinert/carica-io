@@ -7,18 +7,18 @@ $loop = Io\Event\Loop\Factory::get();
 
 $clients = array();
 
-$server = new Io\Network\Server();
+$server = new Io\Network\Server($loop);
 $server->events()->on(
   'connection',
-  function ($stream) use (&$clients) {
+  static function ($stream) use (&$clients, $loop) {
     echo "Client connected: $stream\n";
-    $clients[] = new Io\Network\Connection($stream);
+    $clients[] = new Io\Network\Connection($loop, $stream);
   }
 );
 
 $loop->setInterval(
-  function () use (&$clients) {
-    echo "Send time to ".count($clients)." clients\n";
+  static function () use (&$clients) {
+    echo 'Send time to '.count($clients)." clients\n";
     foreach ($clients as $index => $client) {
       /**
        * @var Io\Network\Connection $client

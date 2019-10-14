@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Network\Http\Route\Target {
 
@@ -15,7 +16,7 @@ namespace Carica\Io\Network\Http\Route\Target {
       $this->setPath($path);
     }
 
-    private function setPath($path) {
+    private function setPath($path): void {
       $parts = explode('/', $path);
       $this->_pathLength = count($parts);
       foreach ($parts as $index => $part) {
@@ -38,7 +39,7 @@ namespace Carica\Io\Network\Http\Route\Target {
           return FALSE;
         }
         foreach ($this->_pathMatches as $index => $match) {
-          if ($parts[$index] != $match) {
+          if ($parts[$index] !== $match) {
             return FALSE;
           }
         }
@@ -49,8 +50,8 @@ namespace Carica\Io\Network\Http\Route\Target {
       return $parameters;
     }
 
-    protected function validateLength($length) {
-      return $this->_pathLength == $length;
+    protected function validateLength(int $length): bool {
+      return $this->_pathLength === $length;
     }
   }
 }

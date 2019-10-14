@@ -1,6 +1,15 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Network\Http {
+
+  use ArrayAccess;
+  use ArrayObject;
+  use Countable;
+  use IteratorAggregate;
+  use LogicException;
+  use Traversable;
+  use UnexpectedValueException;
 
   /**
    * An encapsulation to provide easier http header handling. Basically it allows to
@@ -12,10 +21,10 @@ namespace Carica\Io\Network\Http {
    *
    * @property string $name
    * @property string $value
-   * @property \ArrayObject $values
+   * @property ArrayObject $values
    */
   class Header
-    implements \ArrayAccess, \IteratorAggregate, \Countable {
+    implements ArrayAccess, IteratorAggregate, Countable {
 
     /**
      * The http header name
@@ -23,13 +32,13 @@ namespace Carica\Io\Network\Http {
      */
     private $_name = '';
     /**
-     * @var \ArrayObject
+     * @var ArrayObject
      */
     private $_values;
 
     /**
      * @param string $name
-     * @param string|array|\Traversable $data
+     * @param string|array|Traversable $data
      */
     public function __construct($name, $data = array()) {
       $this->setName($name);
@@ -40,11 +49,11 @@ namespace Carica\Io\Network\Http {
      * Set the http header name
      *
      * @param string $name
-     * @throws \UnexpectedValueException
+     * @throws UnexpectedValueException
      */
     public function setName($name) {
       if (trim($name) === '') {
-        throw new \UnexpectedValueException(
+        throw new UnexpectedValueException(
           sprintf('Property %s::$name can not be empty', __CLASS__)
         );
       }
@@ -54,11 +63,11 @@ namespace Carica\Io\Network\Http {
     /**
      * Set the header data, can be a single value or an array
      *
-     * @param string|array|\Traversable
+     * @param string|array|Traversable
      */
     public function setData($data) {
-      $this->_values = new \ArrayObject;
-      if (is_array($data) || $data instanceOf \Traversable) {
+      $this->_values = new ArrayObject;
+      if (is_array($data) || $data instanceOf Traversable) {
         foreach ($data as $value) {
           $this->_values[] = trim((string)$value);
         }
@@ -92,8 +101,8 @@ namespace Carica\Io\Network\Http {
 
     /**
      * @param string $name
-     * @throws \LogicException
-     * @return string|mixed|\ArrayObject
+     * @return string|mixed|ArrayObject
+     *@throws LogicException
      */
     public function __get($name) {
       switch ($name) {
@@ -105,15 +114,15 @@ namespace Carica\Io\Network\Http {
       case 'values' :
         return $this->_values;
       }
-      throw new \LogicException(
+      throw new LogicException(
         sprintf('Can not read non existing property: %s::$%s', __CLASS__, $name)
       );
     }
 
     /**
      * @param string $name
-     * @param string|array|\Traversable $value
-     * @throws \LogicException
+     * @param string|array|Traversable $value
+     * @throws LogicException
      */
     public function __set($name, $value) {
       switch ($name) {
@@ -127,16 +136,16 @@ namespace Carica\Io\Network\Http {
         $this->setData($value);
         return;
       }
-      throw new \LogicException(
+      throw new LogicException(
         sprintf('Can not write non existing property: %s::$%s', __CLASS__, $name)
       );
     }
 
     /**
      * @param integer $offset
-     * @return boolean
+     * @return bool
      */
-    public function offsetExists($offset) {
+    public function offsetExists($offset): bool {
       return $this->_values->offsetExists($offset);
     }
 
@@ -144,7 +153,7 @@ namespace Carica\Io\Network\Http {
      * @param integer $offset
      * @return string
      */
-    public function offsetGet($offset) {
+    public function offsetGet($offset): string {
       return $this->_values->offsetGet($offset);
     }
 

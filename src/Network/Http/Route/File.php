@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Network\Http\Route {
 
   use Carica\Io;
   use Carica\Io\Network\Http;
+  use SplFileInfo;
 
   class File {
 
@@ -11,14 +13,14 @@ namespace Carica\Io\Network\Http\Route {
 
     private $_file = '';
 
-    private $_encoding = 'utf-8';
+    private $_encoding;
 
     public function __construct($file, $encoding = 'utf-8') {
       $this->setFile($file);
       $this->_encoding = $encoding;
     }
 
-    public function setFile($documentRoot) {
+    public function setFile($documentRoot): void {
       if ($file = $this->fileAccess()->getRealPath($documentRoot)) {
         $this->_file = $file;
         return;
@@ -40,29 +42,26 @@ namespace Carica\Io\Network\Http\Route {
         if ($file->isFile() && $file->isReadable()) {
           $response = $request->createResponse();
           $localFile = $file->getRealPath();
-          $mimetype = $this->fileAccess()->getMimeType($localFile);
+          $mimeType = $this->fileAccess()->getMimeType($localFile);
           $encoding = $this->_encoding;
           $response->content = new Http\Response\Content\File(
-            $localFile, $mimetype, $encoding
+            $localFile, $mimeType, $encoding
           );
           return $response;
-        } else {
-          return new Http\Response\Error(
-            $request, 403
-          );
         }
+        return new Http\Response\Error($request, 403);
       }
       return NULL;
     }
 
     /**
-     * @return \SplFileInfo
+     * @return SplFileInfo|NULL
      */
-    private function getFileInfo() {
+    private function getFileInfo(): ?SplFileInfo {
       if ($localFile = $this->fileAccess()->getRealPath($this->_file)) {
         return $this->fileAccess()->getInfo($localFile);
       }
-      return FALSE;
+      return NULL;
     }
   }
 }

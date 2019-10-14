@@ -1,12 +1,11 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Network\Http\Route\Target {
 
-  use Carica\Io\Network\Http;
-
   class StartsWith extends Match {
 
-    protected function validateLength($length) {
+    protected function validateLength(int $length): bool {
       return $this->_pathLength <= $length;
     }
   }

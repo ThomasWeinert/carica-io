@@ -1,18 +1,22 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Stream {
 
   use Carica\Io;
-  use Carica\Io\Event;
   use Carica\Io\Stream\Serial\Device;
+  use Carica\Io\Event\Emitter as EventEmitter;
+  use Carica\Io\Event\HasLoop as HasEventLoop;
+  use Carica\Io\Event\Loop as EventLoop;
+  use Carica\Io\Stream;
 
-  class Serial
+  class SerialStream
     implements
-      Io\Stream,
-      Io\Event\HasLoop {
+      Stream,
+      HasEventLoop {
 
-    use Event\Emitter\Aggregation;
-    use Event\Loop\Aggregation;
+    use EventEmitter\Aggregation;
+    use EventLoop\Aggregation;
 
     private $_device;
     private $_resource;
@@ -20,12 +24,13 @@ namespace Carica\Io\Stream {
 
     /**
      * Serial constructor.
-     * @param $device
+     *
+     * @param EventLoop $loop
+     * @param string $device
      * @param int $baud
-     * @throws \LogicException
      */
-    public function __construct(string $device, int $baud = Device::BAUD_DEFAULT)
-    {
+    public function __construct(EventLoop $loop, string $device, int $baud = Device::BAUD_DEFAULT) {
+      $this->loop($loop);
       $this->_device = new Serial\Device($device, $baud);
     }
 
@@ -38,15 +43,11 @@ namespace Carica\Io\Stream {
         $this->_resource = NULL;
       } elseif (NULL !== $resource) {
         $this->_resource = $resource;
-        $that = $this;
         $this->_listener = $this->loop()->setStreamReader(
-          function() use ($that) {
-            $that->read();
-          },
-          $resource
+          function() { $this->read(); }, $resource
         );
       }
-      if (\is_resource($this->_resource)) {
+      if (is_resource($this->_resource)) {
         return $this->_resource;
       }
       if (NULL !== $this->_listener) {
@@ -57,21 +58,20 @@ namespace Carica\Io\Stream {
     }
 
     public function isOpen(): bool {
-      return \is_resource($this->resource());
+      return is_resource($this->resource());
     }
 
     public function open(): bool {
       $this->_device->setUp();
       $device = (string)$this->_device;
-      if ($resource = @\fopen($device, 'rb+')) {
-        \stream_set_blocking($resource, 0);
-        \stream_set_timeout($resource, 1);
+      if ($resource = @fopen($device, 'rb+')) {
+        stream_set_blocking($resource, 0);
+        stream_set_timeout($resource, 1);
         $this->resource($resource);
         return TRUE;
-      } else {
-        $this->events()->emit('error', sprintf('Can not open serial port: "%s".', $device));
-        return FALSE;
       }
+      $this->events()->emit('error', sprintf('Can not open serial port: "%s".', $device));
+      return FALSE;
     }
 
     public function close() {
@@ -83,8 +83,8 @@ namespace Carica\Io\Stream {
 
     public function read(int $bytes = 1024): ?string {
       if ($resource = $this->resource()) {
-        $data = \fread($resource, $bytes);
-        if (\is_string($data) && $data !== '') {
+        $data = fread($resource, $bytes);
+        if (is_string($data) && $data !== '') {
           $this->events()->emit('read-data', $data);
           return $data;
         }
@@ -94,9 +94,9 @@ namespace Carica\Io\Stream {
 
     public function write($data): bool {
       if ($resource = $this->resource()) {
-        \fwrite(
+        fwrite(
           $resource,
-          $writtenData = \is_array($data) ? Io\encodeBinaryFromArray($data) : $data
+          $writtenData = is_array($data) ? Io\encodeBinaryFromArray($data) : $data
         );
         $this->events()->emit('write-data', $writtenData);
         return TRUE;

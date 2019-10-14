@@ -1,6 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Stream\Serial {
+
+  use LogicException;
 
   class Device {
 
@@ -44,24 +47,29 @@ namespace Carica\Io\Stream\Serial {
       if (isset($this->_baudRates[$baud])) {
         $this->_baud = $baud;
       }
-      if (substr(PHP_OS, 0, 3) === "WIN") {
+      switch (PHP_OS_FAMILY) {
+      case 'Windows':
         $pattern = '(^COM\d+:$)';
         $command = sprintf(
           'mode %s BAUD=%d PARITY=N data=8 stop=1 xon=off',
           strtolower($device),
           $this->_baudRates[$baud]
         );
-      } elseif (0 === strpos(PHP_OS, "Darwin")) {
+        break;
+      case 'Darwin':
         $pattern = '(^/dev/(?:tty|cu)\.[^\s]+$)';
         $command = sprintf('stty -f %s speed %d', $device, $baud);
-      } elseif (0 === strpos(PHP_OS, "Linux")) {
+        break;
+      case 'Linux':
+      case 'BSD':
         $pattern = '(^/dev/tty\w+\d+$)';
         $command = sprintf('stty -F %s %d', $device, $baud);
-      } else {
-        throw new \LogicException(sprintf('Unsupported OS: "%s".', PHP_OS));
+        break;
+      default:
+        throw new LogicException(sprintf('Unsupported OS: "%s".', PHP_OS_FAMILY));
       }
       if (!preg_match($pattern, $device)) {
-        throw new \LogicException(sprintf('Invalid serial port: "%s".', $device));
+        throw new LogicException(sprintf('Invalid serial port: "%s".', $device));
       }
       $this->_device = $device;
       $this->_command = $command;

@@ -1,6 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\File {
+
+  use SplFileInfo;
+  use SplFileObject;
 
   /**
    * A wrapper/factory object for the file system.
@@ -15,11 +19,11 @@ namespace Carica\Io\File {
 
     /**
      * fileinfo provides weird results for css/js. This mapping is used to
-     * force mimetypes by extension.
+     * force mime types by extension.
      *
      * @var array
      */
-    private $_mimetypes = array(
+    private $_mimeTypes = array(
       'css' => 'text/css',
       'html' => 'text/html',
       'js' => 'application/x-javascript'
@@ -29,10 +33,10 @@ namespace Carica\Io\File {
      * Create an return a splFileInfo instance for the filename
      *
      * @param string $filename
-     * @return \SplFileInfo
+     * @return SplFileInfo
      */
-    public function getInfo($filename) {
-      return new \SplFileInfo($filename);
+    public function getInfo($filename): SplFileInfo {
+      return new SplFileInfo($filename);
     }
 
     /**
@@ -41,14 +45,13 @@ namespace Carica\Io\File {
      * @param string $filename
      * @param string $mode
      * @param resource $context
-     * @return \SplFileObject
+     * @return SplFileObject
      */
-    public function getFile($filename, $mode = 'r', $context = NULL) {
+    public function getFile($filename, $mode = 'r', $context = NULL): ?SplFileObject {
       if (NULL === $context) {
-        return new \SplFileObject($filename, $mode, FALSE);
-      } else {
-        return new \SplFileObject($filename, $mode, FALSE, $context);
+        return new SplFileObject($filename, $mode, FALSE);
       }
+      return new SplFileObject($filename, $mode, FALSE, $context);
     }
 
     /**
@@ -62,23 +65,22 @@ namespace Carica\Io\File {
     public function getFileResource($filename, $mode = 'r', $context = NULL) {
       if (NULL === $context) {
         return fopen($filename, $mode, FALSE);
-      } else {
-        return fopen($filename, $mode, FALSE, $context);
       }
+      return fopen($filename, $mode, FALSE, $context);
     }
 
     /**
-     * Try to get the mimetype for an file.
+     * Try to get the mime type for an file.
      *
      * @param string $filename
      * @return string
      */
-    public function getMimeType($filename) {
+    public function getMimeType($filename): string {
       $pattern = '(\.(?P<extension>[^/\\.]+)$)';
       if (preg_match($pattern, $filename, $matches)) {
         $extension = strtolower($matches['extension']);
-        if (isset($this->_mimetypes[$extension])) {
-          return $this->_mimetypes[$extension];
+        if (isset($this->_mimeTypes[$extension])) {
+          return $this->_mimeTypes[$extension];
         }
       }
       return (function_exists('mime_content_type'))
@@ -92,7 +94,7 @@ namespace Carica\Io\File {
      * @param string $path
      * @return string
      */
-    public function getRealPath($path) {
+    public function getRealPath($path): string {
       return realpath($path);
     }
   }

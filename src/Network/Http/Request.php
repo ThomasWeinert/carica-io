@@ -1,8 +1,7 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Network\Http {
-
-  use Carica\Io;
 
   /**
    * @property string $method
@@ -23,9 +22,9 @@ namespace Carica\Io\Network\Http {
     public $_url = '/';
     public $_path = '/';
 
-    private $_connection = NULL;
-    private $_headers = NULL;
-    private $_query = NULL;
+    private $_connection;
+    private $_headers;
+    private $_query;
 
     public function __construct(Connection $connection) {
       $this->connection($connection);
@@ -33,45 +32,64 @@ namespace Carica\Io\Network\Http {
       $this->_query = new Request\Query();
     }
 
-    public function __get($name) {
+    public function __isset($name) {
       switch ($name) {
       case 'method' :
       case 'version' :
       case 'url' :
       case 'path' :
-        return $this->{'_'.$name};
       case 'connection' :
       case 'headers' :
       case 'query' :
-        return call_user_func(array($this, $name));
+        return TRUE;
+      }
+      return FALSE;
+    }
+
+    public function __get($name) {
+      switch ($name) {
+      case 'method' :
+        return $this->_method;
+      case 'version' :
+        return $this->_version;
+      case 'url' :
+        return $this->_url;
+      case 'path' :
+        return $this->_path;
+      case 'connection' :
+        return $this->connection();
+      case 'headers' :
+        return $this->headers();
+      case 'query' :
+        return $this->query();
       }
       throw new \LogicException(
         sprintf('Unknown property %s::$%s', get_class($this), $name)
       );
     }
 
-    public function connection(Connection $connection = NULL) {
+    public function connection(Connection $connection = NULL): ?Connection {
       if (isset($connection)) {
         $this->_connection = $connection;
       }
       return $this->_connection;
     }
 
-    public function headers(Headers $headers = NULL) {
+    public function headers(Headers $headers = NULL): ?Headers {
       if (isset($headers)) {
         $this->_headers = $headers;
       }
       return $this->_headers;
     }
 
-    public function query(Request\Query $query = NULL) {
+    public function query(Request\Query $query = NULL): ?Request\Query {
       if (isset($query)) {
         $this->_query = $query;
       }
       return $this->_query;
     }
 
-    public function parseStatus($line) {
+    public function parseStatus($line): void {
       if (preg_match($this->_patternStatus, $line, $matches)) {
         $this->method = $matches['method'];
         $this->version = $matches['version'];
@@ -84,7 +102,7 @@ namespace Carica\Io\Network\Http {
       }
     }
 
-    public function parseHeader($string) {
+    public function parseHeader($string): void {
       try {
         $this->_headers[] = $string;
       } catch (\UnexpectedValueException $e) {
@@ -96,7 +114,7 @@ namespace Carica\Io\Network\Http {
      * @param Response\Content $content
      * @return Response
      */
-    public function createResponse(Response\Content $content = NULL) {
+    public function createResponse(Response\Content $content = NULL): Response {
       $response = new Response($this->connection());
       if (isset($content)) {
         $response->content = $content;

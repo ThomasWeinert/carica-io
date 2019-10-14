@@ -14,11 +14,12 @@ namespace Carica\Io\Network {
 
     private $_listener;
 
-    private $_stream = FALSE;
+    private $_stream;
 
     private $_address;
 
-    public function __construct($address = 'tcp://0.0.0.0') {
+    public function __construct(Io\Event\Loop $loop, $address = 'tcp://0.0.0.0') {
+      $this->loop($loop);
       $this->_address = $address;
     }
 
@@ -26,8 +27,12 @@ namespace Carica\Io\Network {
       $this->close();
     }
 
+    /**
+     * @param null $stream
+     * @return resource|null
+     */
     public function resource($stream = NULL) {
-      if (NULL !== $stream) {
+      if (NULL !== $stream && is_resource($stream)) {
         $this->_stream = $stream;
         if (NULL !== $this->_listener) {
           $this->loop()->remove($this->_listener);
@@ -35,7 +40,7 @@ namespace Carica\Io\Network {
         if ($this->isActive()) {
           $that = $this;
           $this->loop()->setStreamReader(
-            function() use ($that) {
+            static function() use ($that) {
               $that->accept();
             },
             $stream
@@ -46,7 +51,7 @@ namespace Carica\Io\Network {
     }
 
     public function isActive() {
-      return is_resource($this->_stream);
+      return $this->_stream !== NULL;
     }
 
     public function listen($port = 8080) {

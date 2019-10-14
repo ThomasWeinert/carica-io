@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\File {
 
@@ -8,6 +9,6 @@ namespace Carica\Io\File {
      * @param Access $fileAccess
      * @return mixed
      */
-    function fileAccess(Access $fileAccess = NULL);
+    public function fileAccess(Access $fileAccess = NULL): Access;
   }
 }

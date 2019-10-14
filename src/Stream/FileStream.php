@@ -3,29 +3,34 @@
 namespace Carica\Io\Stream {
 
   use Carica\Io;
-  use Carica\Io\Event;
+  use Carica\Io\Event\Emitter as EventEmitter;
+  use Carica\Io\Event\HasLoop as HasEventLoop;
+  use Carica\Io\Event\Loop as EventLoop;
+  use Carica\Io\Stream;
 
-  class File
+  class FileStream
     implements
-      Io\Stream,
-      Io\Event\HasLoop {
+      Stream,
+      HasEventLoop {
 
-    use Event\Emitter\Aggregation;
-    use Event\Loop\Aggregation;
+    use EventEmitter\Aggregation;
+    use EventLoop\Aggregation;
 
-    private $_filename = '';
-    private $_mode = '';
+    private $_filename;
+    private $_mode;
 
-    private $_resource = NULL;
-    private $_listener = NULL;
+    private $_resource;
+    private $_listener;
 
     /**
      * Store filename and mode options
      *
+     * @param EventLoop $loop
      * @param string $filename
      * @param string $mode
      */
-    public function __construct($filename, $mode = 'r') {
+    public function __construct(EventLoop $loop, $filename, $mode = 'rb') {
+      $this->loop($loop);
       $this->_filename = $filename;
       $this->_mode = $mode;
     }
@@ -49,15 +54,11 @@ namespace Carica\Io\Stream {
         $this->_resource = NULL;
       } elseif (NULL !== $resource) {
         $this->_resource = $resource;
-        $that = $this;
         $this->_listener = $this->loop()->setStreamReader(
-          function() use ($that) {
-            $that->read();
-          },
-          $resource
+          function() { $this->read(); }, $resource
         );
       }
-      if (\is_resource($this->_resource)) {
+      if (is_resource($this->_resource)) {
         return $this->_resource;
       }
       if (NULL !== $this->_listener) {
@@ -68,7 +69,7 @@ namespace Carica\Io\Stream {
     }
 
     public function isOpen(): bool {
-      return \is_resource($this->resource());
+      return is_resource($this->resource());
     }
 
     /**
@@ -77,8 +78,8 @@ namespace Carica\Io\Stream {
      * @return bool
      */
     public function open(): bool {
-      if ($resource = @\fopen($this->_filename, $this->_mode)) {
-        \stream_set_blocking($resource, 0);
+      if ($resource = @fopen($this->_filename, $this->_mode)) {
+        stream_set_blocking($resource, 0);
         $this->resource($resource);
         return TRUE;
       }
@@ -104,8 +105,8 @@ namespace Carica\Io\Stream {
      */
     public function read(int $bytes = 1024): ?string {
       if ($resource = $this->resource()) {
-        $data = \fread($resource, $bytes);
-        if (\is_string($data) && $data !== '') {
+        $data = fread($resource, $bytes);
+        if (is_string($data) && $data !== '') {
           $this->events()->emit('read-data', $data);
           return $data;
         }

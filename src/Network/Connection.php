@@ -1,8 +1,11 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Network {
 
   use Carica\Io;
+  use Carica\Io\Event\Loop as EventLoop;
+  use Carica\Io\Event\Loop\Listener as EventLoopListener;
 
   class Connection
     implements
@@ -13,9 +16,9 @@ namespace Carica\Io\Network {
     use Io\Event\Loop\Aggregation;
 
     /**
-     * @var object
+     * @var EventLoopListener
      */
-    private $_listener = NULL;
+    private $_listener;
 
     /**
      * @var bool|resource
@@ -23,9 +26,11 @@ namespace Carica\Io\Network {
     private $_stream = FALSE;
 
     /**
+     * @param EventLoop $loop
      * @param Io\Stream $stream
      */
-    public function __construct($stream) {
+    public function __construct(EventLoop $loop, $stream) {
+      $this->loop($loop);
       $this->resource($stream);
     }
     public function __destruct() {
@@ -39,10 +44,10 @@ namespace Carica\Io\Network {
         }
         $this->_stream = $stream;
         if ($this->isActive()) {
-          stream_set_blocking($stream, 0);
+          stream_set_blocking($stream, FALSE);
           $that = $this;
           $this->_listener = $this->loop()->setStreamReader(
-            function() use ($that) {
+            static function() use ($that) {
               $that->read();
             },
             $stream
@@ -68,10 +73,12 @@ namespace Carica\Io\Network {
     }
 
     public function write($data) {
-      if ($data != '' && $this->isActive()) {
-        if (-1 === @stream_socket_sendto($this->_stream, $data)) {
-          $this->close();
-        }
+      if (
+        (string)$data !== '' &&
+        $this->isActive() &&
+        (-1 === @stream_socket_sendto($this->_stream, $data))
+      ) {
+        $this->close();
       }
     }
 

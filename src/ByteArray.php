@@ -63,7 +63,7 @@ namespace Carica\Io {
      * @return string
      */
     public function __toString() {
-      return \pack(...\array_merge(array('C*'), $this->_bytes));
+      return (string)\pack(...\array_merge(array('C*'), $this->_bytes));
     }
 
     /**

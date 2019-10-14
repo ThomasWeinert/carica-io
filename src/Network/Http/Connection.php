@@ -6,11 +6,11 @@ namespace Carica\Io\Network\Http {
 
   class Connection extends Io\Network\Connection {
 
-    const STATUS_EXPECT_REQUEST = 0;
-    const STATUS_EXPECT_HEADER = 1;
-    const STATUS_EXPECT_BODY = 2;
+    public const EVENT_REQUEST_RECEIVED = 'request';
 
-    const STATUS_ERROR = -1;
+    private const STATUS_EXPECT_REQUEST = 0;
+    private const STATUS_EXPECT_HEADER = 1;
+    private const STATUS_EXPECT_BODY = 2;
 
     private $_status = self::STATUS_EXPECT_REQUEST;
 
@@ -21,20 +21,20 @@ namespace Carica\Io\Network\Http {
     public function read($bytes = 1024) {
       if ($data = parent::read($bytes)) {
         $this->_buffer .= $data;
-        if ($this->_status == self::STATUS_EXPECT_REQUEST) {
+        if ($this->_status === self::STATUS_EXPECT_REQUEST) {
           if (FALSE !== ($line = $this->readStatusLine())) {
             $this->_request = new Request($this);
             $this->_request->parseStatus($line);
           }
         }
         if (isset($this->_request)) {
-          if ($this->_status == self::STATUS_EXPECT_HEADER) {
+          if ($this->_status === self::STATUS_EXPECT_HEADER) {
             while ($header = $this->readHeader()) {
               $this->_request->parseHeader($header);
             }
           }
-          if ($this->_status == self::STATUS_EXPECT_BODY) {
-            $this->events()->emit('request', $this->_request);
+          if ($this->_status === self::STATUS_EXPECT_BODY) {
+            $this->events()->emit(self::EVENT_REQUEST_RECEIVED, $this->_request);
           }
         }
       }
@@ -65,7 +65,7 @@ namespace Carica\Io\Network\Http {
           $this->_status = self::STATUS_EXPECT_BODY;
           $this->_bufferOffset = strpos($this->_buffer, "\n", $offset) + 1;
           return $result;
-        case " " :
+        case ' ' :
         case "\t" :
           break;
         default :

@@ -32,17 +32,17 @@ use Carica\Io;
 
 $clients = array();
 
-$server = new Io\Network\Server();
+$server = new Io\Network\Server($loop);
 $server->events()->on(
   'connection',
-  function ($stream) use (&$clients) {
+  static function ($stream) use (&$clients, $loop) {
     echo "Client connected: $stream\n";
     $client = new Client();
-    $client->connection = new Io\Network\Connection($stream);
+    $client->connection = new Io\Network\Connection($loop, $stream);
     $client->connection->write("Welcome, enter your username:\n");
     $client->connection->events()->on(
       'read-data',
-      function($data) use ($client, &$clients) {
+      static function($data) use ($client, &$clients) {
         if (empty($client->name) &&
             preg_match('(\S+)', $data, $matches) &&
             !isset($clients[$matches[0]])) {

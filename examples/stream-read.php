@@ -7,7 +7,7 @@ use Carica\Io\Stream;
 $loop = Loop\Factory::get();
 $write = fopen('c:/tmp/sample.txt', 'w');
 
-$stream = new Stream\File('c:/tmp/sample.txt');
+$stream = new Stream\FileStream('c:/tmp/sample.txt');
 $stream->events()->on(
   'read-data',
   function($data) {

@@ -6,10 +6,10 @@ use Carica\Io\Network\Http;
 $route = new Carica\Io\Network\Http\Route();
 $route->match(
   '/hello/{name}',
-  function (Http\Request $request, $parameters) {
+  static function (Http\Request $request, $parameters) {
     $response = $request->createResponse(
       new Http\Response\Content\Text(
-        "Hello ".$parameters['name']."!\n"
+        'Hello '.$parameters['name']."!\n"
       )
     );
     return $response;
@@ -17,7 +17,7 @@ $route->match(
 );
 $route->match(
   '/agent',
-  function (Http\Request $request) {
+  static function (Http\Request $request) {
     $response = $request->createResponse(
       new Http\Response\Content\Text(
         $request->headers['User-Agent']
@@ -28,15 +28,15 @@ $route->match(
 );
 $route->match(
   '/xml',
-  function (Http\Request $request) {
-    $response = $request->createResponse(new Http\Response\Content\Xml());
-    $dom = $response->content->document;
-    $dom->appendChild($root = $dom->createElement('response'));
+  static function (Http\Request $request) {
+    $response = $request->createResponse(new Http\Response\Content\XML());
+    $document = $response->content->document;
+    $document->appendChild($root = $document->createElement('response'));
     foreach ($request->query as $name => $value) {
-      $root->appendChild($parameter = $dom->createElement('query-parameter'));
+      $root->appendChild($parameter = $document->createElement('query-parameter'));
       $parameter->setAttribute('name', $name);
       if (NULL !== $value) {
-        $parameter->appendChild($dom->createTextNode($value));
+        $parameter->appendChild($document->createTextNode($value));
       }
     }
     return $response;
@@ -45,7 +45,9 @@ $route->match(
 $route->match('/hello', new Http\Route\File(__DIR__.'/files/hello.html'));
 $route->startsWith('/files', new Http\Route\Directory(__DIR__));
 
-$server = new Carica\Io\Network\Http\Server($route);
-$server->listen(8080);
+$loop = Carica\Io\Event\Loop\Factory::get();
 
-Carica\Io\Event\Loop\Factory::run();
+$server = new Carica\Io\Network\Http\Server($loop, $route);
+$server->listen();
+
+$loop->run();

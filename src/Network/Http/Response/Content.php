@@ -1,12 +1,14 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Network\Http\Response {
 
+  use Carica\Io\Deferred\Promise;
   use Carica\Io\Network;
 
   /**
    *
-   * @property-read string $type mimetype
+   * @property-read string $type mime type
    * @property-read string $encoding character encoding
    * @property-read integer $length byte length
    */
@@ -15,9 +17,13 @@ namespace Carica\Io\Network\Http\Response {
     private $_type = 'text/plain';
     private $_encoding = '';
 
+    /**
+     * @param Network\Connection $connection
+     * @return bool|Promise
+     */
     abstract public function sendTo(Network\Connection $connection);
 
-    public function __construct($type = NULL, $encoding = NULL) {
+    public function __construct(string $type = NULL, string $encoding = NULL) {
       if (isset($type)) {
         $this->_type = $type;
       }
@@ -26,11 +32,22 @@ namespace Carica\Io\Network\Http\Response {
       }
     }
 
-    public function __get($name) {
+    public function __isset($name) {
       switch ($name) {
       case 'type' :
       case 'encoding' :
-        return $this->{'_'.$name};
+      case 'length' :
+        return TRUE;
+      }
+      return FALSE;
+    }
+
+    public function __get($name) {
+      switch ($name) {
+      case 'type' :
+        return $this->_type;
+      case 'encoding' :
+        return $this->_encoding;
       case 'length' :
         return $this->getLength();
       }
@@ -53,7 +70,7 @@ namespace Carica\Io\Network\Http\Response {
       );
     }
 
-    public function getLength() {
+    public function getLength(): int {
       return 0;
     }
   }

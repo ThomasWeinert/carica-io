@@ -1,8 +1,7 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Network\Http {
-
-  use Carica\Io;
 
   class Headers implements \IteratorAggregate, \Countable, \ArrayAccess {
 
@@ -26,10 +25,10 @@ namespace Carica\Io\Network\Http {
     }
 
     public function offsetSet($name, $value) {
-      if (!$value instanceOf Header) {
-        if (FALSE != strpos($value, ':')) {
-          list($name, $value) = explode(':', $value, 2);
-        }
+      if (
+        (!$value instanceOf Header) &&
+        FALSE !== strpos((string)$value, ':')) {
+        [$name, $value] = explode(':', $value, 2);
       }
       if ($value instanceOf Header) {
         $name = $value->name;

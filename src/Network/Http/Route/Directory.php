@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Network\Http\Route {
 
@@ -26,7 +27,7 @@ namespace Carica\Io\Network\Http\Route {
       }
     }
 
-    public function setDocumentRoot($documentRoot) {
+    public function setDocumentRoot($documentRoot): void {
       if ($directory = $this->fileAccess()->getRealPath($documentRoot)) {
         $this->_documentRoot = $directory;
         return;
@@ -39,15 +40,12 @@ namespace Carica\Io\Network\Http\Route {
       );
     }
 
-    public function setEncoding($mimetype, $encoding) {
-      $this->_encodings[$mimetype] = (string)$encoding;
+    public function setEncoding($mimeType, $encoding): void {
+      $this->_encodings[$mimeType] = (string)$encoding;
     }
 
-    public function getEncoding($mimetype) {
-      if (isset($this->_encodings[$mimetype])) {
-        return $this->_encodings[$mimetype];
-      }
-      return '';
+    public function getEncoding($mimeType): string {
+      return $this->_encodings[$mimeType] ?? '';
     }
 
     public function __invoke(...$arguments) {
@@ -59,17 +57,14 @@ namespace Carica\Io\Network\Http\Route {
         if ($file->isFile() && $file->isReadable()) {
           $response = $request->createResponse();
           $localFile = $file->getRealPath();
-          $mimetype = $this->fileAccess()->getMimeType($localFile);
-          $encoding = $this->getEncoding($mimetype);
+          $mimeType = $this->fileAccess()->getMimeType($localFile);
+          $encoding = $this->getEncoding($mimeType);
           $response->content = new Http\Response\Content\File(
-            $localFile, $mimetype, $encoding
+            $localFile, $mimeType, $encoding
           );
           return $response;
-        } else {
-          return new Http\Response\Error(
-            $request, 403
-          );
         }
+        return new Http\Response\Error($request, 403);
       }
       return NULL;
     }

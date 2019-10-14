@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Network\Http\Response\Content {
 
@@ -7,7 +8,7 @@ namespace Carica\Io\Network\Http\Response\Content {
 
   class Text extends Response\Content {
 
-    private $_data = '';
+    private $_data;
 
     public function __construct($data, $type = 'text/plain; charset=utf-8') {
       parent::__construct($type);
@@ -19,7 +20,7 @@ namespace Carica\Io\Network\Http\Response\Content {
       return TRUE;
     }
 
-    public function getLength() {
+    public function getLength(): int {
       return strlen($this->_data);
     }
   }

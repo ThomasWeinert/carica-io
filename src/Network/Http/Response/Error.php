@@ -1,17 +1,18 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Network\Http\Response {
 
-  use Carica\Io;
   use Carica\Io\Network\Http;
+  use DOMDocument;
 
   /**
-   * @property \DOMDocument $document
+   * @property DOMDocument $document
    */
   class Error extends Http\Response {
 
     private $_template = '
-      <html>
+      <html lang="en">
         <head>
           <title>%1$s - %2$s</title>
         </head>
@@ -25,7 +26,7 @@ namespace Carica\Io\Network\Http\Response {
     public function __construct(Http\Request $request, $status = 500, $message = NULL) {
       parent::__construct($request->connection());
       $this->setStatus($status);
-      $this->content = $content = new Http\Response\Content\Html();
+      $this->content = $content = new Http\Response\Content\HTML();
       if (NULL === $message) {
         $message = $this->_statusStrings[$this->status];
       }

@@ -3,19 +3,21 @@ include(__DIR__.'/../../vendor/autoload.php');
 
 use Carica\Io;
 
+$loop = Io\Event\Loop\Factory::get();
+
 $port = 'COM7:';
 $baud = Io\Stream\Serial\Device::BAUD_57600;
 
-$serial = Io\Stream\Serial\Factory::create($port, $baud);
+$serial = new Io\Stream\SerialStream($loop, $port, $baud);
 
 $serial
   ->events()
   ->on(
     'read-data',
-    function ($data) {
+    static function ($data) {
       echo $data;
     }
   );
 $serial->open();
 
-Io\Event\Loop\Factory::run();
+$loop->run();

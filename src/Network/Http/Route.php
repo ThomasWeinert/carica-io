@@ -2,13 +2,18 @@
 
 namespace Carica\Io\Network\Http {
 
-  use Carica\Io;
+  use ArrayIterator;
+  use Carica\Io\Network\Http\Route\Target\Any as AnyTarget;
+  use Carica\Io\Network\Http\Route\Target\Match as MatchTarget;
+  use Carica\Io\Network\Http\Route\Target\StartsWith as StartsWithTarget;
+  use Iterator;
+  use IteratorAggregate;
 
   /**
    * Simple routing class allowing to match a path against several targets
    *
    */
-  class Route implements \IteratorAggregate {
+  class Route implements IteratorAggregate {
 
     private $_targets = array();
 
@@ -16,9 +21,9 @@ namespace Carica\Io\Network\Http {
      * Attach a callback as an route target for any path
      *
      * @param Callable $callback
-     * @return \Carica\Io\Network\Http\Route\Target\Any
+     * @return AnyTarget
      */
-    public function any(Callable $callback) {
+    public function any(Callable $callback): AnyTarget {
       $this->_targets[] = $target = new Route\Target\Any($callback);
       return $target;
     }
@@ -31,9 +36,9 @@ namespace Carica\Io\Network\Http {
      *
      * @param string $path
      * @param Callable $callback
-     * @return \Carica\Io\Network\Http\Route\Target\Match
+     * @return MatchTarget
      */
-    public function match($path, Callable $callback) {
+    public function match($path, Callable $callback): MatchTarget {
       $this->_targets[] = $target = new Route\Target\Match($callback, $path);
       return $target;
     }
@@ -44,10 +49,10 @@ namespace Carica\Io\Network\Http {
      *
      * @param string $path
      * @param callable $callback
-     * @return Route\Target\StartsWith
+     * @return StartsWithTarget
      */
-    public function startsWith($path, Callable $callback) {
-      $this->_targets[] = $target = new Route\Target\StartsWith($callback, $path);
+    public function startsWith($path, Callable $callback): StartsWithTarget {
+      $this->_targets[] = $target = new StartsWithTarget($callback, $path);
       return $target;
     }
 
@@ -67,7 +72,7 @@ namespace Carica\Io\Network\Http {
      * @param Request $request
      * @return Response|NULL
      */
-    public function fire(Request $request) {
+    public function fire(Request $request): ?Response {
       foreach ($this->_targets as $target) {
         if ($result = $target($request)) {
           return $result;
@@ -80,10 +85,10 @@ namespace Carica\Io\Network\Http {
      * Allow to iterate the attached route targets
      *
      * @see IteratorAggregate::getIterator()
-     * @return \Iterator
+     * @return Iterator
      */
-    public function getIterator() {
-      return new \ArrayIterator($this->_targets);
+    public function getIterator(): Iterator {
+      return new ArrayIterator($this->_targets);
     }
   }
 }

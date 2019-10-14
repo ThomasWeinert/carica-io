@@ -2,7 +2,13 @@
 
 namespace Carica\Io\Network\Http\Request {
 
-  class Query implements \Countable, \ArrayAccess, \IteratorAggregate {
+  use ArrayAccess;
+  use ArrayIterator;
+  use Countable;
+  use InvalidArgumentException;
+  use IteratorAggregate;
+
+  class Query implements Countable, ArrayAccess, IteratorAggregate {
 
     private $_data = array();
 
@@ -15,10 +21,11 @@ namespace Carica\Io\Network\Http\Request {
       foreach ($attributes as $attribute) {
         if (empty($attribute)) {
           continue;
-        } elseif (FALSE === strpos($attribute, '=')) {
+        }
+        if (FALSE === strpos($attribute, '=')) {
           $this->_data[urldecode($attribute)] = TRUE;
         } else {
-          list($name, $value) = explode('=', $attribute);
+          [$name, $value] = explode('=', $attribute);
           $this->_data[urldecode($name)] = urldecode($value);
         }
       }
@@ -29,7 +36,7 @@ namespace Carica\Io\Network\Http\Request {
     }
 
     public function getIterator() {
-      return new \ArrayIterator($this->_data);
+      return new ArrayIterator($this->_data);
     }
 
     public function offsetExists($name) {
@@ -42,7 +49,7 @@ namespace Carica\Io\Network\Http\Request {
 
     public function offsetSet($name, $value) {
       if (empty($name)) {
-        throw new \InvalidArgumentException('Query string parameter name can not be empty.');
+        throw new InvalidArgumentException('Query string parameter name can not be empty.');
       }
       $this->_data[$name] = $value;
     }

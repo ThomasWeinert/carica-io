@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Network\Http\Response\Content {
 
@@ -16,10 +17,10 @@ namespace Carica\Io\Network\Http\Response\Content {
     use Io\File\Access\Aggregation;
     use Io\Event\Loop\Aggregation;
 
-    private $_filename = NULL;
+    private $_filename;
     private $_bufferSize = 51200;
 
-    public function __construct($filename, $type = 'application/octet-stream', $encoding = '') {
+    public function __construct(string $filename, string $type = 'application/octet-stream', string $encoding = '') {
       parent::__construct($type, $encoding);
       $this->_filename = (string)$filename;
     }
@@ -28,10 +29,9 @@ namespace Carica\Io\Network\Http\Response\Content {
       if ($file = $this->fileAccess()->getFileResource($this->_filename)) {
         $defer = new Io\Deferred();
         $bytes = $this->_bufferSize;
-        $that = $this;
         $interval = $this->loop()->setInterval(
-          function () use ($file, $bytes, $defer, $connection) {
-            if ($connection->isActive() && is_resource($file)) {
+          static function () use ($file, $bytes, $defer, $connection) {
+            if (is_resource($file) && $connection->isActive()) {
               if (feof($file)) {
                 $defer->resolve();
               } else {
@@ -45,8 +45,8 @@ namespace Carica\Io\Network\Http\Response\Content {
           100
         );
         $defer->always(
-          function () use ($that, $interval) {
-            $that->loop()->remove($interval);
+          function () use ($interval) {
+            $this->loop()->remove($interval);
           }
         );
         return $defer->promise();
@@ -54,7 +54,7 @@ namespace Carica\Io\Network\Http\Response\Content {
       return FALSE;
     }
 
-    public function getLength() {
+    public function getLength(): int {
       return $this->fileAccess()->getInfo($this->_filename)->getSize();
     }
   }
