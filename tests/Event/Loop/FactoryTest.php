@@ -17,16 +17,6 @@ namespace Carica\Io\Event\Loop {
       Factory::reset();
     }
 
-    public function testCreate() {
-      $loop = Factory::create();
-      $this->assertInstanceOf(Loop::class, $loop);
-    }
-
-    public function testCreateStreamSelectExplicit() {
-      $loop = Factory::create(array());
-      $this->assertInstanceOf(StreamSelect::class, $loop);
-    }
-
     public function testGetAfterSet() {
       $loop = $this->createMock(Loop::class);
       Factory::set($loop);
