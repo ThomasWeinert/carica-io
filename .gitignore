@@ -1,11 +1,5 @@
-
-/.buildpath
-/.project
-/.settings
-/.idea
-/serproxy
 /build
-
+/tools
 /vendor
 
 /phpunit.xml
