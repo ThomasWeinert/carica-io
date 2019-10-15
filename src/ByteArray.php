@@ -1,11 +1,20 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io {
+
+  use ArrayAccess;
+  use ArrayIterator;
+  use Countable;
+  use Iterator;
+  use IteratorAggregate;
+  use OutOfBoundsException;
+  use OutOfRangeException;
 
   /**
    * Flexible access to an array of bytes, allow bit handling
    */
-  class ByteArray implements \ArrayAccess, \IteratorAggregate, \Countable {
+  class ByteArray implements ArrayAccess, IteratorAggregate, Countable {
 
     public const BIT_ONE = 1;
     public const BIT_TWO = 2;
@@ -23,7 +32,7 @@ namespace Carica\Io {
      * Create array of bytes and set length.
      *
      * @param int $length
-     * @throws \OutOfRangeException
+     * @throws OutOfRangeException
      */
     public function __construct(int $length = 1) {
       $this->setLength($length);
@@ -33,17 +42,17 @@ namespace Carica\Io {
      * Resize the byte array, additional bytes will be filled with zero.
      *
      * @param integer $length
-     * @throws \OutOfRangeException
+     * @throws OutOfRangeException
      */
     public function setLength($length) {
       if ((int)$length < 1) {
-        throw new \OutOfRangeException('Zero or negative length is not possible');
+        throw new OutOfRangeException('Zero or negative length is not possible');
       }
       $difference = $length - $this->_length;
       if ($difference > 0) {
-        $this->_bytes = \array_merge($this->_bytes, \array_fill($this->_length, $difference, 0));
+        $this->_bytes = array_merge($this->_bytes, array_fill($this->_length, $difference, 0));
       } elseif ($difference < 0) {
-        $this->_bytes = \array_slice($this->_bytes, 0, $difference);
+        $this->_bytes = array_slice($this->_bytes, 0, $difference);
       }
       $this->_length = (int)$length;
     }
@@ -63,7 +72,7 @@ namespace Carica\Io {
      * @return string
      */
     public function __toString() {
-      return (string)\pack(...\array_merge(array('C*'), $this->_bytes));
+      return (string)pack(...array_merge(array('C*'), $this->_bytes));
     }
 
     /**
@@ -71,22 +80,22 @@ namespace Carica\Io {
      *
      * @param string $string
      * @param boolean $resize to binary string length
-     * @throws \OutOfRangeException
-     * @throws \OutOfBoundsException
+     * @throws OutOfRangeException
+     * @throws OutOfBoundsException
      */
     public function fromString(string $string, bool $resize = FALSE) {
-      if ($resize && \strlen($string) !== $this->getLength()) {
-        $this->setLength(\strlen($string));
+      if ($resize && strlen($string) !== $this->getLength()) {
+        $this->setLength(strlen($string));
       }
-      $bytes = \array_slice(\unpack('C*', "\0".$string), 1);
-      if (\count($bytes) >= $this->_length) {
+      $bytes = array_slice(unpack('C*', "\0".$string), 1);
+      if (count($bytes) >= $this->_length) {
         for ($i = 0; $i < $this->_length; ++$i) {
           $this->_bytes[$i] = $bytes[$i];
         }
       } else {
-        throw new \OutOfBoundsException(
+        throw new OutOfBoundsException(
           sprintf(
-            'Maximum length is "%d". Got "%d".', $this->_length, \count($bytes)
+            'Maximum length is "%d". Got "%d".', $this->_length, count($bytes)
           )
         );
       }
@@ -97,22 +106,22 @@ namespace Carica\Io {
      *
      * @param string $string
      * @param boolean $resize
-     * @throws \OutOfRangeException
-     * @throws \OutOfBoundsException
+     * @throws OutOfRangeException
+     * @throws OutOfBoundsException
      */
     public function fromHexString(string $string, bool $resize = FALSE) {
-      $string = \str_replace(' ', '', $string);
-      $length = \floor(\strlen($string) / 2);
+      $string = str_replace(' ', '', $string);
+      $length = (int)floor(strlen($string) / 2);
       if ($resize && $length !== $this->getLength()) {
         $this->setLength($length);
       }
       if ($length >= $this->_length) {
         for ($i = 0; $i < $this->_length; ++$i) {
-          $this->_bytes[$i] = \hexdec(\substr($string, $i * 2, 2));
+          $this->_bytes[$i] = hexdec(substr($string, $i * 2, 2));
         }
       } else {
-        throw new \OutOfBoundsException(
-          \sprintf(
+        throw new OutOfBoundsException(
+          sprintf(
             'Maximum length is "%d". Got "%d".', $this->_length, $length
           )
         );
@@ -124,21 +133,21 @@ namespace Carica\Io {
      *
      * @param array $bytes
      * @param boolean $resize
-     * @throws \OutOfRangeException
-     * @throws \OutOfBoundsException
+     * @throws OutOfRangeException
+     * @throws OutOfBoundsException
      */
     public function fromArray(array $bytes, bool $resize = FALSE) {
-      $length = \count($bytes);
+      $length = count($bytes);
       if ($resize && $length !== $this->getLength()) {
         $this->setLength($length);
       }
       if ($length >= $this->_length) {
-        foreach (\array_values($bytes) as $index => $byte) {
+        foreach (array_values($bytes) as $index => $byte) {
           $this->_bytes[$index] = $byte;
         }
       } else {
-        throw new \OutOfBoundsException(
-          \sprintf(
+        throw new OutOfBoundsException(
+          sprintf(
             'Maximum length is "%d". Got "%d".', $this->_length, $length
           )
         );
@@ -155,11 +164,11 @@ namespace Carica\Io {
     public function asHex(string $separator = ''): string {
       $result = '';
       foreach ($this->_bytes as $byte) {
-        $result .= \str_pad(\dechex($byte), 2, '0', STR_PAD_LEFT).$separator;
+        $result .= str_pad(dechex($byte), 2, '0', STR_PAD_LEFT).$separator;
       }
       return empty($separator)
         ? $result
-        : \substr($result, 0, -\strlen($separator));
+        : substr($result, 0, -strlen($separator));
     }
 
     /**
@@ -170,9 +179,9 @@ namespace Carica\Io {
     public function asBitString(): string {
       $result = '';
       foreach ($this->_bytes as $byte) {
-        $result .= ' '.\str_pad(\decbin($byte), 8, '0', STR_PAD_LEFT);
+        $result .= ' '.str_pad(decbin($byte), 8, '0', STR_PAD_LEFT);
       }
-      return \substr($result, 1);
+      return substr($result, 1);
     }
 
     /**
@@ -198,7 +207,7 @@ namespace Carica\Io {
     public function offsetExists($offset): bool {
       try {
         $this->validateOffset($offset);
-      } catch (\OutOfBoundsException $e) {
+      } catch (OutOfBoundsException $e) {
         return FALSE;
       }
       return TRUE;
@@ -220,11 +229,11 @@ namespace Carica\Io {
      * @see ArrayAccess::offsetGet()
      * @param integer|array(integer,integer) $offset
      * @return integer|boolean
-     * @throws \OutOfBoundsException
+     * @throws OutOfBoundsException
      */
     public function offsetGet($offset) {
       $this->validateOffset($offset);
-      if (\is_array($offset)) {
+      if (is_array($offset)) {
         $bit = ($offset[1] > 0) ? 1 << $offset[1] : 1;
         return ($this->_bytes[$offset[0]] & $bit) === $bit;
       }
@@ -247,12 +256,12 @@ namespace Carica\Io {
      * @see ArrayAccess::offsetSet()
      * @param integer|integer[] $offset
      * @param integer|boolean $value
-     * @throws \OutOfRangeException
-     * @throws \OutOfBoundsException
+     * @throws OutOfRangeException
+     * @throws OutOfBoundsException
      */
     public function offsetSet($offset, $value) {
       $this->validateOffset($offset);
-      if (\is_array($offset)) {
+      if (is_array($offset)) {
         $bit = ($offset[1] > 0) ? 1 << $offset[1] : 1;
         if ($value) {
           $this->_bytes[$offset[0]] |= $bit;
@@ -272,30 +281,28 @@ namespace Carica\Io {
      *
      * @see ArrayAccess::offsetUnset()
      * @param integer|array $offset
-     * @throws \OutOfRangeException
-     * @throws \OutOfBoundsException
+     * @throws OutOfRangeException
+     * @throws OutOfBoundsException
      */
     public function offsetUnset($offset) {
-      $this->offsetSet($offset, \is_array($offset) ? FALSE : 0);
+      $this->offsetSet($offset, is_array($offset) ? FALSE : 0);
     }
 
     /**
      * Validate the given offset is usable as byte or bit offset
      *
      * @param integer|array(integer,integer) $offset
-     * @throws \OutOfBoundsException
+     * @throws OutOfBoundsException
      */
     private function validateOffset($offset) {
-      if (\is_array($offset)) {
+      if (is_array($offset)) {
         $this->validateBitOffset($offset);
-      } else {
-        if ($offset < 0 || $offset >= $this->_length) {
-          throw new \OutOfBoundsException(
-            \sprintf(
-              'Maximum byte index is "%d". Got "%d".', $this->_length - 1, $offset
-            )
-          );
-        }
+      } elseif ($offset < 0 || $offset >= $this->_length) {
+        throw new OutOfBoundsException(
+          sprintf(
+            'Maximum byte index is "%d". Got "%d".', $this->_length - 1, $offset
+          )
+        );
       }
     }
 
@@ -303,20 +310,20 @@ namespace Carica\Io {
      * Validate the given offset is usable as bit offset
      *
      * @param int[] $offset
-     * @throws \OutOfBoundsException
+     * @throws OutOfBoundsException
      */
     private function validateBitOffset(array $offset) {
-      if (\count($offset) !== 2) {
-        throw new \OutOfBoundsException(
-          \sprintf(
-            'Bit index needs two elements (byte and bit index). Got "%d".', \count($offset)
+      if (count($offset) !== 2) {
+        throw new OutOfBoundsException(
+          sprintf(
+            'Bit index needs two elements (byte and bit index). Got "%d".', count($offset)
           )
         );
       }
       $this->validateOffset($offset[0]);
       if ($offset[1] < 0 || $offset[1] >= 8) {
-        throw new \OutOfBoundsException(
-          \sprintf(
+        throw new OutOfBoundsException(
+          sprintf(
             'Maximum bit index is "7". Got "%d".', $offset[1]
           )
         );
@@ -326,14 +333,14 @@ namespace Carica\Io {
     /**
      * Validate the given value is valid for a single byte
      *
-     * @throws \OutOfRangeException
+     * @throws OutOfRangeException
      * @param int $value
      * @return int
      */
     private function validateValue(int $value): int {
       if ($value < 0 || $value > 255) {
-        throw new \OutOfRangeException(
-          \sprintf('Byte value expected (0-255). Got "%d"', $value)
+        throw new OutOfRangeException(
+          sprintf('Byte value expected (0-255). Got "%d"', $value)
         );
       }
       return $value;
@@ -341,10 +348,10 @@ namespace Carica\Io {
 
     /**
      * Allow to iterate the bytes
-     * @return \Iterator
+     * @return Iterator
      */
-    public function getIterator(): \Iterator {
-      return new \ArrayIterator($this->_bytes);
+    public function getIterator(): Iterator {
+      return new ArrayIterator($this->_bytes);
     }
 
     /**
@@ -353,15 +360,15 @@ namespace Carica\Io {
      * @return int
      */
     public function count(): int {
-      return \count($this->_bytes);
+      return count($this->_bytes);
     }
 
     /**
      * Create an ByteArray from an hexadecimal byte string
      * @param string $hexString
      * @return ByteArray
-     * @throws \OutOfRangeException
-     * @throws \OutOfBoundsException
+     * @throws OutOfRangeException
+     * @throws OutOfBoundsException
      */
     public static function createFromHex(string $hexString): ByteArray {
       $bytes = new ByteArray();
@@ -374,8 +381,8 @@ namespace Carica\Io {
      *
      * @param array $array
      * @return ByteArray
-     * @throws \OutOfBoundsException
-     * @throws \OutOfRangeException
+     * @throws OutOfBoundsException
+     * @throws OutOfRangeException
      */
     public static function createFromArray(array $array): ByteArray {
       $bytes = new ByteArray();

@@ -1,17 +1,25 @@
 <?php
+/** @noinspection ClassMethodNameMatchesFieldNameInspection */
+declare(strict_types=1);
 
 namespace Carica\Io {
+
+  use ArrayIterator;
+  use Countable;
+  use Iterator;
+  use IteratorAggregate;
+  use LogicException;
 
   /**
    * Manage a list Callable elements, the list can be uses as one callable, too.
    *
-   * @property-read Callable add
-   * @property-read Callable remove
-   * @property-read Callable fire
-   * @property-read Callable lock
-   * @property-read Callable disable
+   * @property-read callable add
+   * @property-read callable remove
+   * @property-read callable fire
+   * @property-read callable lock
+   * @property-read callable disable
    */
-  class Callbacks implements \IteratorAggregate, \Countable {
+  class Callbacks implements IteratorAggregate, Countable {
 
     private $_callbacks = array();
     private $_disabled = FALSE;
@@ -112,7 +120,7 @@ namespace Carica\Io {
      *
      * @param mixed [$argument,...]
      */
-    public function fire(...$arguments) {
+    public function fire(...$arguments): void {
       if (!$this->_disabled) {
         $this->_fired = TRUE;
         foreach ($this->_callbacks as $callback) {
@@ -134,27 +142,26 @@ namespace Carica\Io {
      * If the object is used as an functor, call fire()
      *
      * @param mixed [$argument,...]
-     * @return mixed
      */
-    public function __invoke(...$arguments) {
-      return $this->fire(...$arguments);
+    public function __invoke(...$arguments): void {
+      $this->fire(...$arguments);
     }
 
     /**
      * Allow to fetch the methods of this object as anonymous functions
      *
-     * @throws \LogicException
+     * @throws LogicException
      * @param string $name
      * @return callable
      */
     public function __get($name) {
       if (method_exists($this, $name)) {
         $callback = array($this, $name);
-        return function(...$arguments) use ($callback) {
+        return static function(...$arguments) use ($callback) {
           $callback(...$arguments);
         };
       }
-      throw new \LogicException('Unknown property: '.$name);
+      throw new LogicException('Unknown property: '.$name);
     }
 
     /**
@@ -171,20 +178,20 @@ namespace Carica\Io {
      * @param string $name
      * @param mixed $value
      *
-     * @throws \LogicException
+     * @throws LogicException
      */
     public function __set($name, $value) {
-      throw new \LogicException('Unknown/Readonly property: '.$name);
+      throw new LogicException('Unknown/Readonly property: '.$name);
     }
 
     /**
      * IteratorAggregate interface for the stored callbacks
      *
      * @see IteratorAggregate::getIterator()
-     * @return \Iterator
+     * @return Iterator
      */
-    public function getIterator(): \Iterator {
-      return new \ArrayIterator(array_values($this->_callbacks));
+    public function getIterator(): Iterator {
+      return new ArrayIterator(array_values($this->_callbacks));
     }
 
     /**
@@ -194,23 +201,23 @@ namespace Carica\Io {
      * @return int
      */
     public function count(): int {
-      return \count($this->_callbacks);
+      return count($this->_callbacks);
     }
 
     /**
      * Get an hash for the provided callable/object
      *
-     * @param Callable|object $callable
+     * @param callable|object $callable
      * @return string
      */
-    private function getCallableHash($callable) {
-      if (\is_object($callable)) {
+    private function getCallableHash($callable): string {
+      if (is_object($callable)) {
         return spl_object_hash($callable);
-      } elseif (\is_array($callable)) {
-        return md5($this->getCallableHash($callable[0]), $callable[1]);
-      } else {
-        return md5((string)$callable);
       }
+      if (is_array($callable)) {
+        return md5($this->getCallableHash($callable[0]).'->'.$callable[1]);
+      }
+      return md5((string)$callable);
     }
   }
 }
