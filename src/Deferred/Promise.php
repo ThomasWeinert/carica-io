@@ -1,19 +1,20 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Deferred {
 
-  use Carica\Io;
+  use Carica\Io\Deferred;
 
-  class Promise {
+  class Promise implements PromiseLike {
 
-    protected $_defer = NULL;
+    protected $_defer;
 
     /**
      * Create the promise for a Deferred object.
      *
-     * @param Io\Deferred $defer
+     * @param Deferred $defer
      */
-    public function __construct(Io\Deferred $defer) {
+    public function __construct(Deferred $defer) {
       $this->_defer = $defer;
     }
 
@@ -21,10 +22,10 @@ namespace Carica\Io\Deferred {
      * Add a callback that will be execute if the object is finalized with
      * resolved or reject
      *
-     * @param Callable $callback
-     * @return \Carica\Io\Deferred\Promise
+     * @param callable $callback
+     * @return PromiseLike
      */
-    public function always(Callable $callback) {
+    public function always(callable $callback): PromiseLike {
       $this->_defer->always($callback);
       return $this;
     }
@@ -32,10 +33,10 @@ namespace Carica\Io\Deferred {
     /**
      * Add a callback that will be executed if the object is resolved
      *
-     * @param Callable $callback
-     * @return \Carica\Io\Deferred\Promise
+     * @param callable $callback
+     * @return PromiseLike
      */
-    public function done(Callable $callback) {
+    public function done(callable $callback): PromiseLike {
       $this->_defer->done($callback);
       return $this;
     }
@@ -43,10 +44,10 @@ namespace Carica\Io\Deferred {
     /**
      * Add a callback that will be executed if the object was rejected
      *
-     * @param Callable $callback
-     * @return \Carica\Io\Deferred\Promise
+     * @param callable $callback
+     * @return PromiseLike
      */
-    public function fail(Callable $callback) {
+    public function fail(callable $callback): PromiseLike {
       $this->_defer->fail($callback);
       return $this;
     }
@@ -54,10 +55,10 @@ namespace Carica\Io\Deferred {
     /**
      * Add a callback that will be executed if the object is notified about progress
      *
-     * @param Callable $callback
-     * @return \Carica\Io\Deferred\Promise
+     * @param callable $callback
+     * @return PromiseLike
      */
-    public function progress(Callable $callback) {
+    public function progress(callable $callback): PromiseLike {
       $this->_defer->progress($callback);
       return $this;
     }
@@ -67,23 +68,23 @@ namespace Carica\Io\Deferred {
      *
      * @return string
      */
-    public function state() {
+    public function state(): string {
       return $this->_defer->state();
     }
 
     /**
-     * Filter and/or chain Deferreds.
+     * Filter and/or chain Deferred instances.
      *
-     * @param Callable $doneFilter
-     * @param Callable $failFilter
-     * @param Callable $progressFilter
-     * @return \Carica\Io\Deferred\Promise
+     * @param callable $doneFilter
+     * @param callable $failFilter
+     * @param callable $progressFilter
+     * @return PromiseLike
      */
     public function then(
-      Callable $doneFilter = NULL,
-      Callable $failFilter = NULL,
-      Callable $progressFilter = NULL
-    ) {
+      callable $doneFilter = NULL,
+      callable $failFilter = NULL,
+      callable $progressFilter = NULL
+    ): PromiseLike {
       return $this->_defer->then($doneFilter, $failFilter, $progressFilter);
     }
   }

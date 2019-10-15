@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Deferred {
 
@@ -12,7 +13,7 @@ namespace Carica\Io\Deferred {
     /**
      * @var \mysqli
      */
-    private $_mysqli = NULL;
+    private $_mysqli;
 
     public function __construct($mysqli) {
       $this->_mysqli = $mysqli;
@@ -22,12 +23,12 @@ namespace Carica\Io\Deferred {
       return $this->query(...$arguments);
     }
 
-    public function query($sql) {
+    public function query($sql): PromiseLike {
       $defer = new Io\Deferred();
       $mysqli = $this->_mysqli;
       $mysqli->query($sql, MYSQLI_ASYNC);
       $this->loop()->setInterval(
-        function() use ($defer, $mysqli) {
+        static function() use ($defer, $mysqli) {
           $links = $errors = $reject = array($mysqli);
           if ($mysqli->poll($links, $errors, $reject, 0, 0)) {
             if ($result = $mysqli->reap_async_query()) {
