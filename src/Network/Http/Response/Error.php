@@ -34,7 +34,7 @@ namespace Carica\Io\Network\Http\Response {
       $content->document->loadHTML(
         sprintf(
           $this->_template,
-          (int)$status,
+          $status,
           htmlspecialchars($message),
           htmlspecialchars($request->url)
         )

@@ -6,6 +6,7 @@ namespace Carica\Io\Network\Http\Route {
   use Carica\Io\File\Access as FileAccess;
   use Carica\Io\File\HasAccess as HasFileAccess;
   use Carica\Io\Network\Http\Request as HTTPRequest;
+  use Carica\Io\Network\Http\Response as HTTPResponse;
   use Carica\Io\Network\Http\Response\Error as ErrorResponse;
   use Carica\Io\Network\Http\Response\Content as ResponseContent;
 
@@ -23,14 +24,14 @@ namespace Carica\Io\Network\Http\Route {
       'application/xml' => 'utf-8'
     ];
 
-    public function __construct($documentRoot, array $encodings = []) {
+    public function __construct(string $documentRoot, array $encodings = []) {
       $this->setDocumentRoot($documentRoot);
       foreach ($encodings as $mimeType => $encoding) {
         $this->setEncoding($mimeType, $encoding);
       }
     }
 
-    public function setDocumentRoot($documentRoot): void {
+    public function setDocumentRoot(string $documentRoot): void {
       if ($directory = $this->fileAccess()->getRealPath($documentRoot)) {
         $this->_documentRoot = $directory;
         return;
@@ -43,19 +44,15 @@ namespace Carica\Io\Network\Http\Route {
       );
     }
 
-    public function setEncoding($mimeType, $encoding): void {
-      $this->_encodings[$mimeType] = (string)$encoding;
+    public function setEncoding(string $mimeType, string $encoding): void {
+      $this->_encodings[$mimeType] = $encoding;
     }
 
     public function getEncoding($mimeType): string {
       return $this->_encodings[$mimeType] ?? '';
     }
 
-    public function __invoke(...$arguments) {
-      return $this->call(...$arguments);
-    }
-
-    public function call(HTTPRequest $request) {
+    public function __invoke(HTTPRequest $request): ?HTTPResponse {
       if ($file = $this->getFileInfo($request)) {
         if ($file->isFile() && $file->isReadable()) {
           $response = $request->createResponse();

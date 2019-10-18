@@ -75,7 +75,7 @@ namespace Carica\Io\File {
      * @param string $filename
      * @return string
      */
-    public function getMimeType($filename): string {
+    public function getMimeType(string $filename): string {
       $pattern = '(\.(?P<extension>[^/\\.]+)$)';
       if (preg_match($pattern, $filename, $matches)) {
         $extension = strtolower($matches['extension']);
@@ -94,7 +94,7 @@ namespace Carica\Io\File {
      * @param string $path
      * @return string
      */
-    public function getRealPath($path): string {
+    public function getRealPath(string $path): string {
       return realpath($path);
     }
   }

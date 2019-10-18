@@ -10,9 +10,9 @@ namespace Carica\Io\Network\Http\Response\Content {
 
     private $_data;
 
-    public function __construct($data, $type = 'text/plain; charset=utf-8') {
+    public function __construct(string $data, string $type = 'text/plain; charset=utf-8') {
       parent::__construct($type);
-      $this->_data = (string)$data;
+      $this->_data = $data;
     }
 
     public function sendTo(NetworkConnection $connection) {

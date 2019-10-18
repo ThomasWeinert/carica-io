@@ -11,12 +11,12 @@ namespace Carica\Io\Network\Http\Route\Target {
     private $_pathParameters = array();
     protected $_pathLength = 0;
 
-    public function __construct(Callable $callback, $path) {
+    public function __construct(callable $callback, string $path) {
       parent::__construct($callback);
-      $this->setPath($path);
+      $this->setPath( $path);
     }
 
-    private function setPath($path): void {
+    private function setPath(string $path): void {
       $parts = explode('/', $path);
       $this->_pathLength = count($parts);
       foreach ($parts as $index => $part) {

@@ -5,6 +5,7 @@ namespace Carica\Io\Network\Http\Response {
 
   use Carica\Io\Deferred\PromiseLike;
   use Carica\Io\Network\Connection as NetworkConnection;
+  use LogicException;
 
   /**
    *
@@ -51,7 +52,7 @@ namespace Carica\Io\Network\Http\Response {
       case 'length' :
         return $this->getLength();
       }
-      throw new \LogicException(
+      throw new LogicException(
         sprintf('Unknown property %s::$%s', get_class($this), $name)
       );
     }
@@ -61,11 +62,11 @@ namespace Carica\Io\Network\Http\Response {
       case 'type' :
       case 'encoding' :
       case 'length' :
-        throw new \LogicException(
+        throw new LogicException(
           sprintf('Can not write readonly property %s::$%s', get_class($this), $name)
         );
       }
-      throw new \LogicException(
+      throw new LogicException(
         sprintf('Unknown property %s::$%s', get_class($this), $name)
       );
     }

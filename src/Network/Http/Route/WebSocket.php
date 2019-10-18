@@ -8,6 +8,7 @@ namespace Carica\Io\Network\Http\Route {
   use Carica\Io\Network\Http\Headers;
   use Carica\Io\Network\Http\Request;
   use Carica\Io\Network\Http\Response;
+  use Carica\Io\Network\Http\Response as HTTPResponse;
 
   class WebSocket {
 
@@ -27,11 +28,7 @@ namespace Carica\Io\Network\Http\Route {
       }
     }
 
-    public function __invoke(...$arguments) {
-      return $this->call(...$arguments);
-    }
-
-    public function call(Request $request): ?Response {
+    public function __invoke(Request $request): ?HTTPResponse {
       if ($key = $this->getWebSocketKey($request->headers)) {
         $response = $request->createResponse(new Response\Content\Text(''));
         $response->keepAlive = TRUE;

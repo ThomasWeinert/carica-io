@@ -7,7 +7,7 @@ namespace Carica\Io\Network\Http\Response\Content {
 
   class HTML extends DOM {
 
-    public function __construct($type = 'text/html; charset=utf-8') {
+    public function __construct(string $type = 'text/html; charset=utf-8') {
       parent::__construct($type);
     }
 

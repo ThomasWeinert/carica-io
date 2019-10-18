@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Carica\Io\Network\Http\Route {
 
+  use Carica\Io\Network\Http\Response as HTTPResponse;
   use SplFileInfo;
   use Carica\Io\File\Access as FileAccess;
   use Carica\Io\File\HasAccess as HasFileAccess;
@@ -36,11 +37,7 @@ namespace Carica\Io\Network\Http\Route {
       );
     }
 
-    public function __invoke(...$arguments) {
-      return $this->call(...$arguments);
-    }
-
-    public function call(HTTPRequest $request) {
+    public function __invoke(HTTPRequest $request): ?HTTPResponse {
       if ($file = $this->getFileInfo()) {
         if ($file->isFile() && $file->isReadable()) {
           $response = $request->createResponse();

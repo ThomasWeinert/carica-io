@@ -17,7 +17,7 @@ namespace Carica\Io\Network\Http\Route {
       return $this->_callback;
     }
 
-    public function __invoke($request) {
+    public function __invoke(HTTPRequest $request) {
       $parameters = $this->validate($request);
       if (is_array($parameters)) {
         return ($this->getCallback())($request, $parameters);

@@ -7,17 +7,18 @@ namespace Carica\Io\Network\Http\Request {
   use ArrayIterator;
   use Countable;
   use InvalidArgumentException;
+  use Iterator;
   use IteratorAggregate;
 
   class Query implements Countable, ArrayAccess, IteratorAggregate {
 
     private $_data = array();
 
-    public function __construct($string = '') {
+    public function __construct(string $string = '') {
       $this->setQueryString($string);
     }
 
-    public function setQueryString($string) {
+    public function setQueryString(string $string) {
       $attributes = explode('&', $string);
       foreach ($attributes as $attribute) {
         if (empty($attribute)) {
@@ -32,11 +33,11 @@ namespace Carica\Io\Network\Http\Request {
       }
     }
 
-    public function count() {
+    public function count(): int {
       return count($this->_data);
     }
 
-    public function getIterator() {
+    public function getIterator(): Iterator {
       return new ArrayIterator($this->_data);
     }
 
