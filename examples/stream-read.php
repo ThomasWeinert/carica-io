@@ -4,26 +4,28 @@ include(__DIR__.'/../vendor/autoload.php');
 use Carica\Io\Event\Loop;
 use Carica\Io\Stream;
 
-$loop = Loop\Factory::get();
-$write = fopen('c:/tmp/sample.txt', 'w');
+$fileName = tempnam(sys_get_temp_dir(), 'io_');
 
-$stream = new Stream\FileStream('c:/tmp/sample.txt');
+$loop = Loop\Factory::get();
+$write = fopen($fileName, 'wb');
+
+$stream = new Stream\FileStream($loop, $fileName);
 $stream->events()->on(
-  'read-data',
-  function($data) {
+  Stream::EVENT_READ_DATA,
+  static function($data) {
     echo $data;
   }
 );
 $stream->events()->on(
-  'error',
-  function($error) use ($loop) {
+  Stream::EVENT_ERROR,
+  static function($error) use ($loop) {
     echo $error;
     $loop->stop();
   }
 );
 
 $loop->setInterval(
-  function () use ($write) {
+  static function () use ($write) {
     fwrite($write, microtime(TRUE)."\n");
   },
   1000

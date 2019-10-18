@@ -37,14 +37,10 @@ namespace Carica\Io\Event\Loop {
       $this->_resolution = $resolution;
     }
 
-    public static function create(): EventLoop {
-      return new self();
-    }
-
     public static function get(): EventLoop {
       return EventLoop\Factory::get(
         static function() {
-          return self::create();
+          return new self();
         }
       );
     }

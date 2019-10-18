@@ -15,15 +15,15 @@ namespace Carica\Io\Network\Http\Route {
 
     private $_documentRoot = '';
 
-    private $_encodings = array(
+    private $_encodings = [
       'text/plain' => 'utf-8',
       'text/html' => 'utf-8',
       'text/javascript' => 'utf-8',
       'application/x-javascript' => 'utf-8',
       'application/xml' => 'utf-8'
-    );
+    ];
 
-    public function __construct($documentRoot, array $encodings = array()) {
+    public function __construct($documentRoot, array $encodings = []) {
       $this->setDocumentRoot($documentRoot);
       foreach ($encodings as $mimeType => $encoding) {
         $this->setEncoding($mimeType, $encoding);
@@ -37,8 +37,8 @@ namespace Carica\Io\Network\Http\Route {
       }
       throw new \LogicException(
         sprintf(
-         'Invalid document root: Directory "%s" not found.',
-         $documentRoot
+          'Invalid document root: Directory "%s" not found.',
+          $documentRoot
         )
       );
     }

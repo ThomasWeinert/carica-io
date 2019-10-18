@@ -13,7 +13,7 @@ $serial = new Io\Stream\SerialStream($loop, $port, $baud);
 $serial
   ->events()
   ->on(
-    'read-data',
+    Io\Stream\SerialStream::EVENT_READ_DATA,
     static function ($data) {
       echo $data;
     }

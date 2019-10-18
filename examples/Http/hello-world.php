@@ -7,11 +7,11 @@ $loop = Carica\Io\Event\Loop\Factory::get();
 
 $server = new Carica\Io\Network\Server($loop);
 $server->events()->on(
-  'connection',
+  Carica\Io\Network\Server::EVENT_CONNECTION,
   static function ($stream) use ($loop) {
     $request = new Http\Connection($loop, $stream);
     $request->events()->on(
-      'request',
+      Http\Connection::EVENT_REQUEST_RECEIVED,
       static function (Http\Request $request) {
         echo $request->method.' '.$request->url."\n";
         $request->connection()->write(

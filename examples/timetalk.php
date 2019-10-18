@@ -9,7 +9,7 @@ $clients = array();
 
 $server = new Io\Network\Server($loop);
 $server->events()->on(
-  'connection',
+  Io\Network\Server::EVENT_CONNECTION,
   static function ($stream) use (&$clients, $loop) {
     echo "Client connected: $stream\n";
     $clients[] = new Io\Network\Connection($loop, $stream);

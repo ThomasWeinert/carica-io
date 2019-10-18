@@ -3,14 +3,14 @@ declare(strict_types=1);
 
 namespace Carica\Io\Event {
 
-  use \Carica\Io\Event;
+  use Carica\Io\Event\Emitter as EventEmitter;
 
   interface HasEmitter {
 
     /**
-     * @param Event\Emitter $events
-     * @return Event\Emitter
+     * @param EventEmitter $events
+     * @return EventEmitter
      */
-    function events(Event\Emitter $events = NULL);
+    public function events(EventEmitter $events = NULL): EventEmitter;
   }
 }

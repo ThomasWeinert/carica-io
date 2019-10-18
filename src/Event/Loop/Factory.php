@@ -12,7 +12,7 @@ namespace Carica\Io\Event\Loop {
     /**
      * @var EventLoop
      */
-    private static $_globalLoopInstance;
+    private static $_loopInstance;
 
     /**
      * Return a global event loop instance, create it if it does not exists yet.
@@ -21,17 +21,17 @@ namespace Carica\Io\Event\Loop {
      * @return EventLoop
      */
     public static function get(callable $loopGenerator = NULL): EventLoop {
-      if (NULL === self::$_globalLoopInstance) {
+      if (NULL === self::$_loopInstance) {
         if (NULL !== $loopGenerator) {
           $loop = $loopGenerator();
           if ($loop instanceof EventLoop) {
-            return self::$_globalLoopInstance = $loop;
+            return self::$_loopInstance = $loop;
           }
-          throw new \LogicException('Loop generator callback dit not return a loop instance.');
+          throw new \LogicException('Loop generator callback did not return a loop instance.');
         }
-        return self::$_globalLoopInstance = new StreamSelectLoop();
+        return self::$_loopInstance = new StreamSelectLoop();
       }
-      return self::$_globalLoopInstance;
+      return self::$_loopInstance;
     }
 
     /**
@@ -40,14 +40,14 @@ namespace Carica\Io\Event\Loop {
      * @param EventLoop $loop
      */
     public static function set(EventLoop $loop): void {
-      self::$_globalLoopInstance = $loop;
+      self::$_loopInstance = $loop;
     }
 
     /**
      * Destroy the global event loop
      */
     public static function reset(): void {
-      self::$_globalLoopInstance = NULL;
+      self::$_loopInstance = NULL;
     }
 
     /**

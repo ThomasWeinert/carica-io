@@ -34,10 +34,10 @@ namespace Carica\Io\Network\Http {
       $headers[] = 'Content-Type: the/answer';
       $headers[] = 'Content-Length: 42';
       $this->assertEquals(
-        array(
+        [
           'content-type' => new Header('Content-Type', 'the/answer'),
           'content-length' => new Header('Content-Length', 42)
-        ),
+        ],
         iterator_to_array($headers)
       );
     }

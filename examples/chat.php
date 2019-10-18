@@ -13,11 +13,11 @@ class Client {
   /**
    * @var Carica\Io\Stream
    */
-  public $connection = NULL;
+  public $connection;
   /**
    * @var string
    */
-  public $name = NULL;
+  public $name;
 }
 
 function broadcast($clients, $data) {
@@ -34,14 +34,14 @@ $clients = array();
 
 $server = new Io\Network\Server($loop);
 $server->events()->on(
-  'connection',
+  Io\Network\Server::EVENT_CONNECTION,
   static function ($stream) use (&$clients, $loop) {
     echo "Client connected: $stream\n";
     $client = new Client();
     $client->connection = new Io\Network\Connection($loop, $stream);
     $client->connection->write("Welcome, enter your username:\n");
     $client->connection->events()->on(
-      'read-data',
+      Io\Network\Connection::EVENT_READ_DATA,
       static function($data) use ($client, &$clients) {
         if (empty($client->name) &&
             preg_match('(\S+)', $data, $matches) &&
@@ -75,8 +75,8 @@ $server->events()->on(
     );
 
     $client->connection->events()->once(
-      'close',
-      function () use ($client, &$clients) {
+      Io\Network\Connection::EVENT_CLOSE,
+      static function () use ($client, &$clients) {
         unset($clients[$client->name]);
         broadcast($clients, $client->name." has left\n");
         echo $client->name." has left.\n";

@@ -8,19 +8,17 @@ namespace Carica\Io\Event {
 
   interface Loop {
 
-    public function setTimeout(Callable $callback, int $milliseconds): EventLoopListener;
+    public function setTimeout(callable $callback, int $milliseconds): EventLoopListener;
 
-    public function setInterval(Callable $callback, int $milliseconds): EventLoopListener;
+    public function setInterval(callable $callback, int $milliseconds): EventLoopListener;
 
-    public function setStreamReader(Callable $callback, $stream): EventLoopListener;
+    public function setStreamReader(callable $callback, $stream): EventLoopListener;
 
     public function remove(EventLoopListener $listener): void;
 
     public function run(PromiseLike $for = NULL): void;
 
     public function stop(): void;
-
-    public static function create(): self;
 
     /**
      * Return the global event loop instance stored in the

@@ -29,8 +29,8 @@ $route->match(
 $route->match(
   '/xml',
   static function (Http\Request $request) {
-    $response = $request->createResponse(new Http\Response\Content\XML());
-    $document = $response->content->document;
+    $response = $request->createResponse($content = new Http\Response\Content\XML());
+    $document = $content->document;
     $document->appendChild($root = $document->createElement('response'));
     foreach ($request->query as $name => $value) {
       $root->appendChild($parameter = $document->createElement('query-parameter'));

@@ -2,18 +2,21 @@
 
 namespace Carica\Io\Event {
 
+  use PHPUnit\Framework\MockObject\MockObject;
   use PHPUnit\Framework\TestCase;
+  use UnexpectedValueException;
 
   include_once(__DIR__.'/../Bootstrap.php');
 
+  /**
+   * @covers \Carica\Io\Event\Emitter
+   */
   class EmitterTest extends TestCase {
 
-    public $emittedEvents = array();
+    public $emittedEvents = [];
 
-    /**
-     * @covers \Carica\Io\Event\Emitter::on
-     */
-    public function testOnAddListener() {
+    public function testOnAddListener(): void {
+      /** @var callable|MockObject $event */
       $event = $this
         ->getMockBuilder(Emitter\Listener\On::class)
         ->disableOriginalConstructor()
@@ -21,18 +24,16 @@ namespace Carica\Io\Event {
       $emitter = new Emitter();
       $emitter->on('foo', $event);
       $this->assertEquals(
-        array($event), $emitter->listeners('foo')
+        [$event], $emitter->listeners('foo')
       );
     }
 
-    /**
-     * @covers \Carica\Io\Event\Emitter::on
-     */
-    public function testOnWrapsFunction() {
+    public function testOnWrapsFunction(): void {
       $emitter = new Emitter();
       $emitter->on(
         'foo',
-        function() {}
+        static function () {
+        }
       );
       $events = $emitter->listeners('foo');
       $this->assertInstanceOf(
@@ -44,7 +45,8 @@ namespace Carica\Io\Event {
     /**
      * @covers \Carica\Io\Event\Emitter::once
      */
-    public function testOnceAddListener() {
+    public function testOnceAddListener(): void {
+      /** @var callable|MockObject $event */
       $event = $this
         ->getMockBuilder(Emitter\Listener\Once::class)
         ->disableOriginalConstructor()
@@ -52,18 +54,18 @@ namespace Carica\Io\Event {
       $emitter = new Emitter();
       $emitter->once('foo', $event);
       $this->assertEquals(
-        array($event), $emitter->listeners('foo')
+        [$event], $emitter->listeners('foo')
       );
     }
 
     /**
      * @covers \Carica\Io\Event\Emitter::once
      */
-    public function testOnceWrapsFunction() {
+    public function testOnceWrapsFunction(): void {
       $emitter = new Emitter();
       $emitter->once(
         'foo',
-        function() {}
+        static function () {}
       );
       $events = $emitter->listeners('foo');
       $this->assertInstanceOf(
@@ -75,7 +77,8 @@ namespace Carica\Io\Event {
     /**
      * @covers \Carica\Io\Event\Emitter::removeListener
      */
-    public function testRemoveListener() {
+    public function testRemoveListener(): void {
+      /** @var Emitter\Listener|MockObject $listener */
       $listener = $this->createMock(Emitter\Listener::class);
       $emitter = new Emitter();
       $emitter->on('foo', $listener);
@@ -83,10 +86,7 @@ namespace Carica\Io\Event {
       $this->assertCount(0, $emitter->listeners('foo'));
     }
 
-    /**
-     * @covers \Carica\Io\Event\Emitter::removeAllListeners
-     */
-    public function testRemoveAllListeners() {
+    public function testRemoveAllListeners(): void {
       $emitter = new Emitter();
       $emitter->on('foo', $this->createMock(Emitter\Listener::class));
       $emitter->on('foo', $this->createMock(Emitter\Listener::class));
@@ -94,143 +94,112 @@ namespace Carica\Io\Event {
       $this->assertCount(0, $emitter->listeners('foo'));
     }
 
-    /**
-     * @covers \Carica\Io\Event\Emitter::listeners
-     */
-    public function testListernersReturnsEmptyArrayByDefault() {
+    public function testListenersReturnsEmptyArrayByDefault(): void {
       $emitter = new Emitter();
-      $this->assertSame(array(), $emitter->listeners('foo'));
+      $this->assertSame([], $emitter->listeners('foo'));
     }
 
-    /**
-     * @covers \Carica\Io\Event\Emitter::listeners
-     */
-    public function testListernersReturnsListenersForSpecifiedEvent() {
+    public function testListenersReturnsListenersForSpecifiedEvent(): void {
       $emitter = new Emitter();
       $emitter->on('foo', $this->createMock(Emitter\Listener::class));
       $emitter->on('bar', $this->createMock(Emitter\Listener::class));
       $this->assertCount(1, $emitter->listeners('bar'));
     }
 
-    /**
-     * @covers \Carica\Io\Event\Emitter::emit
-     */
-    public function testEmitWithOneListener() {
-      $that = $this;
+    public function testEmitWithOneListener(): void {
       $emitter = new Emitter();
       $emitter->on(
         'foo',
-        function($value) use ($that) {
-          $that->emittedEvents[] = $value;
+        function ($value) {
+          $this->emittedEvents[] = $value;
         }
       );
       $emitter->emit('foo', 'success');
-      $this->assertEquals(array('success'), $that->emittedEvents);
+      $this->assertEquals(['success'], $this->emittedEvents);
     }
 
-    /**
-     * @covers \Carica\Io\Event\Emitter::emit
-     */
-    public function testEmitWithTwoListeners() {
-      $that = $this;
+    public function testEmitWithTwoListeners(): void {
       $emitter = new Emitter();
       $emitter->on(
         'foo',
-        function() use ($that) {
-          $that->emittedEvents[] = 'one';
+        function () {
+          $this->emittedEvents[] = 'one';
         }
       );
       $emitter->on(
         'foo',
-        function () use ($that) {
-          $that->emittedEvents[] = 'two';
+        function () {
+          $this->emittedEvents[] = 'two';
         }
       );
       $emitter->emit('foo');
-      $this->assertEquals(array('one', 'two'), $that->emittedEvents);
+      $this->assertEquals(['one', 'two'], $this->emittedEvents);
     }
 
-    /**
-     * @covers \Carica\Io\Event\Emitter::emit
-     */
-    public function testEmitWithTwoListenersfordifferentEvents() {
-      $that = $this;
+    public function testEmitWithTwoListenersForDifferentEvents(): void {
       $emitter = new Emitter();
       $emitter->on(
         'foo',
-        function() use ($that) {
-          $that->emittedEvents[] = 'fail';
+        function () {
+          $this->emittedEvents[] = 'fail';
         }
       );
       $emitter->on(
         'bar',
-        function () use ($that) {
-          $that->emittedEvents[] = 'success';
+        function () {
+          $this->emittedEvents[] = 'success';
         }
       );
       $emitter->emit('bar');
-      $this->assertEquals(array('success'), $that->emittedEvents);
+      $this->assertEquals(['success'], $this->emittedEvents);
     }
 
-    /**
-     * @covers \Carica\Io\Event\Emitter
-     */
-    public function testCallEventAfterDefining() {
-      $that = $this;
+    public function testCallEventAfterDefining(): void {
       $emitter = new Emitter();
-      $emitter->defineEvents(array('foo'));
+      $emitter->defineEvents(['foo']);
       $emitter->on(
         'foo',
-        function() use ($that) {
-          $that->emittedEvents[] = 'one';
+        function () {
+          $this->emittedEvents[] = 'one';
         }
       );
       $emitter->emit('foo');
-      $this->assertEquals(array('one'), $that->emittedEvents);
+      $this->assertEquals(['one'], $this->emittedEvents);
     }
 
-    /**
-     * @covers \Carica\Io\Event\Emitter
-     */
-    public function testCallEventAfterDefiningUsingAlias() {
-      $that = $this;
+    public function testCallEventAfterDefiningUsingAlias(): void {
       $emitter = new Emitter();
-      $emitter->defineEvents(array('foo' => 'bar'));
+      $emitter->defineEvents(['foo' => 'bar']);
       $emitter->on(
         'bar',
-        function() use ($that) {
-          $that->emittedEvents[] = 'one';
+        function () {
+          $this->emittedEvents[] = 'one';
         }
       );
       $emitter->emit('bar');
-      $this->assertEquals(array('one'), $that->emittedEvents);
+      $this->assertEquals(['one'], $this->emittedEvents);
     }
 
-    /**
-     * @covers \Carica\Io\Event\Emitter
-     */
-    public function testCallEventAfterDefiningUsingSecondAlias() {
-      $that = $this;
+    public function testCallEventAfterDefiningUsingSecondAlias(): void {
       $emitter = new Emitter();
-      $emitter->defineEvents(array('foo' => array('bar', 'foobar')));
+      $emitter->defineEvents(['foo' => ['bar', 'foobar']]);
       $emitter->on(
         'foobar',
-        function() use ($that) {
-          $that->emittedEvents[] = 'one';
+        function () {
+          $this->emittedEvents[] = 'one';
         }
       );
       $emitter->emit('foobar');
-      $this->assertEquals(array('one'), $that->emittedEvents);
+      $this->assertEquals(['one'], $this->emittedEvents);
     }
 
-    /**
-     * @covers \Carica\Io\Event\Emitter
-     */
-    public function testEventAfterDefinitionWithUndefinedEventExpectingException() {
+    public function testEventAfterDefinitionWithUndefinedEventExpectingException(): void {
       $emitter = new Emitter();
-      $emitter->defineEvents(array('foo' => 'bar'));
-      $this->expectException(\UnexpectedValueException::class);
-      $emitter->on('invalid', function() {});
+      $emitter->defineEvents(['foo' => 'bar']);
+      $this->expectException(UnexpectedValueException::class);
+      $emitter->on(
+        'invalid', static function () {}
+      );
     }
   }
 }

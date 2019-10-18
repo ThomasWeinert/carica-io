@@ -13,23 +13,19 @@ namespace Carica\Io\Event\Loop {
     private $_running;
     private $_wait = 5;
 
-    private $_timers = array();
-    private $_streams = array();
-    private $_resources = array(
-      'read' => array(),
-      'write' => array(),
-      'except' => array()
-    );
+    private $_timers = [];
+    private $_streams = [];
+    private $_resources = [
+      'read' => [],
+      'write' => [],
+      'except' => []
+    ];
     private $_hasResources = FALSE;
-
-    public static function create(): EventLoop {
-      return new self();
-    }
 
     public static function get(): EventLoop {
       return EventLoop\Factory::get(
-        static function() {
-          return self::create();
+        static function () {
+          return new self();
         }
       );
     }
@@ -78,8 +74,10 @@ namespace Carica\Io\Event\Loop {
      */
     public function run(PromiseLike $for = NULL): void {
       $this->_running = TRUE;
-      if (isset($for) &&
-          $for->state() === Deferred::STATE_PENDING) {
+      if (
+        isset($for) &&
+        $for->state() === Deferred::STATE_PENDING
+      ) {
         $loop = $this;
         $for->always(
           static function () use ($loop) {
