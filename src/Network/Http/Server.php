@@ -38,7 +38,10 @@ namespace Carica\Io\Network\Http {
                 ->send()
                 ->always(
                   static function () use ($response) {
-                    if ($connection = $response->connection()) {
+                    if (
+                      !$response->keepAlive &&
+                      ($connection = $response->connection())
+                    ) {
                       $connection->close();
                     }
                   }

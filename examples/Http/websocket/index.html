@@ -1,0 +1,23 @@
+<!doctype html>
+<script>
+    if ("WebSocket" in window) {
+        var ws = new WebSocket("ws://127.0.0.1:8080/data");
+        ws.onopen = function () {
+            console.log('connected');
+        };
+        ws.onerror = function (e) {
+            console.log(e.data);
+        };
+        ws.onmessage = function (e) {
+            console.log(e.data);
+        };
+        ws.onclose = function (e) {
+        };
+        window.setInterval(
+            function() {
+                ws.send('test');
+            },
+            3000
+        )
+    }
+</script>

@@ -11,21 +11,23 @@ namespace Carica\Io\Network\Http {
     private const STATUS_EXPECT_REQUEST = 0;
     private const STATUS_EXPECT_HEADER = 1;
     private const STATUS_EXPECT_BODY = 2;
+    private const STATUS_EXPECT_DATA = 3;
 
     private $_status = self::STATUS_EXPECT_REQUEST;
 
     private $_buffer = '';
     private $_bufferOffset = 0;
-    private $_request = NULL;
+    private $_request;
 
-    public function read($bytes = 1024) {
+    public function read($bytes = 65535) {
       if ($data = parent::read($bytes)) {
         $this->_buffer .= $data;
-        if ($this->_status === self::STATUS_EXPECT_REQUEST) {
-          if (FALSE !== ($line = $this->readStatusLine())) {
-            $this->_request = new Request($this);
-            $this->_request->parseStatus($line);
-          }
+        if (
+          $this->_status === self::STATUS_EXPECT_REQUEST &&
+          FALSE !== ($line = $this->readStatusLine())
+        ) {
+          $this->_request = new Request($this);
+          $this->_request->parseStatus($line);
         }
         if (isset($this->_request)) {
           if ($this->_status === self::STATUS_EXPECT_HEADER) {
@@ -35,6 +37,7 @@ namespace Carica\Io\Network\Http {
           }
           if ($this->_status === self::STATUS_EXPECT_BODY) {
             $this->events()->emit(self::EVENT_REQUEST_RECEIVED, $this->_request);
+            $this->_status = self::STATUS_EXPECT_DATA;
           }
         }
       }

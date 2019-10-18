@@ -3,11 +3,13 @@
 namespace Carica\Io\Network\Http {
 
   use Carica\Io;
+  use Carica\Io\Deferred\PromiseLike;
 
   /**
    * An HTTP response encapsulation to answer the request. It does no contain the
    * content but the general data.
    *
+   * @property bool $keepAlive
    * @property string $version
    * @property integer $status
    * @property Headers $headers
@@ -16,7 +18,7 @@ namespace Carica\Io\Network\Http {
    */
   class Response {
 
-    private $_version = '1.0';
+    private $_version = '1.1';
 
     private $_status = 200;
 
@@ -73,24 +75,46 @@ namespace Carica\Io\Network\Http {
       510 => 'Not Extended'
     );
 
-    private $_connection = NULL;
-    private $_headers = NULL;
-    private $_content = NULL;
+    private $_connection;
+    private $_headers;
+    private $_content;
+    /**
+     * @var bool
+     */
+    private $_keepAlive = FALSE;
 
     public function __construct(Connection $connection) {
       $this->connection($connection);
       $this->_headers = new Headers();
     }
 
-    public function __get($name) {
+    public function __isset($name) {
       switch ($name) {
+      case 'keepAlive':
       case 'version' :
       case 'status' :
-        return $this->{'_'.$name};
       case 'connection' :
       case 'content' :
       case 'headers' :
-        return call_user_func(array($this, $name));
+        return TRUE;
+      }
+      return FALSE;
+    }
+
+    public function __get($name) {
+      switch ($name) {
+      case 'keepAlive':
+        return $this->_keepAlive;
+      case 'version' :
+        return $this->_version;
+      case 'status' :
+        return $this->_status;
+      case 'connection' :
+        return $this->connection();
+      case 'content' :
+        return $this->content();
+      case 'headers' :
+        return $this->headers();
       }
       throw new \LogicException(
         sprintf('Unknown property %s::$%s', get_class($this), $name)
@@ -99,6 +123,9 @@ namespace Carica\Io\Network\Http {
 
     public function __set($name, $value) {
       switch ($name) {
+      case 'keepAlive' :
+        $this->_keepAlive = (bool)$value;
+        return NULL;
       case 'version' :
         $this->setVersion($value);
         return NULL;
@@ -106,9 +133,11 @@ namespace Carica\Io\Network\Http {
         $this->setStatus($value);
         return NULL;
       case 'connection' :
+        return $this->connection($value);
       case 'content' :
+        return $this->content($value);
       case 'headers' :
-        return call_user_func(array($this, $name), $value);
+        return $this->headers($value);
       }
       throw new \LogicException(
         sprintf('Can not write unknown property %s::$%s', get_class($this), $name)
@@ -125,7 +154,7 @@ namespace Carica\Io\Network\Http {
       }
     }
 
-    public function setStatus($status) {
+    public function setStatus($status): void {
       $status = (int)$status;
       if (isset($this->_statusStrings[$status])) {
         $this->_status = $status;
@@ -150,7 +179,7 @@ namespace Carica\Io\Network\Http {
       return $this->_headers;
     }
 
-    public function content(Response\Content $content = NULL) {
+    public function content(Response\Content $content = NULL): Response\Content {
       if (isset($content)) {
         $this->_content = $content;
       } elseif (NULL === $this->_content) {
@@ -159,7 +188,7 @@ namespace Carica\Io\Network\Http {
       return $this->_content;
     }
 
-    public function send() {
+    public function send(): PromiseLike {
       $connection = $this->connection();
       $contentType = $this->content()->type;
       $encoding = $this->content()->encoding;
@@ -178,7 +207,7 @@ namespace Carica\Io\Network\Http {
       );
       foreach ($this->headers() as $header) {
         foreach ($header as $value) {
-          $connection->write($header->name.": ".$value."\n");
+          $connection->write($header->name.': '.$value."\n");
         }
       }
       $connection->write("\n");

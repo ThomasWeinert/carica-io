@@ -15,6 +15,9 @@ namespace Carica\Io\Network {
     use Io\Event\Emitter\Aggregation;
     use Io\Event\Loop\Aggregation;
 
+    public const EVENT_READ_DATA = 'read-data';
+    public const EVENT_CLOSE = 'close';
+
     /**
      * @var EventLoopListener
      */
@@ -45,11 +48,8 @@ namespace Carica\Io\Network {
         $this->_stream = $stream;
         if ($this->isActive()) {
           stream_set_blocking($stream, FALSE);
-          $that = $this;
           $this->_listener = $this->loop()->setStreamReader(
-            static function() use ($that) {
-              $that->read();
-            },
+            function() { $this->read(); },
             $stream
           );
         }
@@ -61,11 +61,11 @@ namespace Carica\Io\Network {
       return is_resource($this->_stream);
     }
 
-    public function read($bytes = 1024) {
+    public function read($bytes = 65535) {
       if ($this->isActive()) {
         $data = stream_socket_recvfrom($this->_stream, $bytes);
         if (is_string($data) && $data !== '') {
-          $this->events()->emit('read-data', $data);
+          $this->events()->emit(self::EVENT_READ_DATA, $data);
           return $data;
         }
       }
@@ -85,7 +85,7 @@ namespace Carica\Io\Network {
     public function close() {
       if ($this->isActive()) {
         stream_socket_shutdown($this->_stream, STREAM_SHUT_RDWR);
-        $this->events()->emit('close');
+        $this->events()->emit(self::EVENT_CLOSE);
       }
       $this->resource(FALSE);
     }
