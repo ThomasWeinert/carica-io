@@ -1,109 +1,93 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io {
 
   use PHPUnit\Framework\TestCase;
+  use stdClass;
 
   include_once(__DIR__.'/Bootstrap.php');
 
+  /**
+   * @covers \Carica\Io\Callbacks
+   */
   class CallbacksTest extends TestCase {
 
-    /**
-     * @covers \Carica\Io\Callbacks
-     */
-    public function testAdd() {
+    public function testAdd(): void {
       $callbacks = new Callbacks();
       $callbacks->add('substr');
       $this->assertEquals(
-          array('substr'),
-          iterator_to_array($callbacks)
+        ['substr'],
+        iterator_to_array($callbacks)
       );
     }
 
-    /**
-     * @covers \Carica\Io\Callbacks
-     */
-    public function testAddWithTwoCalls() {
+    public function testAddWithTwoCalls(): void {
       $callbacks = new Callbacks();
       $callbacks
         ->add('strpos')
         ->add('substr');
       $this->assertEquals(
-        array('strpos', 'substr'),
+        ['strpos', 'substr'],
         iterator_to_array($callbacks)
       );
     }
 
-    /**
-     * @covers \Carica\Io\Callbacks
-     */
-    public function testAddWithAnonymusFunction() {
+    public function testAddWithAnonymousFunction(): void {
       $callbacks = new Callbacks();
-      $callbacks->add($function = function() {});
+      $callbacks->add(
+        $function = static function () {
+        }
+      );
       $this->assertEquals(
-        array($function),
+        [$function],
         iterator_to_array($callbacks)
       );
     }
 
-    /**
-     * @covers \Carica\Io\Callbacks
-     */
-    public function testAddWithCallableObject() {
+    public function testAddWithCallableObject(): void {
       $callbacks = new Callbacks();
       $callbacks->add($functor = new Callbacks());
       $this->assertEquals(
-        array($functor),
+        [$functor],
         iterator_to_array($callbacks)
       );
     }
 
-    /**
-     * @covers \Carica\Io\Callbacks
-     */
-    public function testAddWithCallbackArray() {
+    public function testAddWithCallbackArray(): void {
       $callbacks = new Callbacks();
-      $callbacks->add($callback = array($this, 'testAddWithCallbackArray'));
+      $callbacks->add($callback = [$this, 'testAddWithCallbackArray']);
       $this->assertEquals(
-        array($callback),
+        [$callback],
         iterator_to_array($callbacks)
       );
     }
 
-    /**
-     * @covers \Carica\Io\Callbacks
-     */
-    public function testRemove() {
+    public function testRemove(): void {
       $callbacks = new Callbacks();
       $callbacks
         ->add('strpos')
         ->remove('strpos')
         ->add('substr');
       $this->assertEquals(
-        array('substr'),
+        ['substr'],
         iterator_to_array($callbacks)
       );
     }
 
-    /**
-     * @covers \Carica\Io\Callbacks
-     */
-    public function testClearAfterAddingOneFunction() {
+    public function testClearAfterAddingOneFunction(): void {
       $callbacks = new Callbacks();
       $callbacks
         ->add('strpos')
         ->clear()
         ->add('substr');
       $this->assertEquals(
-        array('substr'),
+        ['substr'],
         iterator_to_array($callbacks)
       );
     }
 
-    /**
-     * @covers \Carica\Io\Callbacks
-     */
-    public function testHasExpectingTrue() {
+    public function testHasExpectingTrue(): void {
       $callbacks = new Callbacks();
       $callbacks->add('strpos');
       $this->assertTrue(
@@ -111,64 +95,49 @@ namespace Carica\Io {
       );
     }
 
-    /**
-     * @covers \Carica\Io\Callbacks
-     */
-    public function testHasExpectingFalse() {
+    public function testHasExpectingFalse(): void {
       $callbacks = new Callbacks();
       $this->assertFalse(
         $callbacks->has('strpos')
       );
     }
 
-    /**
-     * @covers \Carica\Io\Callbacks
-     */
-    public function testLockBlocksAdd() {
+    public function testLockBlocksAdd(): void {
       $callbacks = new Callbacks();
       $callbacks
         ->lock()
         ->add('substr');
       $this->assertEquals(
-          array(),
-          iterator_to_array($callbacks)
+        [],
+        iterator_to_array($callbacks)
       );
     }
 
-    /**
-     * @covers \Carica\Io\Callbacks
-     */
-    public function testLockBlocksRemove() {
+    public function testLockBlocksRemove(): void {
       $callbacks = new Callbacks();
       $callbacks
         ->add('substr')
         ->lock()
         ->remove('substr');
       $this->assertEquals(
-          array('substr'),
-          iterator_to_array($callbacks)
+        ['substr'],
+        iterator_to_array($callbacks)
       );
     }
 
-    /**
-     * @covers \Carica\Io\Callbacks
-     */
-    public function testLockBlocksClear() {
+    public function testLockBlocksClear(): void {
       $callbacks = new Callbacks();
       $callbacks
         ->add('substr')
         ->lock()
         ->clear();
       $this->assertEquals(
-        array('substr'),
+        ['substr'],
         iterator_to_array($callbacks)
       );
     }
 
-    /**
-     * @covers \Carica\Io\Callbacks
-     */
-    public function testLockedExpectingTrue() {
+    public function testLockedExpectingTrue(): void {
       $callbacks = new Callbacks();
       $callbacks->lock();
       $this->assertTrue(
@@ -176,31 +145,25 @@ namespace Carica\Io {
       );
     }
 
-    /**
-     * @covers \Carica\Io\Callbacks
-     */
-    public function testLockedExpectingFalse() {
+    public function testLockedExpectingFalse(): void {
       $callbacks = new Callbacks();
       $this->assertFalse(
         $callbacks->locked()
       );
     }
 
-    /**
-     * @covers \Carica\Io\Callbacks
-     */
-    public function testFireWithTwoFunctions() {
-      $foo = new \stdClass();
+    public function testFireWithTwoFunctions(): void {
+      $foo = new stdClass();
       $foo->literal = '';
       $callbacks = new Callbacks();
       $callbacks
         ->add(
-          function () use ($foo) {
+          static function () use ($foo) {
             $foo->literal .= 'Hello ';
           }
         )
         ->add(
-          function () use ($foo) {
+          static function () use ($foo) {
             $foo->literal .= 'World!';
           }
         );
@@ -208,10 +171,7 @@ namespace Carica\Io {
       $this->assertEquals('Hello World!', $foo->literal);
     }
 
-    /**
-     * @covers \Carica\Io\Callbacks
-     */
-    public function testFiredExpectingTrue() {
+    public function testFiredExpectingTrue(): void {
       $callbacks = new Callbacks();
       $callbacks();
       $this->assertTrue(
@@ -219,25 +179,19 @@ namespace Carica\Io {
       );
     }
 
-    /**
-     * @covers \Carica\Io\Callbacks
-     */
-    public function testFiredExpectingFalse() {
+    public function testFiredExpectingFalse(): void {
       $callbacks = new Callbacks();
       $this->assertFalse(
         $callbacks->fired()
       );
     }
 
-    /**
-     * @covers \Carica\Io\Callbacks
-     */
-    public function testDisableBlocksExecution() {
-      $foo = new \stdClass();
+    public function testDisableBlocksExecution(): void {
+      $foo = new stdClass();
       $foo->literal = '';
       $callbacks = new Callbacks();
       $callbacks->add(
-        function () use ($foo) {
+        static function () use ($foo) {
           $foo->literal .= 'Hello World!';
         }
       );
@@ -246,62 +200,56 @@ namespace Carica\Io {
       $this->assertEquals('', $foo->literal);
     }
 
-    /**
-     * @covers \Carica\Io\Callbacks
-     */
-    public function testDisabledExpectingTrue() {
+    public function testDisabledExpectingTrue(): void {
       $callbacks = new Callbacks();
       $callbacks->disable();
       $this->assertTrue(
-          $callbacks->disabled()
+        $callbacks->disabled()
       );
     }
 
-    /**
-     * @covers \Carica\Io\Callbacks
-     */
-    public function testDisabledExpectingFalse() {
+    public function testDisabledExpectingFalse(): void {
       $callbacks = new Callbacks();
       $this->assertFalse(
-          $callbacks->disabled()
+        $callbacks->disabled()
       );
     }
 
-    /**
-     * @covers \Carica\Io\Callbacks
-     */
-    public function testCountWithThreeFunctions() {
+    public function testCountWithThreeFunctions(): void {
       $callbacks = new Callbacks();
       $callbacks
-        ->add(function() {})
-        ->add(function() {})
-        ->add(function() {});
-      $this->assertEquals(3, count($callbacks));
+        ->add(
+          static function () {
+          }
+        )
+        ->add(
+          static function () {
+          }
+        )
+        ->add(
+          static function () {
+          }
+        );
+      $this->assertCount(3, $callbacks);
     }
 
-    /**
-     * @covers \Carica\Io\Callbacks
-     */
-    public function testUseAddMethodAsAnonymusFunction() {
+    public function testUseAddMethodAsAnonymousFunction(): void {
       $callbacks = new Callbacks();
       $add = $callbacks->add;
-      $add(function() {});
-      $this->assertEquals(1, count($callbacks));
+      $add(
+        static function () {
+        }
+      );
+      $this->assertCount(1, $callbacks);
     }
 
-    /**
-     * @covers \Carica\Io\Callbacks
-     */
-    public function testMagicGetWithInvalidPropertyExpectingException() {
+    public function testMagicGetWithInvalidPropertyExpectingException(): void {
       $callbacks = new Callbacks();
       $this->expectException(\LogicException::class);
-      $dummy = $callbacks->invalidProperty;
+      $callbacks->invalidProperty;
     }
 
-    /**
-     * @covers \Carica\Io\Callbacks
-     */
-    public function testMagicSetExpectingException() {
+    public function testMagicSetExpectingException(): void {
       $callbacks = new Callbacks();
       $this->expectException(\LogicException::class);
       $callbacks->add = 'fail';

@@ -11,7 +11,7 @@ namespace Carica\Io\Event\Loop {
     /**
      * @covers \Carica\Io\Event\Loop\Aggregation
      */
-    public function testGetAfterSet() {
+    public function testGetAfterSet(): void {
       $aggregation = new Aggregation_TestProxy();
       $aggregation->loop($loop = $this->createMock(\Carica\Io\Event\Loop::class));
       $this->assertSame($loop, $aggregation->loop());
@@ -20,9 +20,9 @@ namespace Carica\Io\Event\Loop {
     /**
      * @covers \Carica\Io\Event\Loop\Aggregation
      */
-    public function testGetImplicitCreate() {
+    public function testGetImplicitCreate(): void {
       $aggregation = new Aggregation_TestProxy();
-      $this->assertInstanceOf(\Carica\Io\Event\Loop::class, $aggregation->loop());
+      $this->assertNotNull($aggregation->loop());
     }
   }
 

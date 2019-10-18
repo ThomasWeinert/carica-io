@@ -11,11 +11,11 @@ namespace Carica\Io\Event\Loop {
    */
   class ClockTest extends TestCase {
 
-    public function testSetTimeout() {
+    public function testSetTimeout(): void {
       $loop = new Clock();
       $success = FALSE;
       $loop->setTimeout(
-        function () use (&$success) {
+        static function () use (&$success) {
           $success = TRUE;
         },
         100
@@ -26,11 +26,11 @@ namespace Carica\Io\Event\Loop {
       $this->assertTrue($success);
     }
 
-    public function testSetTimeoutOnlyCalledOnce() {
+    public function testSetTimeoutOnlyCalledOnce(): void {
       $loop = new Clock();
       $counter = 0;
       $loop->setTimeout(
-        function () use (&$counter) {
+        static function () use (&$counter) {
           $counter++;
         },
         100
@@ -39,11 +39,11 @@ namespace Carica\Io\Event\Loop {
       $this->assertEquals(1, $counter);
     }
 
-    public function testSetInterval() {
+    public function testSetInterval(): void {
       $loop = new Clock();
       $counter = 0;
       $loop->setInterval(
-        function () use (&$counter) {
+        static function () use (&$counter) {
           $counter++;
         },
         100

@@ -14,7 +14,7 @@ namespace Carica\Io\Network {
     use EventLoop\Aggregation;
 
     public const EVENT_LISTEN = 'listen';
-    const EVENT_CONNECTION = 'connection';
+    public const EVENT_CONNECTION = 'connection';
 
     private $_listener;
 

@@ -5,34 +5,36 @@ namespace Carica\Io\Network\HTTP\Route\Target {
   include_once(__DIR__.'/../../../../Bootstrap.php');
 
   use Carica\Io\Network\HTTP;
+  use PHPUnit\Framework\MockObject\MockObject;
   use PHPUnit\Framework\TestCase;
 
+  /**
+     * @covers \Carica\Io\Network\HTTP\Route\Target\Match
+   */
   class MatchTest extends TestCase {
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Route\Target\Match
-     */
-    public function testWithInvalidMethod() {
+    public function testWithInvalidMethod(): void {
       $result = FALSE;
       $target = new Match(
-        function () use (&$result) {
+        static function () use (&$result) {
           $result = TRUE;
         },
         '/foo'
       );
       $target->methods('POST');
-      $target($this->getRequestFixture('GET'));
+      $target($this->getRequestFixture());
       $this->assertFalse($result);
     }
 
     /**
-     * @covers       \Carica\Io\Network\HTTP\Route\Target\Match
      * @dataProvider provideValidPaths
+     * @param $path
+     * @param $expectedParameters
      */
-    public function testWithValidPaths($path, $expectedParameters) {
+    public function testWithValidPaths($path, $expectedParameters): void {
       $result = FALSE;
       $target = new Match(
-        function (HTTP\Request $request, $parameters) use (&$result) {
+        static function (HTTP\Request $request, $parameters) use (&$result) {
           $result = $parameters;
           return TRUE;
         },
@@ -42,7 +44,7 @@ namespace Carica\Io\Network\HTTP\Route\Target {
       $this->assertEquals($expectedParameters, $result);
     }
 
-    public static function provideValidPaths() {
+    public static function provideValidPaths(): array {
       return [
         ['/foo/bar/42', []],
         ['/foo/bar/{id}', ['id' => 42]],
@@ -52,13 +54,12 @@ namespace Carica\Io\Network\HTTP\Route\Target {
     }
 
     /**
-     * @covers       \Carica\Io\Network\HTTP\Route\Target\Match
      * @dataProvider provideInvalidPaths
+     * @param $path
      */
-    public function testWithInvalidPaths($path) {
-      $result = FALSE;
+    public function testWithInvalidPaths($path): void {
       $target = new Match(
-        function (HTTP\Request $request, $parameters) use (&$result) {
+        static function () {
           return TRUE;
         },
         $path
@@ -66,7 +67,7 @@ namespace Carica\Io\Network\HTTP\Route\Target {
       $this->assertFalse($target($this->getRequestFixture()));
     }
 
-    public static function provideInvalidPaths() {
+    public static function provideInvalidPaths(): array {
       return [
         'to short' => ['/foo'],
         'to long' => ['/foo/bar/42/detail'],
@@ -74,6 +75,9 @@ namespace Carica\Io\Network\HTTP\Route\Target {
       ];
     }
 
+    /**
+     * @return HTTP\Request|MockObject
+     */
     private function getRequestFixture() {
       $request = $this
         ->getMockBuilder(HTTP\Request::class)
@@ -82,13 +86,11 @@ namespace Carica\Io\Network\HTTP\Route\Target {
       $request
         ->expects($this->any())
         ->method('__get')
-        ->will(
-          $this->returnValueMap(
-            [
-              ['method', 'GET'],
-              ['path', '/foo/bar/42']
-            ]
-          )
+        ->willReturnMap(
+          [
+            ['method', 'GET'],
+            ['path', '/foo/bar/42']
+          ]
         );
       return $request;
     }

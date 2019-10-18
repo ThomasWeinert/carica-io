@@ -6,19 +6,20 @@ namespace Carica\Io\Deferred {
   use Carica\Io\Deferred;
   use Carica\Io\Event\HasLoop as HasEventLoop;
   use Carica\Io\Event\Loop as EventLoop;
+  use mysqli;
 
   class MySQL implements HasEventLoop {
 
     use EventLoop\Aggregation;
 
     /**
-     * @var \mysqli
+     * @var mysqli
      */
     private $_mysqli;
 
     /**
      * @param EventLoop $loop
-     * @param \mysqli $mysqli
+     * @param mysqli $mysqli
      */
     public function __construct(EventLoop $loop, $mysqli) {
       $this->loop($loop);

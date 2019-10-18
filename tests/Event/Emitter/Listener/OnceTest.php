@@ -13,10 +13,9 @@ namespace Carica\Io\Event\Emitter\Listener {
     /**
      * @covers \Carica\Io\Event\Emitter\Listener\Once::__invoke
      */
-    public function testInvokeCallsCallback() {
-      $that = $this;
-      $callback = function() use ($that) {
-        $that->calledCallback = TRUE;
+    public function testInvokeCallsCallback(): void {
+      $callback = function() {
+        $this->calledCallback = TRUE;
       };
       $emitter = $this->createMock(\Carica\Io\Event\Emitter::class);
       $emitter

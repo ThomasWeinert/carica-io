@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io {
 
@@ -6,56 +7,48 @@ namespace Carica\Io {
 
   include_once(__DIR__.'/Bootstrap.php');
 
+  /**
+   * @covers \Carica\Io\Deferred
+   */
   class DeferredTest extends TestCase {
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testStaticFunctionCreate() {
+    public function testStaticFunctionCreate(): void {
       $defer = Deferred::create();
-      $this->assertInstanceOf(\Carica\Io\Deferred::class, $defer);
+      $this->assertNotNull($defer);
     }
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testResolve() {
+    public function testResolve(): void {
       $literal = '';
       $defer = new Deferred();
       $defer
         ->done(
-          function($text) use (&$literal) {
+          static function($text) use (&$literal) {
             $literal = $text;
           }
         )
         ->resolve('success');
       $this->assertEquals('success', $literal);
     }
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testResolveTriggersDoneCallbacksOnAppend() {
+
+    public function testResolveTriggersDoneCallbacksOnAppend(): void {
       $literal = '';
       $defer = new Deferred();
       $defer
         ->resolve('success')
         ->done(
-          function($text) use (&$literal) {
+          static function($text) use (&$literal) {
             $literal = $text;
           }
         );
       $this->assertEquals('success', $literal);
     }
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testResolveCallsAlwaysCallbacks() {
+    public function testResolveCallsAlwaysCallbacks(): void {
       $literal = '';
       $defer = new Deferred();
       $defer
         ->always(
-          function($text) use (&$literal) {
+          static function($text) use (&$literal) {
             $literal = $text;
           }
         )
@@ -63,15 +56,12 @@ namespace Carica\Io {
       $this->assertEquals('success', $literal);
     }
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testReject() {
+    public function testReject(): void {
       $literal = '';
       $defer = new Deferred();
       $defer
         ->fail(
-          function($text) use (&$literal) {
+          static function($text) use (&$literal) {
             $literal = $text;
           }
         )
@@ -79,31 +69,25 @@ namespace Carica\Io {
       $this->assertEquals('got error', $literal);
     }
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testRejectTriggersFailCallbacksOnAppend() {
+    public function testRejectTriggersFailCallbacksOnAppend(): void {
       $literal = '';
       $defer = new Deferred();
       $defer
         ->reject('got error')
         ->fail(
-          function($text) use (&$literal) {
+          static function($text) use (&$literal) {
             $literal = $text;
           }
         );
       $this->assertEquals('got error', $literal);
     }
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testRejectCallsAlwaysCallbacks() {
+    public function testRejectCallsAlwaysCallbacks(): void {
       $literal = '';
       $defer = new Deferred();
       $defer
         ->always(
-          function($text) use (&$literal) {
+          static function($text) use (&$literal) {
             $literal = $text;
           }
         )
@@ -111,34 +95,29 @@ namespace Carica\Io {
       $this->assertEquals('got error', $literal);
     }
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testRejectTriggersAlwaysCallbackOnRejectedObject() {
+    public function testRejectTriggersAlwaysCallbackOnRejectedObject(): void {
       $literal = '';
       $defer = new Deferred();
       $defer
         ->reject('got error')
         ->always(
-          function($text) use (&$literal) {
+          static function($text) use (&$literal) {
             $literal = $text;
           }
         );
       $this->assertEquals('got error', $literal);
     }
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testNotifyTriggersProgressCallback() {
+    public function testNotifyTriggersProgressCallback(): void {
       $calls = array();
       $defer = new Deferred();
       $defer
         ->progress(
-          function(...$arguments) use (&$calls) {
+          static function(...$arguments) use (&$calls) {
             $calls[] = $arguments;
           }
-        )
+        );
+      $defer
         ->notify(1)
         ->notify(2, 3);
       $this->assertEquals(
@@ -150,16 +129,13 @@ namespace Carica\Io {
       );
     }
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testProgressCallbackIsCalledWithStoredNotify() {
+    public function testProgressCallbackIsCalledWithStoredNotify(): void {
       $calls = array();
       $defer = new Deferred();
       $defer
         ->notify(1)
         ->progress(
-          function(...$arguments) use (&$calls) {
+          static function(...$arguments) use (&$calls) {
             $calls[] = $arguments;
           }
         )
@@ -173,97 +149,70 @@ namespace Carica\Io {
       );
     }
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testIsResolvedExpectingTrue() {
+    public function testIsResolvedExpectingTrue(): void {
       $defer = new Deferred();
       $defer->resolve();
       $this->assertTrue($defer->isResolved());
     }
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testIsResolvedExpectingFalse() {
+    public function testIsResolvedExpectingFalse(): void {
       $defer = new Deferred();
       $defer->reject();
       $this->assertFalse($defer->isResolved());
     }
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testIsRejectedExpectingTrue() {
+    public function testIsRejectedExpectingTrue(): void {
       $defer = new Deferred();
       $defer->reject();
       $this->assertTrue($defer->isRejected());
     }
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testIsRejectedExpectingFalse() {
+    public function testIsRejectedExpectingFalse(): void {
       $defer = new Deferred();
       $defer->resolve();
       $this->assertFalse($defer->isRejected());
     }
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testStateExpectingPending() {
+    public function testStateExpectingPending(): void {
       $defer = new Deferred();
       $this->assertEquals(Deferred::STATE_PENDING, $defer->state());
     }
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testStateExpectingResolved() {
+    public function testStateExpectingResolved(): void {
       $defer = new Deferred();
       $defer->resolve();
       $this->assertEquals(Deferred::STATE_RESOLVED, $defer->state());
     }
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testStateExpectingRejected() {
+    public function testStateExpectingRejected(): void {
       $defer = new Deferred();
       $defer->reject();
       $this->assertEquals(Deferred::STATE_REJECTED, $defer->state());
     }
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testThenWithDoneFilter() {
+    public function testThenWithDoneFilter(): void {
       $defer = new Deferred();
       $filtered = $defer->then(
-        function($value) {
+        static function($value) {
           return $value * 2;
         }
       );
       $defer->resolve(5);
       $result = 'fail';
       $filtered->done(
-        function ($value) use (&$result) {
+        static function ($value) use (&$result) {
           $result = '2 * 5 = '.$value;
         }
       );
       $this->assertEquals('2 * 5 = 10', $result);
     }
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testThenWithoutDoneFilter() {
+    public function testThenWithoutDoneFilter(): void {
       $defer = new Deferred();
       $filtered = $defer->then();
       $calls = array();
       $filtered->done(
-        function ($value) use (&$calls) {
+        static function ($value) use (&$calls) {
           $calls[] = $value;
         }
       );
@@ -271,36 +220,30 @@ namespace Carica\Io {
       $this->assertEquals(array(5), $calls);
     }
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testThenWithFailFilter() {
+    public function testThenWithFailFilter(): void {
       $defer = new Deferred();
       $filtered = $defer->then(
         NULL,
-        function($value) {
+        static function($value) {
           return $value * 2;
         }
       );
       $defer->reject(5);
       $result = 'fail';
       $filtered->fail(
-        function ($value) use (&$result) {
+        static function ($value) use (&$result) {
           $result = '2 * 5 = '.$value;
         }
       );
       $this->assertEquals('2 * 5 = 10', $result);
     }
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testThenWithoutFailFilter() {
+    public function testThenWithoutFailFilter(): void {
       $defer = new Deferred();
       $filtered = $defer->then();
       $calls = array();
       $filtered->fail(
-          function ($value) use (&$calls) {
+          static function ($value) use (&$calls) {
             $calls[] = $value;
           }
       );
@@ -308,22 +251,19 @@ namespace Carica\Io {
       $this->assertEquals(array(5), $calls);
     }
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testThenWithNotifyFilter() {
+    public function testThenWithNotifyFilter(): void {
       $calls = array();
       $defer = new Deferred();
       $defer
         ->then(
           NULL,
           NULL,
-          function(...$arguments) {
+          static function(...$arguments) {
             return array_sum($arguments);
           }
         )
         ->progress(
-          function($sum) use (&$calls) {
+          static function($sum) use (&$calls) {
             $calls[] = $sum;
           }
         );
@@ -334,16 +274,13 @@ namespace Carica\Io {
       );
     }
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testThenWithoutNotifyFilter() {
+    public function testThenWithoutNotifyFilter(): void {
       $calls = array();
       $defer = new Deferred();
       $defer
         ->then()
         ->progress(
-          function(...$arguments) use (&$calls) {
+          static function(...$arguments) use (&$calls) {
             $calls[] = $arguments;
           }
         );
@@ -354,10 +291,7 @@ namespace Carica\Io {
       );
     }
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testWhenWithOnePromiseReturnsThisArgument() {
+    public function testWhenWithOnePromiseReturnsThisArgument(): void {
       $defer = new Deferred();
       $promise = $defer->promise();
       $this->assertSame(
@@ -365,26 +299,20 @@ namespace Carica\Io {
       );
     }
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testWhenWithOneDeferredArgumentsReturnsThisArgumentsPromise() {
+    public function testWhenWithOneDeferredArgumentsReturnsThisArgumentsPromise(): void {
       $promise = Deferred::when(
         $defer = new Deferred()
       );
       $this->assertSame($promise, $defer->promise());
     }
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testWhenWithTwoDeferredArguments() {
+    public function testWhenWithTwoDeferredArguments(): void {
       $result = NULL;
       Deferred::when(
         $deferOne = new Deferred(),
         $deferTwo = new Deferred()
       )->done(
-        function ($one, $two) use (&$result) {
+        static function ($one, $two) use (&$result) {
           $result = array($one, $two);
         }
       );
@@ -396,16 +324,13 @@ namespace Carica\Io {
       );
     }
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testWhenWithTwoArgumentsButOnlyOneDeferred() {
+    public function testWhenWithTwoArgumentsButOnlyOneDeferred(): void {
       $result = NULL;
       Deferred::when(
         42,
         $defer = new Deferred()
       )->done(
-        function ($one, $two) use (&$result) {
+        static function ($one, $two) use (&$result) {
           $result = array($one, $two);
         }
       );
@@ -416,10 +341,7 @@ namespace Carica\Io {
       );
     }
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testWhenWithRejectedDefer() {
+    public function testWhenWithRejectedDefer(): void {
       $calls = array();
       $defer = new Deferred();
       $defer->reject(42, 'rejected');
@@ -427,7 +349,7 @@ namespace Carica\Io {
         42,
         $defer
       )->fail(
-        function (...$arguments) use (&$calls) {
+        static function (...$arguments) use (&$calls) {
           $calls[] = $arguments;
         }
       );
@@ -439,24 +361,18 @@ namespace Carica\Io {
       );
     }
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testWhenWithoutArgumentsReturnsResolvedPromise() {
+    public function testWhenWithoutArgumentsReturnsResolvedPromise(): void {
       $promise = Deferred::when();
       $this->assertInstanceOf(Deferred\Promise::class, $promise);
       $this->assertEquals(Deferred::STATE_RESOLVED, $promise->state());
     }
 
-    /**
-     * @covers \Carica\Io\Deferred
-     */
-    public function testWhenWithSeveralScalarArgumentsReturnsResolvedPromise() {
+    public function testWhenWithSeveralScalarArgumentsReturnsResolvedPromise(): void {
       $calls = array();
       $promise = Deferred::when('foo', 'bar', '42');
       $promise
         ->done(
-          function(...$arguments) use (&$calls) {
+          static function(...$arguments) use (&$calls) {
             $calls[] = $arguments;
           }
         );

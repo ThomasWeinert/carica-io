@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace Carica\Io\Network\HTTP {
 
   use ArrayAccess;
+  use ArrayIterator;
   use Countable;
+  use InvalidArgumentException;
   use Iterator;
   use IteratorAggregate;
 
@@ -17,7 +19,7 @@ namespace Carica\Io\Network\HTTP {
     }
 
     public function getIterator(): Iterator {
-      return new \ArrayIterator($this->_headers);
+      return new ArrayIterator($this->_headers);
     }
 
     public function offsetExists($name) {
@@ -54,10 +56,10 @@ namespace Carica\Io\Network\HTTP {
     private function prepareKey(string $name) {
       $name = trim($name);
       if (empty($name)) {
-        throw new \InvalidArgumentException('The header name can not be empty.');
+        throw new InvalidArgumentException('The header name can not be empty.');
       }
       if (!preg_match('(^[a-z][a-z\d]*(?:-[a-z\d]+)*$)iD', $name)) {
-        throw new \InvalidArgumentException(
+        throw new InvalidArgumentException(
           sprintf(
             'The header name "%s" is invalid.', $name
           )

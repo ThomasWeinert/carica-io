@@ -4,46 +4,38 @@ namespace Carica\Io\Event\Emitter {
 
   use Carica\Io\Event\Emitter;
   use PHPUnit\Framework\TestCase;
+  use ReflectionClass;
 
   include_once(__DIR__.'/../../Bootstrap.php');
 
+  /**
+   * @covers \Carica\Io\Event\Emitter\Aggregation::emitEvent
+   */
   class AggregationTest extends TestCase {
 
-    /**
-     * @covers \Carica\Io\Event\Emitter\Aggregation::events
-     */
-    public function testGetEventsAfterSet() {
+    public function testGetEventsAfterSet(): void {
       $aggregation = new Aggregation_TestProxy();
       $aggregation->events($events = $this->createMock(Emitter::class));
       $this->assertSame($events, $aggregation->events());
     }
 
-    /**
-     * @covers \Carica\Io\Event\Emitter\Aggregation::events
-     */
-    public function testGetEventsImplicitCreate() {
+    public function testGetEventsImplicitCreate(): void {
       $aggregation = new Aggregation_TestProxy();
-      $this->assertInstanceOf(Emitter::class, $aggregation->events());
+      $this->assertNotNull($aggregation->events());
     }
 
-    /**
-     * @covers \Carica\Io\Event\Emitter\Aggregation::emitEvent
-     */
-    public function testEmitEvent() {
+    public function testEmitEvent(): void {
       $aggregation = new Aggregation_TestProxy();
       $result = FALSE;
-      $aggregation->events()->on('test', function() use (&$result) { $result = TRUE; });
+      $aggregation->events()->on('test', static function() use (&$result) { $result = TRUE; });
       $aggregation->emitEvent('test');
       $this->assertTrue($result);
     }
 
-    /**
-     * @covers \Carica\Io\Event\Emitter\Aggregation::emitEvent
-     */
-    public function testEmitEventDoesNotImplicitCreateEmitter() {
+    public function testEmitEventDoesNotImplicitCreateEmitter(): void {
       $aggregation = new Aggregation_TestProxy();
       $aggregation->emitEvent('dummy');
-      $reflection = new \ReflectionClass($aggregation);
+      $reflection = new ReflectionClass($aggregation);
       $property = $reflection->getProperty('_eventEmitter');
       $property->setAccessible(true);
       $this->assertNull($property->getValue($aggregation));
@@ -52,18 +44,18 @@ namespace Carica\Io\Event\Emitter {
 
     }
 
-    public function testAttachEventUsingImportedMagicMethod() {
+    public function testAttachEventUsingImportedMagicMethod(): void {
       $aggregation = new Aggregation_TestProxy();
       $result = FALSE;
-      $aggregation->onTest(function() use (&$result) { $result = TRUE; });
+      $aggregation->onTest(static function() use (&$result) { $result = TRUE; });
       $aggregation->emitEvent('test');
       $this->assertTrue($result);
     }
 
-    public function testAttachEventUsingOwnMagicMethod() {
+    public function testAttachEventUsingOwnMagicMethod(): void {
       $aggregation = new Aggregation_TestProxyWithCall();
       $result = FALSE;
-      $aggregation->onTest(function() use (&$result) { $result = TRUE; });
+      $aggregation->onTest(static function() use (&$result) { $result = TRUE; });
       $aggregation->events()->emit('test');
       $this->assertTrue($result);
     }

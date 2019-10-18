@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Carica\Io\Network\HTTP {
 
   use LogicException;
+  use UnexpectedValueException;
 
   /**
    * @property string $method
@@ -111,7 +112,7 @@ namespace Carica\Io\Network\HTTP {
     public function parseHeader(string $string): void {
       try {
         $this->_headers[] = $string;
-      } catch (\UnexpectedValueException $e) {
+      } catch (UnexpectedValueException $e) {
         // ignore invalid headers
       }
     }

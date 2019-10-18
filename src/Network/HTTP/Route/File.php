@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Carica\Io\Network\HTTP\Route {
 
   use Carica\Io\Network\HTTP\Response as HTTPResponse;
+  use LogicException;
   use SplFileInfo;
   use Carica\Io\File\Access as FileAccess;
   use Carica\Io\File\HasAccess as HasFileAccess;
@@ -29,7 +30,7 @@ namespace Carica\Io\Network\HTTP\Route {
         $this->_file = $file;
         return;
       }
-      throw new \LogicException(
+      throw new LogicException(
         sprintf(
          'Invalid file: "%s" not found.',
          $file

@@ -5,6 +5,7 @@ namespace Carica\Io\Network\HTTP\Route\Target {
   include_once(__DIR__.'/../../../../Bootstrap.php');
 
   use Carica\Io\Network\HTTP\Request;
+  use PHPUnit\Framework\MockObject\MockObject;
   use PHPUnit\Framework\TestCase;
 
   class AnyTest extends TestCase {
@@ -12,10 +13,10 @@ namespace Carica\Io\Network\HTTP\Route\Target {
     /**
      * @covers \Carica\Io\Network\HTTP\Route\Target\Any
      */
-    public function testWithoutLimitation() {
+    public function testWithoutLimitation(): void {
       $result = FALSE;
       $target = new Any(
-        function() use (&$result) { $result = TRUE; }
+        static function() use (&$result) { $result = TRUE; }
       );
       $target($this->getRequestFixture());
       $this->assertTrue($result);
@@ -24,10 +25,10 @@ namespace Carica\Io\Network\HTTP\Route\Target {
     /**
      * @covers \Carica\Io\Network\HTTP\Route\Target\Any
      */
-    public function testMethodsIncludeCurrent() {
+    public function testMethodsIncludeCurrent(): void {
       $result = FALSE;
       $target = new Any(
-        function() use (&$result) { $result = TRUE; }
+        static function() use (&$result) { $result = TRUE; }
       );
       $target->methods('GET POST');
       $target($this->getRequestFixture('POST'));
@@ -37,10 +38,10 @@ namespace Carica\Io\Network\HTTP\Route\Target {
     /**
      * @covers \Carica\Io\Network\HTTP\Route\Target\Any
      */
-    public function testMethodsNotIncludeCurrent() {
+    public function testMethodsNotIncludeCurrent(): void {
       $result = FALSE;
       $target = new Any(
-        function() use (&$result) { $result = TRUE; }
+        static function() use (&$result) { $result = TRUE; }
       );
       $target->methods('POST');
       $target($this->getRequestFixture('GET'));
@@ -50,15 +51,18 @@ namespace Carica\Io\Network\HTTP\Route\Target {
     /**
      * @covers \Carica\Io\Network\HTTP\Route\Target\Any
      */
-    public function testMethodsWithInvalidValue() {
-      $result = FALSE;
+    public function testMethodsWithInvalidValue(): void {
       $target = new Any(
-        function() use (&$result) { $result = TRUE; }
+        static function() { }
       );
       $this->expectException(\InvalidArgumentException::class);
       $target->methods('123');
     }
 
+    /**
+     * @param string $method
+     * @return MockObject|Request
+     */
     private function getRequestFixture($method = 'GET') {
       $request = $this
         ->getMockBuilder(Request::class)
@@ -68,7 +72,7 @@ namespace Carica\Io\Network\HTTP\Route\Target {
         ->expects($this->any())
         ->method('__get')
         ->with('method')
-        ->will($this->returnValue($method));
+        ->willReturn($method);
       return $request;
     }
   }

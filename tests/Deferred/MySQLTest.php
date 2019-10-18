@@ -5,7 +5,7 @@ namespace Carica\Io\Deferred {
   include_once(__DIR__.'/../Bootstrap.php');
 
   use Carica\Io;
-  use phpDocumentor\Reflection\Types\This;
+  use PHPUnit\Framework\MockObject\MockObject;
   use PHPUnit\Framework\TestCase;
 
   /**
@@ -19,7 +19,7 @@ namespace Carica\Io\Deferred {
       }
     }
 
-    public function testCreatingPromiseThatGetsRejected() {
+    public function testCreatingPromiseThatGetsRejected(): void {
       $mysql = new MySQL(
         $this->getLoopFixture(),
         $this->getMySQLConnectionFixture(FALSE)
@@ -28,7 +28,7 @@ namespace Carica\Io\Deferred {
       $this->assertEquals(Io\Deferred::STATE_REJECTED, $promise->state());
     }
 
-    public function testCreatingPromiseThatGetsResolved() {
+    public function testCreatingPromiseThatGetsResolved(): void {
       $mysql = new MySQL(
         $this->getLoopFixture(),
         $this->getMySQLConnectionFixture(TRUE)
@@ -37,6 +37,9 @@ namespace Carica\Io\Deferred {
       $this->assertEquals(Io\Deferred::STATE_RESOLVED, $promise->state());
     }
 
+    /**
+     * @return Io\Event\Loop|MockObject
+     */
     public function getLoopFixture() {
       $loop = $this->createMock(Io\Event\Loop::class);
       $loop
@@ -51,12 +54,16 @@ namespace Carica\Io\Deferred {
       return $loop;
     }
 
+    /**
+     * @param bool $result
+     * @return \mysqli|Io\Event\Loop|MockObject
+     */
     public function getMySQLConnectionFixture($result = FALSE) {
       // seems that mysqli is not completely mockable, we use a pseudo class
       $mysqli = $this
-        ->getMockBuilder('mysqli_just_for_mocking')
-        ->disableOriginalConstructor()
-        ->setMethods(array('query', 'poll', 'reap_async_query'))
+        ->getMockBuilder(mysqli_just_for_mocking::class)
+        ->allowMockingUnknownTypes()
+        ->addMethods(array('query', 'poll', 'reap_async_query'))
         ->getMock();
       $mysqli
         ->expects($this->once())
@@ -79,5 +86,9 @@ namespace Carica\Io\Deferred {
         ->willReturn($result);
       return $mysqli;
     }
+  }
+
+  interface mysqli_just_for_mocking {
+
   }
 }

@@ -147,9 +147,9 @@ namespace Carica\Io {
     /**
      * Notify the object about the progress
      * @param array $arguments
-     * @return PromiseLike
+     * @return $this
      */
-    public function notify(...$arguments): PromiseLike {
+    public function notify(...$arguments): self {
       if ($this->_state === self::STATE_PENDING) {
         $this->_progressArguments = $arguments;
         $callback = $this->_progress;

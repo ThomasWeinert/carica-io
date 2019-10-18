@@ -5,6 +5,7 @@ namespace Carica\Io\Network\HTTP\Route\Target {
   include_once(__DIR__.'/../../../../Bootstrap.php');
 
   use Carica\Io\Network\HTTP;
+  use PHPUnit\Framework\MockObject\MockObject;
   use PHPUnit\Framework\TestCase;
 
   class StartsWithTest extends TestCase {
@@ -13,10 +14,10 @@ namespace Carica\Io\Network\HTTP\Route\Target {
      * @covers \Carica\Io\Network\HTTP\Route\Target\StartsWith
      * @dataProvider provideValidPaths
      */
-    public function testWithValidPaths($path, $expectedParameters) {
+    public function testWithValidPaths($path, $expectedParameters): void {
       $result = FALSE;
       $target = new StartsWith(
-        function(HTTP\Request $request, $parameters) use (&$result) {
+        static function(HTTP\Request $request, $parameters) use (&$result) {
           $result = $parameters;
           return TRUE;
         },
@@ -26,7 +27,7 @@ namespace Carica\Io\Network\HTTP\Route\Target {
       $this->assertEquals($expectedParameters, $result);
     }
 
-    public static function provideValidPaths(){
+    public static function provideValidPaths(): array {
       return array(
         array('/foo/bar', array()),
         array('/foo/{group}', array('group' => 'bar'))
@@ -36,10 +37,9 @@ namespace Carica\Io\Network\HTTP\Route\Target {
     /**
      * @covers \Carica\Io\Network\HTTP\Route\Target\StartsWith
      */
-    public function testWithInvalidPaths() {
-      $result = FALSE;
+    public function testWithInvalidPaths(): void {
       $target = new Match(
-        function(HTTP\Request $request, $parameters) use (&$result) {
+        static function() {
           return TRUE;
         },
         '/bar/foo'
@@ -47,6 +47,9 @@ namespace Carica\Io\Network\HTTP\Route\Target {
       $this->assertFalse($target($this->getRequestFixture()));
     }
 
+    /**
+     * @return MockObject|HTTP\Request
+     */
     private function getRequestFixture() {
       $request = $this
         ->getMockBuilder(HTTP\Request::class)
@@ -55,13 +58,11 @@ namespace Carica\Io\Network\HTTP\Route\Target {
       $request
         ->expects($this->any())
         ->method('__get')
-        ->will(
-          $this->returnValueMap(
-            array(
-              array('method', 'GET'),
-              array('path', '/foo/bar/file.html')
-            )
-          )
+        ->willReturnMap(
+          [
+            ['method', 'GET'],
+            ['path', '/foo/bar/file.html']
+          ]
         );
       return $request;
     }

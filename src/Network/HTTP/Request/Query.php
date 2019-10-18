@@ -12,13 +12,13 @@ namespace Carica\Io\Network\HTTP\Request {
 
   class Query implements Countable, ArrayAccess, IteratorAggregate {
 
-    private $_data = array();
+    private $_data = [];
 
     public function __construct(string $string = '') {
       $this->setQueryString($string);
     }
 
-    public function setQueryString(string $string) {
+    public function setQueryString(string $string): void {
       $attributes = explode('&', $string);
       foreach ($attributes as $attribute) {
         if (empty($attribute)) {

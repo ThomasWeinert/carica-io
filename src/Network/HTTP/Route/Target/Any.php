@@ -5,6 +5,7 @@ namespace Carica\Io\Network\HTTP\Route\Target {
 
   use Carica\Io\Network\HTTP\Request as HTTPRequest;
   use Carica\Io\Network\HTTP\Route\Target as RouteTarget;
+  use InvalidArgumentException;
 
   class Any extends RouteTarget {
 
@@ -21,7 +22,7 @@ namespace Carica\Io\Network\HTTP\Route\Target {
           if (preg_match('(^[A-Z]{3,}$)', $method)) {
             $this->_methods[] = $method;
           } else {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
               sprintf('Invalid http method name: "%s"', $method)
             );
           }

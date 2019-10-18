@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io {
 
@@ -9,24 +10,24 @@ namespace Carica\Io {
   class StreamTest extends TestCase {
 
     public function setUp(): void {
-      class_exists(\Carica\Io\Stream::class);
+      class_exists(Stream::class);
     }
 
-    function testEncodeBinaryFromArray() {
+    public function testEncodeBinaryFromArray(): void {
       $bytes = new ByteArray();
       $bytes->fromHexString('FFF1F2', TRUE);
       $this->assertEquals(
         (string)$bytes,
-        \Carica\Io\encodeBinaryFromArray([0xFF, 0xF1, 0xF2])
+        encodeBinaryFromArray([0xFF, 0xF1, 0xF2])
       );
     }
 
-    function testDecodeBinaryToArray() {
+    public function testDecodeBinaryToArray(): void {
       $bytes = new ByteArray();
       $bytes->fromHexString('FFF1F2', TRUE);
       $this->assertEquals(
         [0xFF, 0xF1, 0xF2],
-        \Carica\Io\decodeBinaryToArray((string)$bytes)
+        decodeBinaryToArray((string)$bytes)
       );
     }
   }

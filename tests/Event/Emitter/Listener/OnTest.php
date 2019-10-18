@@ -7,16 +7,17 @@ namespace Carica\Io\Event\Emitter\Listener {
 
   include_once(__DIR__.'/../../../Bootstrap.php');
 
+  /**
+   * @covers \Carica\Io\Event\Emitter\Listener\On
+   */
   class OnTest extends TestCase {
 
     public $calledCallback = FALSE;
 
-    /**
-     * @covers \Carica\Io\Event\Emitter\Listener\On::__construct
-     */
-    public function testConstructor() {
+    public function testConstructor(): void {
       $emitter = $this->createMock(Emitter::class);
-      $callback = function() {};
+      $callback = static function () {
+      };
       $event = new On($emitter, 'foo', $callback);
       $this->assertSame($emitter, $event->emitter);
       $this->assertEquals('foo', $event->event);
@@ -24,91 +25,108 @@ namespace Carica\Io\Event\Emitter\Listener {
     }
 
     /**
-     * @covers \Carica\Io\Event\Emitter\Listener\On::__isset
+     * @param $property
      * @dataProvider provideValidProperties
      */
-    public function testPropertyIsset($property) {
-      $event = new On($this->createMock(Emitter::class), 'foo', function() {});
+    public function testPropertyIsset($property): void {
+      $event = new On(
+        $this->createMock(Emitter::class),
+        'foo',
+        static function () {
+        }
+      );
       $this->assertTrue(isset($event->$property));
     }
 
-    /**
-     * @covers \Carica\Io\Event\Emitter\Listener\On::__isset
-     */
-    public function testPropertyIssetWithInvalidPropertyExpectingFalse() {
-      $event = new On($this->createMock(Emitter::class), 'foo', function() {});
+    public function testPropertyIssetWithInvalidPropertyExpectingFalse(): void {
+      $event = new On(
+        $this->createMock(Emitter::class),
+        'foo',
+        static function () {
+        }
+      );
       $this->assertFalse(isset($event->INVALID_PROPERTY));
     }
 
-    /**
-     * @covers \Carica\Io\Event\Emitter\Listener\On::__get
-     */
-    public function testGetPropertyEmitter() {
-      $event = new On($emitter = $this->createMock(Emitter::class), 'foo', function() {});
+    public function testGetPropertyEmitter(): void {
+      $event = new On(
+        $emitter = $this->createMock(Emitter::class),
+        'foo',
+        static function () {
+        }
+      );
       $this->assertSame($emitter, $event->emitter);
     }
 
-    /**
-     * @covers \Carica\Io\Event\Emitter\Listener\On::__get
-     */
-    public function testGetPropertyEvent() {
-      $event = new On($this->createMock(Emitter::class), 'foo', function() {});
+    public function testGetPropertyEvent(): void {
+      $event = new On(
+        $this->createMock(Emitter::class),
+        'foo',
+        static function () {
+        }
+      );
       $this->assertEquals('foo', $event->event);
     }
 
-    /**
-     * @covers \Carica\Io\Event\Emitter\Listener\On::__get
-     */
-    public function testGetPropertyCallback() {
-      $event = new On($this->createMock(Emitter::class), 'foo', $callback = function() {});
+    public function testGetPropertyCallback(): void {
+      $event = new On(
+        $this->createMock(Emitter::class),
+        'foo',
+        $callback = static function () {
+        }
+      );
       $this->assertSame($callback, $event->callback);
     }
 
-    /**
-     * @covers \Carica\Io\Event\Emitter\Listener\On::getCallback
-     */
-    public function testGetCallback() {
-      $event = new On($this->createMock(Emitter::class), 'foo', $callback = function() {});
+    public function testGetCallback(): void {
+      $event = new On(
+        $this->createMock(Emitter::class),
+        'foo',
+        $callback = static function () {
+        }
+      );
       $this->assertSame($callback, $event->getCallback());
     }
 
-    /**
-     * @covers \Carica\Io\Event\Emitter\Listener\On::__get
-     */
-    public function testGetInvalidPropertyExpectingException() {
-      $event = new On($this->createMock(Emitter::class), 'foo', function() {});
+    public function testGetInvalidPropertyExpectingException(): void {
+      $event = new On(
+        $this->createMock(Emitter::class),
+        'foo',
+        static function () {
+        }
+      );
       $this->expectException(\LogicException::class);
-      $dummy = $event->INVALID_PROPERTY;
+      $event->INVALID_PROPERTY;
     }
 
-    /**
-     * @covers \Carica\Io\Event\Emitter\Listener\On::__set
-     */
-    public function testSetIsBlockedExpectingException() {
-      $event = new On($this->createMock(Emitter::class), 'foo', function() {});
+    public function testSetIsBlockedExpectingException(): void {
+      $event = new On(
+        $this->createMock(Emitter::class),
+        'foo',
+        static function () {
+        }
+      );
       $this->expectException(\LogicException::class);
       $event->emitter = $this->createMock(Emitter::class);
     }
 
-    /**
-     * @covers \Carica\Io\Event\Emitter\Listener\On::__unset
-     */
-    public function testUnsetIsBlockedExpectingException() {
-      $event = new On($this->createMock(Emitter::class), 'foo', function() {});
+    public function testUnsetIsBlockedExpectingException(): void {
+      $event = new On(
+        $this->createMock(Emitter::class),
+        'foo',
+        static function () {
+        }
+      );
       $this->expectException(\LogicException::class);
       unset($event->emitter);
     }
 
-    /**
-     * @covers \Carica\Io\Event\Emitter\Listener\On::__invoke
-     */
-    public function testInvokeCallsCallback() {
-      $that = $this;
+    public function testInvokeCallsCallback(): void {
       $event = new On(
         $this->createMock(Emitter::class),
         'foo',
-        function() use ($that) {
-          $that->calledCallback = TRUE;
+        function () {
+          $this->calledCallback = TRUE;
         }
       );
       $event();
@@ -119,12 +137,12 @@ namespace Carica\Io\Event\Emitter\Listener {
      * Data Provider
      *************************/
 
-    public static function provideValidProperties() {
-      return array(
-        array('emitter'),
-        array('event'),
-        array('callback')
-      );
+    public static function provideValidProperties(): array {
+      return [
+        ['emitter'],
+        ['event'],
+        ['callback']
+      ];
     }
   }
 }

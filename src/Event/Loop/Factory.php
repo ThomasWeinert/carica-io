@@ -6,6 +6,7 @@ namespace Carica\Io\Event\Loop {
   use Carica\Io\Deferred\PromiseLike;
   use Carica\Io\Event\Loop as EventLoop;
   use Carica\Io\Event\Loop\StreamSelect as StreamSelectLoop;
+  use LogicException;
 
   class Factory {
 
@@ -27,7 +28,7 @@ namespace Carica\Io\Event\Loop {
           if ($loop instanceof EventLoop) {
             return self::$_loopInstance = $loop;
           }
-          throw new \LogicException('Loop generator callback did not return a loop instance.');
+          throw new LogicException('Loop generator callback did not return a loop instance.');
         }
         return self::$_loopInstance = new StreamSelectLoop();
       }

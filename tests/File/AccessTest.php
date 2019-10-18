@@ -6,15 +6,15 @@ namespace Carica\Io\File {
 
   include_once(__DIR__.'/../Bootstrap.php');
 
-  class FileAccessTest extends TestCase {
+  class AccessTest extends TestCase {
 
     /**
      * @covers \Carica\Io\File\Access::getInfo
      */
-    public function testGetInfo() {
+    public function testGetInfo(): void {
       $fileSystem = new Access();
       $info = $fileSystem->getInfo(__FILE__);
-      $this->assertInstanceOf('splFileInfo', $info);
+      $this->assertNotNull($info);
       $this->assertEquals(
         __FILE__,
         (string)$info
@@ -24,7 +24,7 @@ namespace Carica\Io\File {
     /**
      * @covers \Carica\Io\File\Access::getFile
      */
-    public function testGetFile() {
+    public function testGetFile(): void {
       $fileSystem = new Access();
       $file = $fileSystem->getFile(__FILE__);
       $this->assertInstanceOf('splFileObject', $file);
@@ -33,7 +33,7 @@ namespace Carica\Io\File {
     /**
      * @covers \Carica\Io\File\Access::getFile
      */
-    public function testGetFileWithContext() {
+    public function testGetFileWithContext(): void {
       $fileSystem = new Access();
       $file = $fileSystem->getFile(__FILE__, 'r', stream_context_create(array()));
       $this->assertInstanceOf('splFileObject', $file);
@@ -42,7 +42,7 @@ namespace Carica\Io\File {
     /**
      * @covers \Carica\Io\File\Access::getFileResource
      */
-    public function testGetFileResource() {
+    public function testGetFileResource(): void {
       $fileSystem = new Access();
       $this->assertIsResource($fh = $fileSystem->getFileResource(__FILE__));
       fclose($fh);
@@ -51,7 +51,7 @@ namespace Carica\Io\File {
     /**
      * @covers \Carica\Io\File\Access::getFileResource
      */
-    public function testGetFileResourceWithContext() {
+    public function testGetFileResourceWithContext(): void {
       $fileSystem = new Access();
       $this->assertIsResource(
         $fh = $fileSystem->getFileResource(__FILE__, 'r', stream_context_create(array()))
@@ -62,7 +62,7 @@ namespace Carica\Io\File {
     /**
      * @covers \Carica\Io\File\Access::getMimeType
      */
-    public function testGetMimeTypeExpectingPhp() {
+    public function testGetMimeTypeExpectingPhp(): void {
       if (!function_exists('mime_content_type')) {
         $this->markTestSkipped('Function "mime_content_type()" not available.');
       }
@@ -75,7 +75,7 @@ namespace Carica\Io\File {
     /**
      * @covers \Carica\Io\File\Access::getMimeType
      */
-    public function testGetMimeTypeUsingExtensionMapping() {
+    public function testGetMimeTypeUsingExtensionMapping(): void {
       $fileSystem = new Access();
       $this->assertEquals(
         'text/css', $fileSystem->getMimeType('sample.css')
@@ -85,7 +85,7 @@ namespace Carica\Io\File {
     /**
      * @covers \Carica\Io\File\Access::getRealPath
      */
-    public function testGetRealPath() {
+    public function testGetRealPath(): void {
       $fileSystem = new Access();
       $this->assertEquals(
         __FILE__,

@@ -12,7 +12,7 @@ namespace Carica\Io\File\Access {
     /**
      * @covers \Carica\Io\File\Access\Aggregation
      */
-    public function testGetAfterSet() {
+    public function testGetAfterSet(): void {
       $aggregation = new Aggregation_TestProxy();
       $aggregation->fileAccess($fileAccess = $this->createMock(File\Access::class));
       $this->assertSame($fileAccess, $aggregation->fileAccess());
@@ -21,9 +21,9 @@ namespace Carica\Io\File\Access {
     /**
      * @covers \Carica\Io\File\Access\Aggregation
      */
-    public function testGetImplicitCreate() {
+    public function testGetImplicitCreate(): void {
       $aggregation = new Aggregation_TestProxy();
-      $this->assertInstanceOf(File\Access::class, $aggregation->fileAccess());
+      $this->assertNotNull($aggregation->fileAccess());
     }
   }
 

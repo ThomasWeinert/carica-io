@@ -9,6 +9,8 @@ namespace Carica\Io\Network\HTTP\Route {
   use Carica\Io\Network\HTTP\Response as HTTPResponse;
   use Carica\Io\Network\HTTP\Response\Error as ErrorResponse;
   use Carica\Io\Network\HTTP\Response\Content as ResponseContent;
+  use LogicException;
+  use SplFileInfo;
 
   class Directory implements HasFileAccess {
 
@@ -36,7 +38,7 @@ namespace Carica\Io\Network\HTTP\Route {
         $this->_documentRoot = $directory;
         return;
       }
-      throw new \LogicException(
+      throw new LogicException(
         sprintf(
           'Invalid document root: Directory "%s" not found.',
           $documentRoot
@@ -71,13 +73,14 @@ namespace Carica\Io\Network\HTTP\Route {
 
     /**
      * @param HTTPRequest $request
-     * @return \SplFileInfo|FALSE
+     * @return SplFileInfo|FALSE
      */
     private function getFileInfo(HTTPRequest $request) {
-      if ($localFile = $this->fileAccess()->getRealPath($this->_documentRoot.$request->path)) {
-        if (0 === strpos($localFile, $this->_documentRoot.DIRECTORY_SEPARATOR)) {
-          return $this->fileAccess()->getInfo($localFile);
-        }
+      if (
+        ($localFile = $this->fileAccess()->getRealPath($this->_documentRoot.$request->path)) &&
+        (0 === strpos($localFile, $this->_documentRoot.DIRECTORY_SEPARATOR))
+      ) {
+        return $this->fileAccess()->getInfo($localFile);
       }
       return FALSE;
     }

@@ -26,7 +26,7 @@ namespace Carica\Io {
   }
 
   function decodeBinaryToArray(string $data): array {
-    return \array_slice(\unpack('C*', "\0".$data), 1);
+    return array_slice(unpack('C*', "\0".$data), 1);
   }
 
 }

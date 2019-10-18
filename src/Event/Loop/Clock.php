@@ -56,7 +56,7 @@ namespace Carica\Io\Event\Loop {
     }
 
     public function setStreamReader(Callable $callback, $stream): EventLoopListener {
-      $listener = new StreamSelect\Listener\StreamReader($this, function() {}, $stream);
+      $listener = new StreamSelect\Listener\StreamReader($this, static function() {}, $stream);
       return $this->_streams[spl_object_hash($listener)] = $listener;
     }
 
@@ -90,7 +90,7 @@ namespace Carica\Io\Event\Loop {
     }
 
     public function count(): int {
-      return \count($this->_timers) + \count($this->_streams);
+      return count($this->_timers) + count($this->_streams);
     }
 
     public function getNow(): int {

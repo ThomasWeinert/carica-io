@@ -11,9 +11,9 @@ namespace Carica\Io\Network\HTTP {
     /**
      * @covers \Carica\Io\Network\HTTP\Route
      */
-    public function testAny() {
+    public function testAny(): void {
       $route = new Route();
-      $route->any($function = function() {});
+      $route->any($function = static function() {});
       $this->assertEquals(
         array(
           new Route\Target\Any($function)
@@ -25,9 +25,9 @@ namespace Carica\Io\Network\HTTP {
     /**
      * @covers \Carica\Io\Network\HTTP\Route
      */
-    public function testMatch() {
+    public function testMatch(): void {
       $route = new Route();
-      $route->match('/path', $function = function() {});
+      $route->match('/path', $function = static function() {});
       $this->assertEquals(
         array(
           new Route\Target\Match($function, '/path')
@@ -39,9 +39,9 @@ namespace Carica\Io\Network\HTTP {
     /**
      * @covers \Carica\Io\Network\HTTP\Route
      */
-    public function testStartsWith() {
+    public function testStartsWith(): void {
       $route = new Route();
-      $route->startsWith('/path', $function = function() {});
+      $route->startsWith('/path', $function = static function() {});
       $this->assertEquals(
         array(
           new Route\Target\StartsWith($function, '/path')
@@ -53,7 +53,7 @@ namespace Carica\Io\Network\HTTP {
     /**
      * @covers \Carica\Io\Network\HTTP\Route
      */
-    public function testRoutingOneMatchingTarget() {
+    public function testRoutingOneMatchingTarget(): void {
       $request = $this
         ->getMockBuilder(Request::class)
         ->disableOriginalConstructor()
@@ -65,7 +65,7 @@ namespace Carica\Io\Network\HTTP {
 
       $route = new Route();
       $route->any(
-        function() use ($response) {
+        static function() use ($response) {
           return $response;
         }
       );
@@ -75,7 +75,7 @@ namespace Carica\Io\Network\HTTP {
     /**
      * @covers \Carica\Io\Network\HTTP\Route
      */
-    public function testRoutingNoMatchingTarget() {
+    public function testRoutingNoMatchingTarget(): void {
       $request = $this
         ->getMockBuilder(Request::class)
         ->disableOriginalConstructor()
@@ -83,7 +83,7 @@ namespace Carica\Io\Network\HTTP {
 
       $route = new Route();
       $route->any(
-        function() {
+        static function() {
           return NULL;
         }
       );

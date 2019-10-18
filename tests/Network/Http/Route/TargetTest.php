@@ -12,21 +12,21 @@ namespace Carica\Io\Network\HTTP\Route {
     /**
      * @covers \Carica\Io\Network\HTTP\Route\Target
      */
-    public function testConstructor() {
-      $target = new Target_TestProxy($callback = function() {});
+    public function testConstructor(): void {
+      $target = new Target_TestProxy($callback = static function() {});
       $this->assertSame($callback, $target->getCallback());
     }
 
     /**
      * @covers \Carica\Io\Network\HTTP\Route\Target
      */
-    public function testCallableInterfaceVaildationSuccessful() {
+    public function testCallableInterfaceValidationSuccessful(): void {
       $request = $this
         ->getMockBuilder(HTTP\Request::class)
         ->disableOriginalConstructor()
         ->getMock();
       $target = new Target_TestProxy(
-        function(HTTP\Request $request, array $parameters) use (&$result) {
+        static function() {
           return TRUE;
         }
       );
@@ -36,13 +36,13 @@ namespace Carica\Io\Network\HTTP\Route {
     /**
      * @covers \Carica\Io\Network\HTTP\Route\Target
      */
-    public function testCallableInterfaceVaildationFailed() {
+    public function testCallableInterfaceVaildationFailed(): void {
       $request = $this
         ->getMockBuilder(HTTP\Request::class)
         ->disableOriginalConstructor()
         ->getMock();
       $target = new Target_TestProxy(
-        function(HTTP\Request $request, array $parameters) use (&$result) {
+        static function() {
           return TRUE;
         }
       );
@@ -53,7 +53,7 @@ namespace Carica\Io\Network\HTTP\Route {
 
   class Target_TestProxy extends Target {
 
-    public $validationResult = NULL;
+    public $validationResult;
 
     public function validate(HTTP\Request $request) {
       return $this->validationResult;

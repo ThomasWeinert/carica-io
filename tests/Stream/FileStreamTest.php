@@ -13,7 +13,7 @@ namespace Carica\Io\Stream {
    */
   class FileStreamTest extends TestCase {
 
-    public function testOpen() {
+    public function testOpen(): void {
       $loop = $this->createMock(Loop::class);
       $loop
         ->expects($this->once())
@@ -25,7 +25,7 @@ namespace Carica\Io\Stream {
       $this->assertIsResource($file->resource());
     }
 
-    public function testOpenExpectingError() {
+    public function testOpenExpectingError(): void {
       $loop = $this->createMock(Loop::class);
       $events = $this
         ->getMockBuilder(Emitter::class)
@@ -42,7 +42,7 @@ namespace Carica\Io\Stream {
       $this->assertNull($file->resource());
     }
 
-    public function testRead() {
+    public function testRead(): void {
       $loop = $this->createMock(Loop::class);
       $loop
         ->expects($this->once())
@@ -64,13 +64,13 @@ namespace Carica\Io\Stream {
       $this->assertEquals('Hello World!', $file->read());
     }
 
-    public function testReadWithoutResource() {
+    public function testReadWithoutResource(): void {
       $loop = $this->createMock(Loop::class);
       $file = new FileStream($loop, __DIR__.'/TestData/sample.txt');
       $this->assertEquals('', $file->read());
     }
 
-    public function testWriteWithoutResource() {
+    public function testWriteWithoutResource(): void {
       $loop = $this->createMock(Loop::class);
       $file = new FileStream($loop, __DIR__.'/TestData/sample.txt');
       $this->assertFalse($file->write('foobar'));

@@ -5,6 +5,7 @@ namespace Carica\Io\Event\Emitter {
 
   use Carica\Io\Event;
   use Carica\Io\Event\Emitter as EventEmitter;
+  use InvalidArgumentException;
   use LogicException;
   use UnexpectedValueException;
 
@@ -77,7 +78,7 @@ namespace Carica\Io\Event\Emitter {
               is_callable($arguments[0])
             )
           ) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
               'No callable for event provided.'
             );
           }
