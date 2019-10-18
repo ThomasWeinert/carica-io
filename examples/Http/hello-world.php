@@ -1,7 +1,7 @@
 <?php
 include(__DIR__.'/../../vendor/autoload.php');
 
-use Carica\Io\Network\Http;
+use Carica\Io\Network\HTTP;
 
 $loop = Carica\Io\Event\Loop\Factory::get();
 
@@ -9,10 +9,10 @@ $server = new Carica\Io\Network\Server($loop);
 $server->events()->on(
   Carica\Io\Network\Server::EVENT_CONNECTION,
   static function ($stream) use ($loop) {
-    $request = new Http\Connection($loop, $stream);
+    $request = new HTTP\Connection($loop, $stream);
     $request->events()->on(
-      Http\Connection::EVENT_REQUEST_RECEIVED,
-      static function (Http\Request $request) {
+      HTTP\Connection::EVENT_REQUEST_RECEIVED,
+      static function (HTTP\Request $request) {
         echo $request->method.' '.$request->url."\n";
         $request->connection()->write(
           "HTTP/1.1 200 OK\r\n".

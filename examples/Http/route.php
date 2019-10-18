@@ -1,14 +1,14 @@
 <?php
 include(__DIR__.'/../../vendor/autoload.php');
 
-use Carica\Io\Network\Http;
+use Carica\Io\Network\HTTP;
 
-$route = new Carica\Io\Network\Http\Route();
+$route = new Carica\Io\Network\HTTP\Route();
 $route->match(
   '/hello/{name}',
-  static function (Http\Request $request, $parameters) {
+  static function (HTTP\Request $request, $parameters) {
     $response = $request->createResponse(
-      new Http\Response\Content\Text(
+      new HTTP\Response\Content\Text(
         'Hello '.$parameters['name']."!\n"
       )
     );
@@ -17,9 +17,9 @@ $route->match(
 );
 $route->match(
   '/agent',
-  static function (Http\Request $request) {
+  static function (HTTP\Request $request) {
     $response = $request->createResponse(
-      new Http\Response\Content\Text(
+      new HTTP\Response\Content\Text(
         $request->headers['User-Agent']
       )
     );
@@ -28,8 +28,8 @@ $route->match(
 );
 $route->match(
   '/xml',
-  static function (Http\Request $request) {
-    $response = $request->createResponse($content = new Http\Response\Content\XML());
+  static function (HTTP\Request $request) {
+    $response = $request->createResponse($content = new HTTP\Response\Content\XML());
     $document = $content->document;
     $document->appendChild($root = $document->createElement('response'));
     foreach ($request->query as $name => $value) {
@@ -42,12 +42,12 @@ $route->match(
     return $response;
   }
 );
-$route->match('/hello', new Http\Route\File(__DIR__.'/files/hello.html'));
-$route->startsWith('/files', new Http\Route\Directory(__DIR__));
+$route->match('/hello', new HTTP\Route\File(__DIR__.'/files/hello.html'));
+$route->startsWith('/files', new HTTP\Route\Directory(__DIR__));
 
 $loop = Carica\Io\Event\Loop\Factory::get();
 
-$server = new Carica\Io\Network\Http\Server($loop, $route);
+$server = new Carica\Io\Network\HTTP\Server($loop, $route);
 $server->listen();
 
 $loop->run();

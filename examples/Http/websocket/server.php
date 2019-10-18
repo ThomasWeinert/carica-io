@@ -1,22 +1,22 @@
 <?php
 include(__DIR__.'/../../../vendor/autoload.php');
 
-use Carica\Io\Network\Http;
+use Carica\Io\Network\HTTP;
 
 $loop = Carica\Io\Event\Loop\Factory::get();
 
-$route = new Carica\Io\Network\Http\Route();
-$route->match('/', new Http\Route\File(__DIR__.'/index.html'));
+$route = new Carica\Io\Network\HTTP\Route();
+$route->match('/', new HTTP\Route\File(__DIR__.'/index.html'));
 $route->match(
   '/data',
-  $webSocket = new Http\Route\WebSocket(
+  $webSocket = new HTTP\Route\WebSocket(
     static function($data) {
       var_dump($data);
     }
   )
 );
 
-$server = new Carica\Io\Network\Http\Server($loop, $route);
+$server = new Carica\Io\Network\HTTP\Server($loop, $route);
 $server->listen();
 
 $loop->setInterval(

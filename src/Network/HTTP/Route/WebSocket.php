@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace Carica\Io\Network\Http\Route {
+namespace Carica\Io\Network\HTTP\Route {
 
   use Carica\Io\Event\Emitter as EventEmitter;
-  use Carica\Io\Network\Http\Connection;
-  use Carica\Io\Network\Http\Headers;
-  use Carica\Io\Network\Http\Request;
-  use Carica\Io\Network\Http\Response;
-  use Carica\Io\Network\Http\Response as HTTPResponse;
+  use Carica\Io\Network\HTTP\Connection;
+  use Carica\Io\Network\HTTP\Headers;
+  use Carica\Io\Network\HTTP\Request;
+  use Carica\Io\Network\HTTP\Response;
+  use Carica\Io\Network\HTTP\Response as HTTPResponse;
 
   class WebSocket {
 

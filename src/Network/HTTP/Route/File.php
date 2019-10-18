@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace Carica\Io\Network\Http\Route {
+namespace Carica\Io\Network\HTTP\Route {
 
-  use Carica\Io\Network\Http\Response as HTTPResponse;
+  use Carica\Io\Network\HTTP\Response as HTTPResponse;
   use SplFileInfo;
   use Carica\Io\File\Access as FileAccess;
   use Carica\Io\File\HasAccess as HasFileAccess;
-  use Carica\Io\Network\Http\Request as HTTPRequest;
-  use Carica\Io\Network\Http\Response\Error as ErrorResponse;
-  use Carica\Io\Network\Http\Response\Content as ResponseContent;
+  use Carica\Io\Network\HTTP\Request as HTTPRequest;
+  use Carica\Io\Network\HTTP\Response\Error as ErrorResponse;
+  use Carica\Io\Network\HTTP\Response\Content as ResponseContent;
 
   class File implements HasFileAccess {
 

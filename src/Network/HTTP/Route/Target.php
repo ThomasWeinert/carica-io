@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Carica\Io\Network\Http\Route {
+namespace Carica\Io\Network\HTTP\Route {
 
-  use Carica\Io\Network\Http\Request as HTTPRequest;
+  use Carica\Io\Network\HTTP\Request as HTTPRequest;
 
   abstract class Target {
 

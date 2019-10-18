@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Carica\Io\Network\Http\Response {
+namespace Carica\Io\Network\HTTP\Response {
 
   use Carica\Io\Deferred\PromiseLike;
   use Carica\Io\Network\Connection as NetworkConnection;

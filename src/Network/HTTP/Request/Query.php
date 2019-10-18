@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Carica\Io\Network\Http\Request {
+namespace Carica\Io\Network\HTTP\Request {
 
   use ArrayAccess;
   use ArrayIterator;

@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Carica\Io\Network\Http\Response\Content {
+namespace Carica\Io\Network\HTTP\Response\Content {
 
-  use Carica\Io\Network\Http\Response;
+  use Carica\Io\Network\HTTP\Response;
   use DOMDocument;
 
   /**

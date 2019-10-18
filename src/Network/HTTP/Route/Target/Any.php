@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Carica\Io\Network\Http\Route\Target {
+namespace Carica\Io\Network\HTTP\Route\Target {
 
-  use Carica\Io\Network\Http\Request as HTTPRequest;
-  use Carica\Io\Network\Http\Route\Target as RouteTarget;
+  use Carica\Io\Network\HTTP\Request as HTTPRequest;
+  use Carica\Io\Network\HTTP\Route\Target as RouteTarget;
 
   class Any extends RouteTarget {
 

@@ -1,16 +1,16 @@
 <?php
 
-namespace Carica\Io\Network\Http\Route\Target {
+namespace Carica\Io\Network\HTTP\Route\Target {
 
   include_once(__DIR__.'/../../../../Bootstrap.php');
 
-  use Carica\Io\Network\Http\Request;
+  use Carica\Io\Network\HTTP\Request;
   use PHPUnit\Framework\TestCase;
 
   class AnyTest extends TestCase {
 
     /**
-     * @covers \Carica\Io\Network\Http\Route\Target\Any
+     * @covers \Carica\Io\Network\HTTP\Route\Target\Any
      */
     public function testWithoutLimitation() {
       $result = FALSE;
@@ -22,7 +22,7 @@ namespace Carica\Io\Network\Http\Route\Target {
     }
 
     /**
-     * @covers \Carica\Io\Network\Http\Route\Target\Any
+     * @covers \Carica\Io\Network\HTTP\Route\Target\Any
      */
     public function testMethodsIncludeCurrent() {
       $result = FALSE;
@@ -35,7 +35,7 @@ namespace Carica\Io\Network\Http\Route\Target {
     }
 
     /**
-     * @covers \Carica\Io\Network\Http\Route\Target\Any
+     * @covers \Carica\Io\Network\HTTP\Route\Target\Any
      */
     public function testMethodsNotIncludeCurrent() {
       $result = FALSE;
@@ -48,7 +48,7 @@ namespace Carica\Io\Network\Http\Route\Target {
     }
 
     /**
-     * @covers \Carica\Io\Network\Http\Route\Target\Any
+     * @covers \Carica\Io\Network\HTTP\Route\Target\Any
      */
     public function testMethodsWithInvalidValue() {
       $result = FALSE;

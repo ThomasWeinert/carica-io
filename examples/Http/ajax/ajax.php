@@ -1,14 +1,14 @@
 <?php
 include(__DIR__.'/../../../vendor/autoload.php');
 
-use Carica\Io\Network\Http;
+use Carica\Io\Network\HTTP;
 
-$route = new Http\Route();
+$route = new HTTP\Route();
 $route->match(
   '/time',
-  static function (Http\Request $request) {
+  static function (HTTP\Request $request) {
     $response = $request->createResponse();
-    $response->content = new Http\Response\Content\XML();
+    $response->content = new HTTP\Response\Content\XML();
     $dom = $response->content->document;
     $dom->appendChild($rootNode = $dom->createElement('time'));
     $rootNode->appendChild($dom->createTextNode(date('Y-m-d H:i:s')));
@@ -17,9 +17,9 @@ $route->match(
 );
 $route->match(
   '/',
-  static function (Http\Request $request) {
+  static function (HTTP\Request $request) {
     $response = $request->createResponse();
-    $response->content = new Http\Response\Content\File(
+    $response->content = new HTTP\Response\Content\File(
       __DIR__.'/index.html', 'text/html', 'utf-8'
     );
     return $response;
@@ -35,7 +35,7 @@ $loop->setInterval(
   5000
 );
 
-$server = new Carica\Io\Network\Http\Server($loop, $route);
+$server = new Carica\Io\Network\HTTP\Server($loop, $route);
 $server->listen(8080);
 
 $loop->run();

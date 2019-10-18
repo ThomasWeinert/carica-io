@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace Carica\Io\Network\Http {
+namespace Carica\Io\Network\HTTP {
 
   use ArrayIterator;
-  use Carica\Io\Network\Http\Route\Target\Any as AnyTarget;
-  use Carica\Io\Network\Http\Route\Target\Match as MatchTarget;
-  use Carica\Io\Network\Http\Route\Target\StartsWith as StartsWithTarget;
+  use Carica\Io\Network\HTTP\Route\Target\Any as AnyTarget;
+  use Carica\Io\Network\HTTP\Route\Target\Match as MatchTarget;
+  use Carica\Io\Network\HTTP\Route\Target\StartsWith as StartsWithTarget;
   use Iterator;
   use IteratorAggregate;
 

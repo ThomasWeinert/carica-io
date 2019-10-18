@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Carica\Io\Network\Http\Response {
+namespace Carica\Io\Network\HTTP\Response {
 
-  use Carica\Io\Network\Http\Request as HTTPRequest;
-  use Carica\Io\Network\Http\Response as HTTPResponse;
+  use Carica\Io\Network\HTTP\Request as HTTPRequest;
+  use Carica\Io\Network\HTTP\Response as HTTPResponse;
   use DOMDocument;
 
   /**

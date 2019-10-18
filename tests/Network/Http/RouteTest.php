@@ -1,6 +1,6 @@
 <?php
 
-namespace Carica\Io\Network\Http {
+namespace Carica\Io\Network\HTTP {
 
   use PHPUnit\Framework\TestCase;
 
@@ -9,7 +9,7 @@ namespace Carica\Io\Network\Http {
   class RouteTest extends TestCase {
 
     /**
-     * @covers \Carica\Io\Network\Http\Route
+     * @covers \Carica\Io\Network\HTTP\Route
      */
     public function testAny() {
       $route = new Route();
@@ -23,7 +23,7 @@ namespace Carica\Io\Network\Http {
     }
 
     /**
-     * @covers \Carica\Io\Network\Http\Route
+     * @covers \Carica\Io\Network\HTTP\Route
      */
     public function testMatch() {
       $route = new Route();
@@ -37,7 +37,7 @@ namespace Carica\Io\Network\Http {
     }
 
     /**
-     * @covers \Carica\Io\Network\Http\Route
+     * @covers \Carica\Io\Network\HTTP\Route
      */
     public function testStartsWith() {
       $route = new Route();
@@ -51,7 +51,7 @@ namespace Carica\Io\Network\Http {
     }
 
     /**
-     * @covers \Carica\Io\Network\Http\Route
+     * @covers \Carica\Io\Network\HTTP\Route
      */
     public function testRoutingOneMatchingTarget() {
       $request = $this
@@ -73,7 +73,7 @@ namespace Carica\Io\Network\Http {
     }
 
     /**
-     * @covers \Carica\Io\Network\Http\Route
+     * @covers \Carica\Io\Network\HTTP\Route
      */
     public function testRoutingNoMatchingTarget() {
       $request = $this

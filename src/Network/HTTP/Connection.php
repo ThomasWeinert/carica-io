@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Carica\Io\Network\Http {
+namespace Carica\Io\Network\HTTP {
 
   use Carica\Io\Network\Connection as NetworkConnection;
 

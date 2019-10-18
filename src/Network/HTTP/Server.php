@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Carica\Io\Network\Http {
+namespace Carica\Io\Network\HTTP {
 
   use Carica\Io\Event\Loop as EventLoop;
   use Carica\Io\Network\Server as NetworkServer;

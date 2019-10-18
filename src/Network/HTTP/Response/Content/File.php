@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Carica\Io\Network\Http\Response\Content {
+namespace Carica\Io\Network\HTTP\Response\Content {
 
   use Carica\Io\Deferred;
   use Carica\Io\Event\HasLoop as HasEventLoop;
@@ -9,7 +9,7 @@ namespace Carica\Io\Network\Http\Response\Content {
   use Carica\Io\File\Access as FileAccess;
   use Carica\Io\File\HasAccess as HasFileAccess;
   use Carica\Io\Network\Connection as NetworkConnection;
-  use Carica\Io\Network\Http\Response\Content as ResponseContent;
+  use Carica\Io\Network\HTTP\Response\Content as ResponseContent;
 
   class File
     extends
