@@ -59,7 +59,7 @@ namespace Carica\Io\Network {
       if (!$this->isActive()) {
         $stream = stream_socket_server($this->_address.':'.$port, $errorNumber, $errorString);
         if ($stream) {
-          stream_set_blocking($stream, 0);
+          stream_set_blocking($stream, FALSE);
           $this->resource($stream);
           $this->events()->emit(self::EVENT_LISTEN, $this->_address.':'.$port);
           return TRUE;

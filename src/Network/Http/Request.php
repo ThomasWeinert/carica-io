@@ -97,12 +97,12 @@ namespace Carica\Io\Network\Http {
 
     public function parseStatus(string $line): void {
       if (preg_match($this->_patternStatus, $line, $matches)) {
-        $this->method = $matches['method'];
-        $this->version = $matches['version'];
-        $this->url = $matches['url'];
+        $this->_method = $matches['method'];
+        $this->_version = $matches['version'];
+        $this->_url = $matches['url'];
         $parsedUrl = parse_url($matches['url']);
-        $this->path = empty($parsedUrl['path']) ? '' : $parsedUrl['path'];
-        $this->query->setQueryString(
+        $this->_path = empty($parsedUrl['path']) ? '' : $parsedUrl['path'];
+        $this->_query->setQueryString(
           empty($parsedUrl['query']) ? '' : $parsedUrl['query']
         );
       }
