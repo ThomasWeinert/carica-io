@@ -1,9 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Network\Http {
 
-  use Carica\Io;
+  use Carica\Io\Deferred;
   use Carica\Io\Deferred\PromiseLike;
+  use InvalidArgumentException;
+  use LogicException;
 
   /**
    * An HTTP response encapsulation to answer the request. It does no contain the
@@ -116,7 +119,7 @@ namespace Carica\Io\Network\Http {
       case 'headers' :
         return $this->headers();
       }
-      throw new \LogicException(
+      throw new LogicException(
         sprintf('Unknown property %s::$%s', get_class($this), $name)
       );
     }
@@ -139,16 +142,16 @@ namespace Carica\Io\Network\Http {
       case 'headers' :
         return $this->headers($value);
       }
-      throw new \LogicException(
+      throw new LogicException(
         sprintf('Can not write unknown property %s::$%s', get_class($this), $name)
       );
     }
 
-    public function setVersion($version) {
+    public function setVersion($version): void {
       if (in_array($version, array('1.0', '1.1'))) {
         $this->_version = $version;
       } else {
-        throw new \InvalidArgumentException(
+        throw new InvalidArgumentException(
           sprintf('Invalid http version string %s', $version)
         );
       }
@@ -159,7 +162,7 @@ namespace Carica\Io\Network\Http {
       if (isset($this->_statusStrings[$status])) {
         $this->_status = $status;
       } else {
-        throw new \InvalidArgumentException(
+        throw new InvalidArgumentException(
           sprintf('Invalid http status code %d', $status)
         );
       }
@@ -190,6 +193,9 @@ namespace Carica\Io\Network\Http {
 
     public function send(): PromiseLike {
       $connection = $this->connection();
+      if (!$connection) {
+        return (new Deferred())->reject()->promise();
+      }
       $contentType = $this->content()->type;
       $encoding = $this->content()->encoding;
       if (!empty($encoding)) {
@@ -211,7 +217,7 @@ namespace Carica\Io\Network\Http {
         }
       }
       $connection->write("\n");
-      return Io\Deferred::When(
+      return Deferred::When(
         $this->content()->sendTo($connection)
       );
     }

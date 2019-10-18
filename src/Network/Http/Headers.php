@@ -3,21 +3,25 @@ declare(strict_types=1);
 
 namespace Carica\Io\Network\Http {
 
-  class Headers implements \IteratorAggregate, \Countable, \ArrayAccess {
+  use ArrayAccess;
+  use Countable;
+  use Iterator;
+  use IteratorAggregate;
+
+  class Headers implements IteratorAggregate, Countable, ArrayAccess {
 
     private $_headers = array();
 
-
-    public function count() {
+    public function count(): int {
       return count($this->_headers);
     }
 
-    public function getIterator() {
+    public function getIterator(): Iterator {
       return new \ArrayIterator($this->_headers);
     }
 
     public function offsetExists($name) {
-      return array_key_exists($this->prepareKey($name, TRUE), $this->_headers);
+      return array_key_exists($this->prepareKey($name), $this->_headers);
     }
 
     public function offsetGet($name) {
@@ -47,7 +51,7 @@ namespace Carica\Io\Network\Http {
       unset($this->_headers[$this->prepareKey($name)]);
     }
 
-    private function prepareKey($name) {
+    private function prepareKey(string $name) {
       $name = trim($name);
       if (empty($name)) {
         throw new \InvalidArgumentException('The header name can not be empty.');

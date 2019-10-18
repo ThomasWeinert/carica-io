@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Carica\Io\Event\Loop {
 
-  use Carica\Io\Deferred\Promise;
+  use Carica\Io\Deferred\PromiseLike;
   use Carica\Io\Event\Loop as EventLoop;
   use Carica\Io\Event\Loop\Listener as EventLoopListener;
 
@@ -74,7 +74,7 @@ namespace Carica\Io\Event\Loop {
       }
     }
 
-    public function run(Promise $for = NULL): void {
+    public function run(PromiseLike $for = NULL): void {
       $this->_running = TRUE;
     }
 

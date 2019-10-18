@@ -3,13 +3,12 @@ declare(strict_types=1);
 
 namespace Carica\Io\Event\Loop {
 
-  use Carica\Io;
-  use Carica\Io\Deferred\Promise;
-  use Carica\Io\Event;
+  use Carica\Io\Deferred;
+  use Carica\Io\Deferred\PromiseLike;
   use Carica\Io\Event\Loop as EventLoop;
   use Carica\Io\Event\Loop\Listener as EventLoopListener;
 
-  class StreamSelect implements Event\Loop {
+  class StreamSelect implements EventLoop {
 
     private $_running;
     private $_wait = 5;
@@ -75,12 +74,12 @@ namespace Carica\Io\Event\Loop {
      * it is still pending and add a callback to stop the loop if is is
      * finished.
      *
-     * @param Promise $for
+     * @param PromiseLike $for
      */
-    public function run(Promise $for = NULL): void {
+    public function run(PromiseLike $for = NULL): void {
       $this->_running = TRUE;
       if (isset($for) &&
-          $for->state() === Io\Deferred::STATE_PENDING) {
+          $for->state() === Deferred::STATE_PENDING) {
         $loop = $this;
         $for->always(
           static function () use ($loop) {

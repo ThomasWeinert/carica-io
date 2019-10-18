@@ -1,26 +1,38 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Event\Emitter\Listener  {
 
-  use Carica\Io\Event;
+  use Carica\Io\Event\Emitter as EventEmitter;
+  use Carica\Io\Event\Emitter\Listener as EventEmitterListener;
+  use LogicException;
 
   /**
-   * @property Event\Emitter $emitter
+   * @property EventEmitter $emitter
    * @property string $event
    * @property callable $callback
    */
-  class On implements Event\Emitter\Listener {
-
-    private $_emitter = NULL;
-    private $_event = NULL;
-    private $_callback = NULL;
+  class On implements EventEmitterListener {
 
     /**
-     * @param Event\Emitter $emitter
+     * @var EventEmitter
+     */
+    private $_emitter;
+    /**
+     * @var string
+     */
+    private $_event;
+    /**
+     * @var callable
+     */
+    private $_callback;
+
+    /**
+     * @param EventEmitter $emitter
      * @param string $event
      * @param callable $callback
      */
-    public function __construct(Event\Emitter $emitter, $event, $callback) {
+    public function __construct(EventEmitter $emitter, string $event, callable $callback) {
       $this->_emitter = $emitter;
       $this->_event = $event;
       $this->_callback = $callback;
@@ -35,42 +47,44 @@ namespace Carica\Io\Event\Emitter\Listener  {
       case 'emitter' :
       case 'event' :
       case 'callback' :
-        return isset($this->{'_'.$name});
+        return TRUE;
       }
       return FALSE;
     }
 
     /**
-     * @throws \LogicException
+     * @throws LogicException
      * @param string $name
      * @return mixed
      */
     public function __get($name) {
       switch ($name) {
       case 'emitter' :
+        return $this->_emitter;
       case 'event' :
+        return $this->_event;
       case 'callback' :
-        return $this->{'_'.$name};
+        return $this->_callback;
       }
-      throw new \LogicException(sprintf('Property %s::$%s does not exists.', get_class($this), $name));
+      throw new LogicException(sprintf('Property %s::$%s does not exists.', get_class($this), $name));
     }
 
     /**
-     * @throws \LogicException
+     * @throws LogicException
      * @param string $name
      * @param mixed $value
      */
     public function __set($name, $value) {
-      throw new \LogicException(sprintf('%s is immutable.', get_class($this)));
+      throw new LogicException(sprintf('%s is immutable.', get_class($this)));
     }
 
 
     /**
-     * @throws \LogicException
+     * @throws LogicException
      * @param string $name
      */
     public function __unset($name) {
-      throw new \LogicException(sprintf('%s is immutable.', get_class($this)));
+      throw new LogicException(sprintf('%s is immutable.', get_class($this)));
     }
 
     public function __invoke(...$arguments) {
@@ -79,9 +93,9 @@ namespace Carica\Io\Event\Emitter\Listener  {
     }
 
     /**
-     * @return callable|null
+     * @return callable
      */
-    public function getCallback() {
+    public function getCallback(): callable {
       return $this->_callback;
     }
   }

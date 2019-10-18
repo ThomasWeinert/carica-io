@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Carica\Io\Network\Http\Route\Target {
 
-  use Carica\Io\Network\Http;
+  use Carica\Io\Network\Http\Request as HTTPRequest;
 
   class Match extends Any {
 
@@ -28,7 +28,7 @@ namespace Carica\Io\Network\Http\Route\Target {
       }
     }
 
-    public function validate(Http\Request $request) {
+    public function validate(HTTPRequest $request) {
       if (FALSE === parent::validate($request)) {
         return FALSE;
       }

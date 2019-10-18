@@ -6,6 +6,7 @@ namespace Carica\Io\Network\Http {
   use ArrayAccess;
   use ArrayObject;
   use Countable;
+  use Iterator;
   use IteratorAggregate;
   use LogicException;
   use Traversable;
@@ -40,7 +41,7 @@ namespace Carica\Io\Network\Http {
      * @param string $name
      * @param string|array|Traversable $data
      */
-    public function __construct($name, $data = array()) {
+    public function __construct(string $name, $data = array()) {
       $this->setName($name);
       $this->setData($data);
     }
@@ -51,7 +52,7 @@ namespace Carica\Io\Network\Http {
      * @param string $name
      * @throws UnexpectedValueException
      */
-    public function setName($name) {
+    public function setName(string $name) {
       if (trim($name) === '') {
         throw new UnexpectedValueException(
           sprintf('Property %s::$name can not be empty', __CLASS__)
@@ -172,11 +173,11 @@ namespace Carica\Io\Network\Http {
       $this->_values->offsetUnset($offset);
     }
 
-    public function getIterator() {
+    public function getIterator(): Iterator {
       return $this->_values->getIterator();
     }
 
-    public function count() {
+    public function count(): int {
       return count($this->_values);
     }
   }

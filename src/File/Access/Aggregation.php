@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Carica\Io\File\Access {
 
-  use Carica\Io\File;
   use Carica\Io\File\Access as FileAccess;
 
   trait Aggregation {
@@ -17,11 +16,11 @@ namespace Carica\Io\File\Access {
      * @param FileAccess $fileAccess
      * @return FileAccess
      */
-    public function fileAccess(File\Access $fileAccess = NULL): FileAccess {
+    public function fileAccess(FileAccess $fileAccess = NULL): FileAccess {
       if (isset($fileAccess)) {
         $this->_fileAccess = $fileAccess;
       } elseif (NULL === $this->_fileAccess) {
-        $this->_fileAccess = new File\Access();
+        $this->_fileAccess = new FileAccess();
       }
       return $this->_fileAccess;
     }

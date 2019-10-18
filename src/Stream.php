@@ -4,6 +4,10 @@ namespace Carica\Io {
 
   interface Stream extends Event\HasEmitter {
 
+    public const EVENT_READ_DATA = 'read-data';
+    public const EVENT_WRITE_DATA = 'write-data';
+    public const EVENT_ERROR = 'error';
+
     public function isOpen(): bool;
 
     public function open(): bool;

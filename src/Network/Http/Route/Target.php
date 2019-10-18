@@ -1,18 +1,19 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Network\Http\Route {
 
-  use Carica\Io\Network\Http;
+  use Carica\Io\Network\Http\Request as HTTPRequest;
 
   abstract class Target {
 
-    private $_callback = NULL;
+    private $_callback;
 
-    public function __construct(Callable $callback) {
+    public function __construct(callable $callback) {
       $this->_callback = $callback;
     }
 
-    public function getCallback() {
+    public function getCallback(): callable {
       return $this->_callback;
     }
 
@@ -24,6 +25,6 @@ namespace Carica\Io\Network\Http\Route {
       return FALSE;
     }
 
-    abstract public function validate(Http\Request $request);
+    abstract public function validate(HTTPRequest $request);
   }
 }

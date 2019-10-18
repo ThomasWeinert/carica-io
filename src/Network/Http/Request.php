@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Carica\Io\Network\Http {
 
+  use LogicException;
+
   /**
    * @property string $method
    * @property string $version
@@ -63,9 +65,13 @@ namespace Carica\Io\Network\Http {
       case 'query' :
         return $this->query();
       }
-      throw new \LogicException(
+      throw new LogicException(
         sprintf('Unknown property %s::$%s', get_class($this), $name)
       );
+    }
+
+    public function __set($name, $value) {
+      throw new LogicException('Unknown/Readonly property: '.$name);
     }
 
     public function connection(Connection $connection = NULL): ?Connection {
@@ -89,7 +95,7 @@ namespace Carica\Io\Network\Http {
       return $this->_query;
     }
 
-    public function parseStatus($line): void {
+    public function parseStatus(string $line): void {
       if (preg_match($this->_patternStatus, $line, $matches)) {
         $this->method = $matches['method'];
         $this->version = $matches['version'];
@@ -102,7 +108,7 @@ namespace Carica\Io\Network\Http {
       }
     }
 
-    public function parseHeader($string): void {
+    public function parseHeader(string $string): void {
       try {
         $this->_headers[] = $string;
       } catch (\UnexpectedValueException $e) {

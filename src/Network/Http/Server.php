@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Network\Http {
 
   use Carica\Io\Event\Loop as EventLoop;
-  use Carica\Io\Network;
+  use Carica\Io\Network\Server as NetworkServer;
 
-  class Server extends Network\Server {
+  class Server extends NetworkServer {
 
     public const EVENT_CONNECTION_RECEIVED = 'connection';
 
@@ -14,12 +15,12 @@ namespace Carica\Io\Network\Http {
      */
     private $_route;
 
-    public function __construct(EventLoop $loop, Callable $route, $address = 'tcp://0.0.0.0') {
+    public function __construct(EventLoop $loop, callable $route, string $address = 'tcp://0.0.0.0') {
       parent::__construct($loop, $address);
       $this->_route = $route;
     }
 
-    public function listen($port = 8080) {
+    public function listen(int $port = 8080): bool {
       $route = $this->_route;
       $this->events()->on(
         self::EVENT_CONNECTION_RECEIVED,

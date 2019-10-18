@@ -10,7 +10,7 @@ namespace Carica\Io\Event\Loop {
     /**
      * @var EventLoop
      */
-    private $_eventLoop = NULL;
+    private $_eventLoop;
 
     /**
      * Getter/Setter for the event loop including implicit create. The create uses

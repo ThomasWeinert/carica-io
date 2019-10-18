@@ -3,9 +3,10 @@ declare(strict_types=1);
 
 namespace Carica\Io\Network\Http\Route\Target {
 
-  use Carica\Io\Network\Http;
+  use Carica\Io\Network\Http\Request as HTTPRequest;
+  use Carica\Io\Network\Http\Route\Target as RouteTarget;
 
-  class Any extends Http\Route\Target {
+  class Any extends RouteTarget {
 
     private $_methods = array();
 
@@ -15,7 +16,7 @@ namespace Carica\Io\Network\Http\Route\Target {
         $methods = explode(' ', $methods);
       }
       foreach ($methods as $method) {
-        $method = strToUpper(trim($method));
+        $method = strtoupper(trim($method));
         if ($method !== '') {
           if (preg_match('(^[A-Z]{3,}$)', $method)) {
             $this->_methods[] = $method;
@@ -35,7 +36,7 @@ namespace Carica\Io\Network\Http\Route\Target {
       );
     }
 
-    public function validate(Http\Request $request) {
+    public function validate(HTTPRequest $request) {
       if (!$this->validateMethod($request->method)) {
         return FALSE;
       }

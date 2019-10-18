@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Carica\Io\Network\Http\Response {
 
-  use Carica\Io\Deferred\Promise;
-  use Carica\Io\Network;
+  use Carica\Io\Deferred\PromiseLike;
+  use Carica\Io\Network\Connection as NetworkConnection;
 
   /**
    *
@@ -18,10 +18,10 @@ namespace Carica\Io\Network\Http\Response {
     private $_encoding = '';
 
     /**
-     * @param Network\Connection $connection
-     * @return bool|Promise
+     * @param NetworkConnection $connection
+     * @return bool|PromiseLike
      */
-    abstract public function sendTo(Network\Connection $connection);
+    abstract public function sendTo(NetworkConnection $connection);
 
     public function __construct(string $type = NULL, string $encoding = NULL) {
       if (isset($type)) {

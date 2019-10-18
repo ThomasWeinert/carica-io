@@ -70,7 +70,7 @@ namespace Carica\Io\Stream {
         $this->resource($resource);
         return TRUE;
       }
-      $this->events()->emit('error', sprintf('Can not open serial port: "%s".', $device));
+      $this->events()->emit(self::EVENT_ERROR, sprintf('Can not open serial port: "%s".', $device));
       return FALSE;
     }
 
@@ -85,7 +85,7 @@ namespace Carica\Io\Stream {
       if ($resource = $this->resource()) {
         $data = fread($resource, $bytes);
         if (is_string($data) && $data !== '') {
-          $this->events()->emit('read-data', $data);
+          $this->events()->emit(self::EVENT_READ_DATA, $data);
           return $data;
         }
       }
@@ -98,7 +98,7 @@ namespace Carica\Io\Stream {
           $resource,
           $writtenData = is_array($data) ? Io\encodeBinaryFromArray($data) : $data
         );
-        $this->events()->emit('write-data', $writtenData);
+        $this->events()->emit(self::EVENT_WRITE_DATA, $writtenData);
         return TRUE;
       }
       return FALSE;

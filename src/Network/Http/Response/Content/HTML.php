@@ -1,10 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Network\Http\Response\Content {
 
-  use Carica\Io;
   use Carica\Io\Network;
-  use Carica\Io\Network\Http\Response;
 
   class HTML extends DOM {
 

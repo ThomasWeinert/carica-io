@@ -3,12 +3,15 @@ declare(strict_types=1);
 
 namespace Carica\Io\Network\Http\Route {
 
-  use Carica\Io;
-  use Carica\Io\Network\Http;
+  use Carica\Io\File\Access as FileAccess;
+  use Carica\Io\File\HasAccess as HasFileAccess;
+  use Carica\Io\Network\Http\Request as HTTPRequest;
+  use Carica\Io\Network\Http\Response\Error as ErrorResponse;
+  use Carica\Io\Network\Http\Response\Content as ResponseContent;
 
-  class Directory {
+  class Directory implements HasFileAccess {
 
-    use Io\File\Access\Aggregation;
+    use FileAccess\Aggregation;
 
     private $_documentRoot = '';
 
@@ -22,8 +25,8 @@ namespace Carica\Io\Network\Http\Route {
 
     public function __construct($documentRoot, array $encodings = array()) {
       $this->setDocumentRoot($documentRoot);
-      foreach ($encodings as $mimetype => $encoding) {
-        $this->setEncoding($mimetype, $encoding);
+      foreach ($encodings as $mimeType => $encoding) {
+        $this->setEncoding($mimeType, $encoding);
       }
     }
 
@@ -52,28 +55,28 @@ namespace Carica\Io\Network\Http\Route {
       return $this->call(...$arguments);
     }
 
-    public function call(Http\Request $request) {
+    public function call(HTTPRequest $request) {
       if ($file = $this->getFileInfo($request)) {
         if ($file->isFile() && $file->isReadable()) {
           $response = $request->createResponse();
           $localFile = $file->getRealPath();
           $mimeType = $this->fileAccess()->getMimeType($localFile);
           $encoding = $this->getEncoding($mimeType);
-          $response->content = new Http\Response\Content\File(
+          $response->content = new ResponseContent\File(
             $localFile, $mimeType, $encoding
           );
           return $response;
         }
-        return new Http\Response\Error($request, 403);
+        return new ErrorResponse($request, 403);
       }
       return NULL;
     }
 
     /**
-     * @param Http\Request $request
+     * @param HTTPRequest $request
      * @return \SplFileInfo|FALSE
      */
-    private function getFileInfo(Http\Request $request) {
+    private function getFileInfo(HTTPRequest $request) {
       if ($localFile = $this->fileAccess()->getRealPath($this->_documentRoot.$request->path)) {
         if (0 === strpos($localFile, $this->_documentRoot.DIRECTORY_SEPARATOR)) {
           return $this->fileAccess()->getInfo($localFile);

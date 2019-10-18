@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Carica\Io\Event {
 
-  use Carica\Io;
+  use Carica\Io\Deferred\PromiseLike;
   use Carica\Io\Event\Loop\Listener as EventLoopListener;
 
   interface Loop {
@@ -16,7 +16,7 @@ namespace Carica\Io\Event {
 
     public function remove(EventLoopListener $listener): void;
 
-    public function run(Io\Deferred\Promise $for = NULL): void;
+    public function run(PromiseLike $for = NULL): void;
 
     public function stop(): void;
 

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Carica\Io\Network\Http\Response\Content {
 
-  use Carica\Io\Network;
+  use Carica\Io\Network\Connection as NetworkConnection;
   use Carica\Io\Network\Http\Response;
 
   class Text extends Response\Content {
@@ -15,7 +15,7 @@ namespace Carica\Io\Network\Http\Response\Content {
       $this->_data = (string)$data;
     }
 
-    public function sendTo(Network\Connection $connection) {
+    public function sendTo(NetworkConnection $connection) {
       $connection->write($this->_data);
       return TRUE;
     }

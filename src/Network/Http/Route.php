@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Network\Http {
 
@@ -24,7 +25,7 @@ namespace Carica\Io\Network\Http {
      * @return AnyTarget
      */
     public function any(Callable $callback): AnyTarget {
-      $this->_targets[] = $target = new Route\Target\Any($callback);
+      $this->_targets[] = $target = new AnyTarget($callback);
       return $target;
     }
 
@@ -39,7 +40,7 @@ namespace Carica\Io\Network\Http {
      * @return MatchTarget
      */
     public function match($path, Callable $callback): MatchTarget {
-      $this->_targets[] = $target = new Route\Target\Match($callback, $path);
+      $this->_targets[] = $target = new MatchTarget($callback, $path);
       return $target;
     }
 

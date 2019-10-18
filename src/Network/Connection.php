@@ -4,16 +4,16 @@ declare(strict_types=1);
 namespace Carica\Io\Network {
 
   use Carica\Io;
+  use Carica\Io\Event\HasEmitter as HasEventEmitter;
+  use Carica\Io\Event\Emitter as EventEmitter;
+  use Carica\Io\Event\HasLoop as HasEventLoop;
   use Carica\Io\Event\Loop as EventLoop;
   use Carica\Io\Event\Loop\Listener as EventLoopListener;
 
-  class Connection
-    implements
-      Io\Event\HasEmitter,
-      Io\Event\HasLoop {
+  class Connection implements HasEventEmitter, HasEventLoop {
 
-    use Io\Event\Emitter\Aggregation;
-    use Io\Event\Loop\Aggregation;
+    use EventEmitter\Aggregation;
+    use EventLoop\Aggregation;
 
     public const EVENT_READ_DATA = 'read-data';
     public const EVENT_CLOSE = 'close';

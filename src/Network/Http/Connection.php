@@ -1,10 +1,11 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Network\Http {
 
-  use Carica\Io;
+  use Carica\Io\Network\Connection as NetworkConnection;
 
-  class Connection extends Io\Network\Connection {
+  class Connection extends NetworkConnection {
 
     public const EVENT_REQUEST_RECEIVED = 'request';
 

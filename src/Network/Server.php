@@ -1,16 +1,20 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Network {
 
-  use Carica\Io;
+  use Carica\Io\Event\HasEmitter as HasEventEmitter;
+  use Carica\Io\Event\Emitter as EventEmitter;
+  use Carica\Io\Event\HasLoop as HasEventLoop;
+  use Carica\Io\Event\Loop as EventLoop;
 
-  class Server
-    implements
-      Io\Event\HasEmitter,
-      Io\Event\HasLoop {
+  class Server implements HasEventEmitter, HasEventLoop {
 
-    use Io\Event\Emitter\Aggregation;
-    use Io\Event\Loop\Aggregation;
+    use EventEmitter\Aggregation;
+    use EventLoop\Aggregation;
+
+    public const EVENT_LISTEN = 'listen';
+    const EVENT_CONNECTION = 'connection';
 
     private $_listener;
 
@@ -18,7 +22,7 @@ namespace Carica\Io\Network {
 
     private $_address;
 
-    public function __construct(Io\Event\Loop $loop, $address = 'tcp://0.0.0.0') {
+    public function __construct(EventLoop $loop, string $address = 'tcp://0.0.0.0') {
       $this->loop($loop);
       $this->_address = $address;
     }
@@ -38,11 +42,8 @@ namespace Carica\Io\Network {
           $this->loop()->remove($this->_listener);
         }
         if ($this->isActive()) {
-          $that = $this;
           $this->loop()->setStreamReader(
-            static function() use ($that) {
-              $that->accept();
-            },
+            function() { $this->accept(); },
             $stream
           );
         }
@@ -50,17 +51,17 @@ namespace Carica\Io\Network {
       return $this->_stream;
     }
 
-    public function isActive() {
+    public function isActive(): bool {
       return $this->_stream !== NULL;
     }
 
-    public function listen($port = 8080) {
+    public function listen(int $port = 8080): bool {
       if (!$this->isActive()) {
         $stream = stream_socket_server($this->_address.':'.$port, $errorNumber, $errorString);
         if ($stream) {
           stream_set_blocking($stream, 0);
           $this->resource($stream);
-          $this->events()->emit('listen', $this->_address.':'.$port);
+          $this->events()->emit(self::EVENT_LISTEN, $this->_address.':'.$port);
           return TRUE;
         }
         return FALSE;
@@ -68,16 +69,16 @@ namespace Carica\Io\Network {
       return TRUE;
     }
 
-    public function close() {
+    public function close(): void {
       if ($this->isActive()) {
         stream_socket_shutdown($this->resource(), STREAM_SHUT_RDWR);
       }
       $this->resource(FALSE);
     }
 
-    public function accept() {
+    private function accept(): void {
       if ($this->isActive() && ($stream = @stream_socket_accept($this->resource(), 1, $peer))) {
-        $this->events()->emit('connection', $stream, $peer);
+        $this->events()->emit(self::EVENT_CONNECTION, $stream, $peer);
       }
     }
   }

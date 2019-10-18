@@ -1,8 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Network\Http\Response\Content {
 
-  use Carica\Io\Network;
+  use Carica\Io\Network\Connection as NetworkConnection;
 
   /**
    * An xml response content
@@ -13,7 +14,7 @@ namespace Carica\Io\Network\Http\Response\Content {
       parent::__construct($type);
     }
 
-    public function sendTo(Network\Connection $connection) {
+    public function sendTo(NetworkConnection $connection) {
       $connection->write($this->document->saveXml());
       return TRUE;
     }

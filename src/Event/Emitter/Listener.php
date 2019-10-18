@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Event\Emitter {
 
   interface Listener {
 
-    function __invoke();
+    public function __invoke();
 
-    function getCallback();
+    public function getCallback(): callable;
   }
 }

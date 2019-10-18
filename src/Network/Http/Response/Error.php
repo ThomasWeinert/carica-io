@@ -3,13 +3,14 @@ declare(strict_types=1);
 
 namespace Carica\Io\Network\Http\Response {
 
-  use Carica\Io\Network\Http;
+  use Carica\Io\Network\Http\Request as HTTPRequest;
+  use Carica\Io\Network\Http\Response as HTTPResponse;
   use DOMDocument;
 
   /**
    * @property DOMDocument $document
    */
-  class Error extends Http\Response {
+  class Error extends HTTPResponse {
 
     private $_template = '
       <html lang="en">
@@ -23,14 +24,14 @@ namespace Carica\Io\Network\Http\Response {
         </body>
       </html>';
 
-    public function __construct(Http\Request $request, $status = 500, $message = NULL) {
+    public function __construct(HTTPRequest $request, int $status = 500, string $message = NULL) {
       parent::__construct($request->connection());
       $this->setStatus($status);
-      $this->content = $content = new Http\Response\Content\HTML();
+      $this->content = $content = new Content\HTML();
       if (NULL === $message) {
         $message = $this->_statusStrings[$this->status];
       }
-      $content->document->loadHtml(
+      $content->document->loadHTML(
         sprintf(
           $this->_template,
           (int)$status,

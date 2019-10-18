@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Carica\Io\Event\Loop {
 
-  use Carica\Io\Deferred\Promise;
+  use Carica\Io\Deferred\PromiseLike;
   use Carica\Io\Event\Loop as EventLoop;
   use Carica\Io\Event\Loop\StreamSelect as StreamSelectLoop;
 
@@ -52,9 +52,9 @@ namespace Carica\Io\Event\Loop {
 
     /**
      * Run the global event loop
-     * @param Promise $for
+     * @param PromiseLike $for
      */
-    public static function run(Promise $for = NULL): void {
+    public static function run(PromiseLike $for = NULL): void {
       self::get()->run($for);
     }
   }

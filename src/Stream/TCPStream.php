@@ -75,7 +75,7 @@ namespace Carica\Io\Stream {
       $this
         ->events()
         ->emit(
-          'error',
+          self::EVENT_ERROR,
           sprintf('Can not open tcp server: "%s:%d".', $this->_host, $this->_port)
         );
       return FALSE;
@@ -94,7 +94,7 @@ namespace Carica\Io\Stream {
       if ($resource = $this->resource()) {
         $data = stream_socket_recvfrom($resource, $bytes);
         if (is_string($data) && $data !== '') {
-          $this->events()->emit('read-data', $data);
+          $this->events()->emit(self::EVENT_READ_DATA, $data);
           return $data;
         }
       }
@@ -108,11 +108,11 @@ namespace Carica\Io\Stream {
           $writtenData = is_array($data) ? Io\encodeBinaryFromArray($data) : $data
         );
         if ($bytesSent !== -1) {
-          $this->events()->emit('write-data', $writtenData);
+          $this->events()->emit(self::EVENT_WRITE_DATA, $writtenData);
           return TRUE;
         }
         $this->events()->emit(
-          'error', 'Socket sent to failed.'
+          self::EVENT_ERROR, 'Socket sent to failed.'
         );
       }
       return FALSE;
