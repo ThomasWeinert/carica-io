@@ -8,6 +8,9 @@ namespace Carica\Io\Deferred {
   use phpDocumentor\Reflection\Types\This;
   use PHPUnit\Framework\TestCase;
 
+  /**
+   * @covers \Carica\Io\Deferred\MySQL
+   */
   class MySQLTest extends TestCase {
 
     public function setUp(): void {
@@ -16,22 +19,20 @@ namespace Carica\Io\Deferred {
       }
     }
 
-    /**
-     * @covers \Carica\Io\Deferred\MySQL
-     */
     public function testCreatingPromiseThatGetsRejected() {
-      $mysql = new MySQL($this->getMySQLConnectionFixture(FALSE));
-      $mysql->loop($this->getLoopFixture());
+      $mysql = new MySQL(
+        $this->getLoopFixture(),
+        $this->getMySQLConnectionFixture(FALSE)
+      );
       $promise = $mysql('SQL');
       $this->assertEquals(Io\Deferred::STATE_REJECTED, $promise->state());
     }
 
-    /**
-     * @covers \Carica\Io\Deferred\MySQL
-     */
     public function testCreatingPromiseThatGetsResolved() {
-      $mysql = new MySQL($this->getMySQLConnectionFixture(TRUE));
-      $mysql->loop($this->getLoopFixture());
+      $mysql = new MySQL(
+        $this->getLoopFixture(),
+        $this->getMySQLConnectionFixture(TRUE)
+      );
       $promise = $mysql('SQL');
       $this->assertEquals(Io\Deferred::STATE_RESOLVED, $promise->state());
     }
@@ -51,7 +52,7 @@ namespace Carica\Io\Deferred {
     }
 
     public function getMySQLConnectionFixture($result = FALSE) {
-      // seems that mysqli is not completly mockable, we use a pseudo class
+      // seems that mysqli is not completely mockable, we use a pseudo class
       $mysqli = $this
         ->getMockBuilder('mysqli_just_for_mocking')
         ->disableOriginalConstructor()
@@ -71,11 +72,11 @@ namespace Carica\Io\Deferred {
           0,
           0
         )
-        ->will($this->returnValue(TRUE));
+        ->willReturn(TRUE);
       $mysqli
         ->expects($this->once())
         ->method('reap_async_query')
-        ->will($this->returnValue($result));
+        ->willReturn($result);
       return $mysqli;
     }
   }

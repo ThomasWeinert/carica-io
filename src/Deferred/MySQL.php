@@ -3,28 +3,30 @@ declare(strict_types=1);
 
 namespace Carica\Io\Deferred {
 
-  use Carica\Io;
-  use Carica\Io\Event;
+  use Carica\Io\Deferred;
+  use Carica\Io\Event\HasLoop as HasEventLoop;
+  use Carica\Io\Event\Loop as EventLoop;
 
-  class MySQL {
+  class MySQL implements HasEventLoop {
 
-    use Event\Loop\Aggregation;
+    use EventLoop\Aggregation;
 
     /**
      * @var \mysqli
      */
     private $_mysqli;
 
-    public function __construct($mysqli) {
+    /**
+     * @param EventLoop $loop
+     * @param \mysqli $mysqli
+     */
+    public function __construct(EventLoop $loop, $mysqli) {
+      $this->loop($loop);
       $this->_mysqli = $mysqli;
     }
 
-    public function __invoke(...$arguments) {
-      return $this->query(...$arguments);
-    }
-
-    public function query($sql): PromiseLike {
-      $defer = new Io\Deferred();
+    public function __invoke(string $sql): PromiseLike {
+      $defer = new Deferred();
       $mysqli = $this->_mysqli;
       $mysqli->query($sql, MYSQLI_ASYNC);
       $this->loop()->setInterval(
