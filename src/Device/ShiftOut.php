@@ -1,9 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Device {
 
-  interface ShiftOut
-  {
+  interface ShiftOut {
 
     /**
      * Write data using shift out. This will call begin(), transfer($data), end()
@@ -11,12 +11,12 @@ namespace Carica\Io\Device {
      * @param int|string|int[] $data
      * @param bool $isBigEndian
      */
-    function write($data, $isBigEndian = TRUE);
+    public function write($data, bool $isBigEndian = TRUE): void;
 
     /**
      * Start transfer
      */
-    function begin();
+    public function begin(): void;
 
     /**
      * Transfer data
@@ -24,11 +24,11 @@ namespace Carica\Io\Device {
      * @param int|string|int[] $data
      * @param bool $isBigEndian
      */
-    function transfer($data, $isBigEndian = TRUE);
+    public function transfer($data, bool $isBigEndian = TRUE): void;
 
     /**
      * End transfer
      */
-    function end();
+    public function end(): void;
   }
 }

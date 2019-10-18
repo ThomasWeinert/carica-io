@@ -1,6 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace Carica\Io\Device {
+
+  use Carica\Io\Deferred\PromiseLike;
 
   /**
    * Interface I2C Device
@@ -8,23 +11,22 @@ namespace Carica\Io\Device {
    * This represents an i2c device, the address needs to be stored by the object. It should be
    * one of the constructor arguments.
    */
-  interface I2C
-  {
+  interface I2C {
 
     /**
      * Write data to the i2c device
      * @param array $data
      */
-    function write(array $data);
+    public function write(array $data): void;
 
     /**
      * Read data from the i2c device, this is an asynchronous call,
-     * the callback is execute with the received data bytes.
+     * the promise is resolved with the received data bytes.
      *
      * @param int $length
-     * @return \Carica\Io\Deferred\Promise
+     * @return PromiseLike
      */
-    function read($length);
+    public function read($length): PromiseLike;
 
     /**
      * Start continuous reading, repeatingly calls the listener
@@ -32,11 +34,11 @@ namespace Carica\Io\Device {
      * @param int $length
      * @param callable $listener
      */
-    function startReading($length, callable $listener);
+    public function startReading($length, callable $listener): void;
 
     /**
      * Stop continuous reading on the specified address
      */
-    function stopReading();
+    public function stopReading(): void;
   }
 }
