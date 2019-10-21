@@ -5,16 +5,17 @@ namespace Carica\Io\Deferred {
   include_once(__DIR__.'/../Bootstrap.php');
 
   use Carica\Io;
+  use PHPUnit\Framework\MockObject\MockObject;
   use PHPUnit\Framework\TestCase;
 
+  /**
+   * @covers \Carica\Io\Deferred\Promise
+   */
   class PromiseTest extends TestCase {
 
-    /**
-     * @covers \Carica\Io\Deferred\Promise::always
-     */
     public function testAlways(): void {
-      $function = static function() {
-      };
+      $function = static function() {};
+      /** @var MockObject|Io\Deferred $defer */
       $defer = $this->createMock(Io\Deferred::class);
       $defer
         ->expects($this->once())
@@ -26,11 +27,9 @@ namespace Carica\Io\Deferred {
       $this->assertSame($promise, $promise->always($function));
     }
 
-    /**
-     * @covers \Carica\Io\Deferred\Promise::done
-     */
     public function testDone(): void {
       $function = static function() {};
+      /** @var MockObject|Io\Deferred $defer */
       $defer = $this->createMock(Io\Deferred::class);
       $defer
         ->expects($this->once())
@@ -42,11 +41,9 @@ namespace Carica\Io\Deferred {
       $this->assertSame($promise, $promise->done($function));
     }
 
-    /**
-     * @covers \Carica\Io\Deferred\Promise::fail
-     */
     public function testFail(): void {
       $function = static function() {};
+      /** @var MockObject|Io\Deferred $defer */
       $defer = $this->createMock(Io\Deferred::class);
       $defer
         ->expects($this->once())
@@ -58,14 +55,12 @@ namespace Carica\Io\Deferred {
       $this->assertSame($promise, $promise->fail($function));
     }
 
-    /**
-     * @covers \Carica\Io\Deferred\Promise::then
-     */
     public function testThenWithNullArguments(): void {
       $promise = $this
         ->getMockBuilder(Promise::class)
         ->disableOriginalConstructor()
         ->getMock();
+      /** @var MockObject|Io\Deferred $defer */
       $defer = $this->createMock(Io\Deferred::class);
       $defer
         ->expects($this->once())
@@ -79,15 +74,13 @@ namespace Carica\Io\Deferred {
       $this->assertNotSame($filterPromise, $promise);
     }
 
-    /**
-     * @covers \Carica\Io\Deferred\Promise::then
-     */
     public function testThenWithFunctionArguments(): void {
       $promise = $this
         ->getMockBuilder(Promise::class)
         ->disableOriginalConstructor()
         ->getMock();
       $function = static function() {};
+      /** @var MockObject|Io\Deferred $defer */
       $defer = $this->createMock(Io\Deferred::class);
       $defer
         ->expects($this->once())
@@ -101,11 +94,9 @@ namespace Carica\Io\Deferred {
       $this->assertNotSame($filterPromise, $promise);
     }
 
-    /**
-     * @covers \Carica\Io\Deferred\Promise::progress
-     */
     public function testProgress(): void {
       $function = static function() {};
+      /** @var MockObject|Io\Deferred $defer */
       $defer = $this->createMock(Io\Deferred::class);
       $defer
         ->expects($this->once())
@@ -117,10 +108,8 @@ namespace Carica\Io\Deferred {
       $this->assertSame($promise, $promise->progress($function));
     }
 
-    /**
-     * @covers \Carica\Io\Deferred\Promise::state
-     */
     public function testState(): void {
+      /** @var MockObject|Io\Deferred $defer */
       $defer = $this->createMock(Io\Deferred::class);
       $defer
         ->expects($this->once())

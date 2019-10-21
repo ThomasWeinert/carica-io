@@ -2,15 +2,16 @@
 
 namespace Carica\Io\Network\HTTP {
 
+  use PHPUnit\Framework\MockObject\MockObject;
   use PHPUnit\Framework\TestCase;
 
   include_once(__DIR__.'/../../Bootstrap.php');
 
+  /**
+   * @covers \Carica\Io\Network\HTTP\Route
+   */
   class RouteTest extends TestCase {
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Route
-     */
     public function testAny(): void {
       $route = new Route();
       $route->any($function = static function() {});
@@ -22,9 +23,6 @@ namespace Carica\Io\Network\HTTP {
       );
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Route
-     */
     public function testMatch(): void {
       $route = new Route();
       $route->match('/path', $function = static function() {});
@@ -36,9 +34,6 @@ namespace Carica\Io\Network\HTTP {
       );
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Route
-     */
     public function testStartsWith(): void {
       $route = new Route();
       $route->startsWith('/path', $function = static function() {});
@@ -50,10 +45,8 @@ namespace Carica\Io\Network\HTTP {
       );
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Route
-     */
     public function testRoutingOneMatchingTarget(): void {
+      /** @var MockObject|Request $request */
       $request = $this
         ->getMockBuilder(Request::class)
         ->disableOriginalConstructor()
@@ -72,10 +65,8 @@ namespace Carica\Io\Network\HTTP {
       $this->assertSame($response, $route($request));
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Route
-     */
     public function testRoutingNoMatchingTarget(): void {
+      /** @var MockObject|Request $request */
       $request = $this
         ->getMockBuilder(Request::class)
         ->disableOriginalConstructor()

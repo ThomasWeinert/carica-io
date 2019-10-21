@@ -4,6 +4,7 @@ namespace Carica\Io\Stream {
 
   use Carica\Io\Event\Emitter;
   use Carica\Io\Event\Loop;
+  use PHPUnit\Framework\MockObject\MockObject;
   use PHPUnit\Framework\TestCase;
 
   include_once(__DIR__.'/../Bootstrap.php');
@@ -14,6 +15,7 @@ namespace Carica\Io\Stream {
   class FileStreamTest extends TestCase {
 
     public function testOpen(): void {
+      /** @var MockObject|Loop $loop */
       $loop = $this->createMock(Loop::class);
       $loop
         ->expects($this->once())
@@ -26,7 +28,9 @@ namespace Carica\Io\Stream {
     }
 
     public function testOpenExpectingError(): void {
+      /** @var MockObject|Loop $loop */
       $loop = $this->createMock(Loop::class);
+      /** @var MockObject|Emitter $events */
       $events = $this
         ->getMockBuilder(Emitter::class)
         ->disableOriginalConstructor()
@@ -43,12 +47,14 @@ namespace Carica\Io\Stream {
     }
 
     public function testRead(): void {
+      /** @var MockObject|Loop $loop */
       $loop = $this->createMock(Loop::class);
       $loop
         ->expects($this->once())
         ->method('setStreamReader')
         ->with($this->isType('callable'), $this->isType('resource'));
 
+      /** @var MockObject|Emitter $events */
       $events = $this
         ->getMockBuilder(Emitter::class)
         ->disableOriginalConstructor()
@@ -65,12 +71,14 @@ namespace Carica\Io\Stream {
     }
 
     public function testReadWithoutResource(): void {
+      /** @var MockObject|Loop $loop */
       $loop = $this->createMock(Loop::class);
       $file = new FileStream($loop, __DIR__.'/TestData/sample.txt');
       $this->assertEquals('', $file->read());
     }
 
     public function testWriteWithoutResource(): void {
+      /** @var MockObject|Loop $loop */
       $loop = $this->createMock(Loop::class);
       $file = new FileStream($loop, __DIR__.'/TestData/sample.txt');
       $this->assertFalse($file->write('foobar'));

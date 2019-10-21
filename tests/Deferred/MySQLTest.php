@@ -5,6 +5,8 @@ namespace Carica\Io\Deferred {
   include_once(__DIR__.'/../Bootstrap.php');
 
   use Carica\Io;
+  use Carica\Io\Event\Loop\Listener as EventLoopListener;
+  use mysqli;
   use PHPUnit\Framework\MockObject\MockObject;
   use PHPUnit\Framework\TestCase;
 
@@ -48,7 +50,7 @@ namespace Carica\Io\Deferred {
         ->willReturnCallback(
           function ($callback) {
             $callback();
-            return $this->createMock(\Carica\Io\Event\Loop\Listener::class);
+            return $this->createMock(EventLoopListener::class);
           }
         );
       return $loop;
@@ -56,15 +58,11 @@ namespace Carica\Io\Deferred {
 
     /**
      * @param bool $result
-     * @return \mysqli|Io\Event\Loop|MockObject
+     * @return mysqli|Io\Event\Loop|MockObject
      */
     public function getMySQLConnectionFixture($result = FALSE) {
-      // seems that mysqli is not completely mockable, we use a pseudo class
-      $mysqli = $this
-        ->getMockBuilder(mysqli_just_for_mocking::class)
-        ->allowMockingUnknownTypes()
-        ->addMethods(array('query', 'poll', 'reap_async_query'))
-        ->getMock();
+      // seems that mysqli can not be mocked completely, so we use a interface
+      $mysqli = $this->createMock(mysqli_just_for_mocking::class);
       $mysqli
         ->expects($this->once())
         ->method('query')
@@ -90,5 +88,8 @@ namespace Carica\Io\Deferred {
 
   interface mysqli_just_for_mocking {
 
+    public function query(...$arguments);
+    public function poll(...$arguments);
+    public function reap_async_query(...$arguments);
   }
 }

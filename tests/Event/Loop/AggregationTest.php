@@ -2,6 +2,8 @@
 
 namespace Carica\Io\Event\Loop {
 
+  use Carica\Io\Event\Loop;
+  use PHPUnit\Framework\MockObject\MockObject;
   use PHPUnit\Framework\TestCase;
 
   include_once(__DIR__.'/../../Bootstrap.php');
@@ -13,7 +15,9 @@ namespace Carica\Io\Event\Loop {
      */
     public function testGetAfterSet(): void {
       $aggregation = new Aggregation_TestProxy();
-      $aggregation->loop($loop = $this->createMock(\Carica\Io\Event\Loop::class));
+      /** @var Loop|MockObject $loop */
+      $loop = $this->createMock(Loop::class);
+      $aggregation->loop($loop);
       $this->assertSame($loop, $aggregation->loop());
     }
 

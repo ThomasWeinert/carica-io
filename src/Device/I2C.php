@@ -29,7 +29,7 @@ namespace Carica\Io\Device {
     public function read($length): PromiseLike;
 
     /**
-     * Start continuous reading, repeatingly calls the listener
+     * Start continuous reading, repeatedly calls the listener
      *
      * @param int $length
      * @param callable $listener

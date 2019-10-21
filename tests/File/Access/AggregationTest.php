@@ -5,22 +5,22 @@ namespace Carica\Io\File\Access {
   include_once(__DIR__.'/../../Bootstrap.php');
 
   use Carica\Io\File;
+  use PHPUnit\Framework\MockObject\MockObject;
   use PHPUnit\Framework\TestCase;
 
+  /**
+   * @covers \Carica\Io\File\Access\Aggregation
+   */
   class AggregationTest extends TestCase {
 
-    /**
-     * @covers \Carica\Io\File\Access\Aggregation
-     */
     public function testGetAfterSet(): void {
       $aggregation = new Aggregation_TestProxy();
-      $aggregation->fileAccess($fileAccess = $this->createMock(File\Access::class));
+      /** @var MockObject|File\Access $fileAccess */
+      $fileAccess = $this->createMock(File\Access::class);
+      $aggregation->fileAccess($fileAccess);
       $this->assertSame($fileAccess, $aggregation->fileAccess());
     }
 
-    /**
-     * @covers \Carica\Io\File\Access\Aggregation
-     */
     public function testGetImplicitCreate(): void {
       $aggregation = new Aggregation_TestProxy();
       $this->assertNotNull($aggregation->fileAccess());

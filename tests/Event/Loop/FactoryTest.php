@@ -3,6 +3,7 @@
 namespace Carica\Io\Event\Loop {
 
   use Carica\Io\Event\Loop;
+  use PHPUnit\Framework\MockObject\MockObject;
   use PHPUnit\Framework\TestCase;
 
   include_once(__DIR__.'/../../Bootstrap.php');
@@ -18,6 +19,7 @@ namespace Carica\Io\Event\Loop {
     }
 
     public function testGetAfterSet(): void {
+      /** @var MockObject|Loop $loop */
       $loop = $this->createMock(Loop::class);
       Factory::set($loop);
       $this->assertSame($loop, Factory::get());
@@ -29,6 +31,7 @@ namespace Carica\Io\Event\Loop {
     }
 
     public function testRun(): void {
+      /** @var MockObject|Loop $loop */
       $loop = $this->createMock(Loop::class);
       $loop
         ->expects($this->once())

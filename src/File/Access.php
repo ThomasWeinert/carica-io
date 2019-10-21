@@ -76,6 +76,7 @@ namespace Carica\Io\File {
      * @return string
      */
     public function getMimeType(string $filename): string {
+      /** @lang PhpRegExp */
       $pattern = '(\.(?P<extension>[^/\\.]+)$)';
       if (preg_match($pattern, $filename, $matches)) {
         $extension = strtolower($matches['extension']);

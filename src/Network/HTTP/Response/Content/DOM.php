@@ -21,8 +21,7 @@ namespace Carica\Io\Network\HTTP\Response\Content {
     }
 
     public function __get($name) {
-      switch ($name) {
-      case 'document' :
+      if ($name === 'document') {
         return $this->_document;
       }
       return parent::__get($name);

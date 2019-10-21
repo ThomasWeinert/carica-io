@@ -2,15 +2,17 @@
 
 namespace Carica\Io\Network\HTTP {
 
+  use LogicException;
   use PHPUnit\Framework\TestCase;
+  use UnexpectedValueException;
 
   include_once(__DIR__.'/../../Bootstrap.php');
 
+  /**
+   * @covers \Carica\Io\Network\HTTP\Header
+   */
   class HeaderTest extends TestCase {
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Header
-     */
     public function testConstructor(): void {
       $header = new Header('Content-Type', 'text/plain');
       $this->assertEquals('Content-Type', $header->name);
@@ -18,26 +20,20 @@ namespace Carica\Io\Network\HTTP {
       $this->assertEquals(['text/plain'], (array)$header->values);
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Header
-     */
     public function testConstructorWithListData(): void {
       $header = new Header('Content-Type', ['text/plain', 'foo/bar']);
       $this->assertEquals('foo/bar', $header->value);
       $this->assertEquals(['text/plain', 'foo/bar'], (array)$header->values);
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Header
-     */
     public function testStringCastReturnLastValue(): void {
       $header = new Header('Content-Type', ['text/plain', 'foo/bar']);
       $this->assertEquals('foo/bar', (string)$header);
     }
 
     /**
-     * @covers \Carica\Io\Network\HTTP\Header::__isset
      * @dataProvider provideValidPropertyNames
+     * @param string $property
      */
     public function testIssetPropertyExpectingTrue($property): void {
       $header = new Header('Content-Type', ['text/plain', 'foo/bar']);
@@ -45,24 +41,18 @@ namespace Carica\Io\Network\HTTP {
     }
 
     public static function provideValidPropertyNames(): array {
-      return array(
-        array('name'),
-        array('value'),
-        array('values')
-      );
+      return [
+        ['name'],
+        ['value'],
+        ['values']
+      ];
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Header::__isset
-     */
     public function testIssetPropertyExpectingFalse(): void {
       $header = new Header('Content-Type', ['text/plain', 'foo/bar']);
       $this->assertFalse(isset($header->invalidProperty));
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Header
-     */
     public function testGetSetNameProperty(): void {
       $header = new Header('Content-Type', ['text/plain', 'foo/bar']);
       $header->name = 'Content-Length';
@@ -70,21 +60,21 @@ namespace Carica\Io\Network\HTTP {
     }
 
     /**
-     * @covers \Carica\Io\Network\HTTP\Header
      * @dataProvider provideInvalidHeaderNames
+     * @param string $name
      */
     public function testGetSetNamePropertyExpectingException($name): void {
       $header = new Header('Content-Type', ['text/plain', 'foo/bar']);
-      $this->expectException(\UnexpectedValueException::class);
+      $this->expectException(UnexpectedValueException::class);
       $header->name = $name;
     }
 
     public static function provideInvalidHeaderNames(): array {
-      return array(
-        array(''),
-        array('   '),
-        array("\t\r\n")
-      );
+      return [
+        [''],
+        ['   '],
+        ["\t\r\n"]
+      ];
     }
 
     /**
@@ -110,7 +100,8 @@ namespace Carica\Io\Network\HTTP {
      */
     public function testGetInvalidPropertyExpectingException(): void {
       $header = new Header('Content-Type', 'foo/bar');
-      $this->expectException(\LogicException::class);
+      $this->expectException(LogicException::class);
+      /** @noinspection PhpUndefinedFieldInspection */
       $header->invalidProperty;
     }
 
@@ -119,7 +110,8 @@ namespace Carica\Io\Network\HTTP {
      */
     public function testSetInvalidPropertyExpectingException(): void {
       $header = new Header('Content-Type', 'foo/bar');
-      $this->expectException(\LogicException::class);
+      $this->expectException(LogicException::class);
+      /** @noinspection PhpUndefinedFieldInspection */
       $header->invalidProperty = 'fail';
     }
 
@@ -196,7 +188,7 @@ namespace Carica\Io\Network\HTTP {
     public function testHeaderAsIterator(): void {
       $header = new Header('Content-Type', ['text/plain', 'foo/bar']);
       $this->assertEquals(
-        array('text/plain', 'foo/bar'),
+        ['text/plain', 'foo/bar'],
         iterator_to_array($header)
       );
     }

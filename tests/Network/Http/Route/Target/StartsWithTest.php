@@ -8,16 +8,20 @@ namespace Carica\Io\Network\HTTP\Route\Target {
   use PHPUnit\Framework\MockObject\MockObject;
   use PHPUnit\Framework\TestCase;
 
+  /**
+   * @covers \Carica\Io\Network\HTTP\Route\Target\StartsWith
+   */
   class StartsWithTest extends TestCase {
 
     /**
-     * @covers \Carica\Io\Network\HTTP\Route\Target\StartsWith
      * @dataProvider provideValidPaths
+     * @param string $path
+     * @param array $expectedParameters
      */
     public function testWithValidPaths($path, $expectedParameters): void {
       $result = FALSE;
       $target = new StartsWith(
-        static function(HTTP\Request $request, $parameters) use (&$result) {
+        static function (HTTP\Request $request, $parameters) use (&$result) {
           $result = $parameters;
           return TRUE;
         },
@@ -28,18 +32,15 @@ namespace Carica\Io\Network\HTTP\Route\Target {
     }
 
     public static function provideValidPaths(): array {
-      return array(
-        array('/foo/bar', array()),
-        array('/foo/{group}', array('group' => 'bar'))
-      );
+      return [
+        ['/foo/bar', []],
+        ['/foo/{group}', ['group' => 'bar']]
+      ];
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Route\Target\StartsWith
-     */
     public function testWithInvalidPaths(): void {
       $target = new Match(
-        static function() {
+        static function () {
           return TRUE;
         },
         '/bar/foo'

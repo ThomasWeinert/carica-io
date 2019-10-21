@@ -3,6 +3,8 @@
 namespace Carica\Io\Event\Emitter\Listener {
 
   use Carica\Io\Event\Emitter;
+  use LogicException;
+  use PHPUnit\Framework\MockObject\MockObject;
   use PHPUnit\Framework\TestCase;
 
   include_once(__DIR__.'/../../../Bootstrap.php');
@@ -15,7 +17,7 @@ namespace Carica\Io\Event\Emitter\Listener {
     public $calledCallback = FALSE;
 
     public function testConstructor(): void {
-      $emitter = $this->createMock(Emitter::class);
+      $emitter = $this->createEmitterFixture();
       $callback = static function () {
       };
       $event = new On($emitter, 'foo', $callback);
@@ -30,7 +32,7 @@ namespace Carica\Io\Event\Emitter\Listener {
      */
     public function testPropertyIsset($property): void {
       $event = new On(
-        $this->createMock(Emitter::class),
+        $this->createEmitterFixture(),
         'foo',
         static function () {
         }
@@ -40,7 +42,7 @@ namespace Carica\Io\Event\Emitter\Listener {
 
     public function testPropertyIssetWithInvalidPropertyExpectingFalse(): void {
       $event = new On(
-        $this->createMock(Emitter::class),
+        $this->createEmitterFixture(),
         'foo',
         static function () {
         }
@@ -50,7 +52,7 @@ namespace Carica\Io\Event\Emitter\Listener {
 
     public function testGetPropertyEmitter(): void {
       $event = new On(
-        $emitter = $this->createMock(Emitter::class),
+        $emitter = $this->createEmitterFixture(),
         'foo',
         static function () {
         }
@@ -60,7 +62,7 @@ namespace Carica\Io\Event\Emitter\Listener {
 
     public function testGetPropertyEvent(): void {
       $event = new On(
-        $this->createMock(Emitter::class),
+        $this->createEmitterFixture(),
         'foo',
         static function () {
         }
@@ -70,7 +72,7 @@ namespace Carica\Io\Event\Emitter\Listener {
 
     public function testGetPropertyCallback(): void {
       $event = new On(
-        $this->createMock(Emitter::class),
+        $this->createEmitterFixture(),
         'foo',
         $callback = static function () {
         }
@@ -80,7 +82,7 @@ namespace Carica\Io\Event\Emitter\Listener {
 
     public function testGetCallback(): void {
       $event = new On(
-        $this->createMock(Emitter::class),
+        $this->createEmitterFixture(),
         'foo',
         $callback = static function () {
         }
@@ -90,40 +92,41 @@ namespace Carica\Io\Event\Emitter\Listener {
 
     public function testGetInvalidPropertyExpectingException(): void {
       $event = new On(
-        $this->createMock(Emitter::class),
+        $this->createEmitterFixture(),
         'foo',
         static function () {
         }
       );
-      $this->expectException(\LogicException::class);
+      $this->expectException(LogicException::class);
+      /** @noinspection PhpUndefinedFieldInspection */
       $event->INVALID_PROPERTY;
     }
 
     public function testSetIsBlockedExpectingException(): void {
       $event = new On(
-        $this->createMock(Emitter::class),
+        $this->createEmitterFixture(),
         'foo',
         static function () {
         }
       );
-      $this->expectException(\LogicException::class);
-      $event->emitter = $this->createMock(Emitter::class);
+      $this->expectException(LogicException::class);
+      $event->emitter = $this->createEmitterFixture();
     }
 
     public function testUnsetIsBlockedExpectingException(): void {
       $event = new On(
-        $this->createMock(Emitter::class),
+        $this->createEmitterFixture(),
         'foo',
         static function () {
         }
       );
-      $this->expectException(\LogicException::class);
+      $this->expectException(LogicException::class);
       unset($event->emitter);
     }
 
     public function testInvokeCallsCallback(): void {
       $event = new On(
-        $this->createMock(Emitter::class),
+        $this->createEmitterFixture(),
         'foo',
         function () {
           $this->calledCallback = TRUE;
@@ -143,6 +146,13 @@ namespace Carica\Io\Event\Emitter\Listener {
         ['event'],
         ['callback']
       ];
+    }
+
+    /**
+     * @return MockObject|Emitter
+     */
+    private function createEmitterFixture() {
+      return $this->createMock(Emitter::class);
     }
   }
 }

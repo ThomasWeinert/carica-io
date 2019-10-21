@@ -173,6 +173,13 @@ namespace Carica\Io {
       $this->assertFalse($defer->isRejected());
     }
 
+    public function testIsPending(): void {
+      $defer = new Deferred();
+      $this->assertTrue($defer->isPending());
+      $defer->reject();
+      $this->assertFalse($defer->isPending());
+    }
+
     public function testStateExpectingPending(): void {
       $defer = new Deferred();
       $this->assertEquals(Deferred::STATE_PENDING, $defer->state());

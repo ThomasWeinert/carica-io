@@ -5,22 +5,21 @@ namespace Carica\Io\Network\HTTP\Route {
   include_once(__DIR__.'/../../../Bootstrap.php');
 
   use Carica\Io\Network\HTTP;
+  use PHPUnit\Framework\MockObject\MockObject;
   use PHPUnit\Framework\TestCase;
 
+  /**
+   * @covers \Carica\Io\Network\HTTP\Route\Target
+   */
   class TargetTest extends TestCase {
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Route\Target
-     */
     public function testConstructor(): void {
       $target = new Target_TestProxy($callback = static function() {});
       $this->assertSame($callback, $target->getCallback());
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Route\Target
-     */
     public function testCallableInterfaceValidationSuccessful(): void {
+      /** @var MockObject|HTTP\Request $request */
       $request = $this
         ->getMockBuilder(HTTP\Request::class)
         ->disableOriginalConstructor()
@@ -33,10 +32,9 @@ namespace Carica\Io\Network\HTTP\Route {
       $target->validationResult = array();
       $this->assertTrue($target($request));
     }
-    /**
-     * @covers \Carica\Io\Network\HTTP\Route\Target
-     */
-    public function testCallableInterfaceVaildationFailed(): void {
+
+    public function testCallableInterfaceValidationFailed(): void {
+      /** @var MockObject|HTTP\Request $request */
       $request = $this
         ->getMockBuilder(HTTP\Request::class)
         ->disableOriginalConstructor()

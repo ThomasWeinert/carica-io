@@ -79,7 +79,7 @@ namespace Carica\Io\Event {
      */
     public function testRemoveListener(): void {
       /** @var Emitter\Listener|MockObject $listener */
-      $listener = $this->createMock(Emitter\Listener::class);
+      $listener = $this->createEventListenerFixture();
       $emitter = new Emitter();
       $emitter->on('foo', $listener);
       $emitter->removeListener('foo', $listener);
@@ -88,8 +88,8 @@ namespace Carica\Io\Event {
 
     public function testRemoveAllListeners(): void {
       $emitter = new Emitter();
-      $emitter->on('foo', $this->createMock(Emitter\Listener::class));
-      $emitter->on('foo', $this->createMock(Emitter\Listener::class));
+      $emitter->on('foo', $this->createEventListenerFixture());
+      $emitter->on('foo', $this->createEventListenerFixture());
       $emitter->removeAllListeners('foo');
       $this->assertCount(0, $emitter->listeners('foo'));
     }
@@ -101,8 +101,8 @@ namespace Carica\Io\Event {
 
     public function testListenersReturnsListenersForSpecifiedEvent(): void {
       $emitter = new Emitter();
-      $emitter->on('foo', $this->createMock(Emitter\Listener::class));
-      $emitter->on('bar', $this->createMock(Emitter\Listener::class));
+      $emitter->on('foo', $this->createEventListenerFixture());
+      $emitter->on('bar', $this->createEventListenerFixture());
       $this->assertCount(1, $emitter->listeners('bar'));
     }
 
@@ -200,6 +200,13 @@ namespace Carica\Io\Event {
       $emitter->on(
         'invalid', static function () {}
       );
+    }
+
+    /**
+     * @return MockObject|Emitter\Listener
+     */
+    private function createEventListenerFixture(): MockObject {
+      return $this->createMock(Emitter\Listener::class);
     }
   }
 }

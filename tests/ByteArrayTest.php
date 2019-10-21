@@ -1,7 +1,9 @@
-<?php
+<?php /** @noinspection PhpIllegalArrayKeyTypeInspection */
 
 namespace Carica\Io {
 
+  use OutOfBoundsException;
+  use OutOfRangeException;
   use PHPUnit\Framework\TestCase;
 
   include_once(__DIR__.'/Bootstrap.php');
@@ -18,7 +20,7 @@ namespace Carica\Io {
     }
 
     public function testConstructorWithInvalidLengthExpectingException(): void {
-      $this->expectException(\OutOfRangeException::class);
+      $this->expectException(OutOfRangeException::class);
       $this->expectExceptionMessage('Zero or negative length is not possible');
       new ByteArray(-3);
     }
@@ -39,7 +41,7 @@ namespace Carica\Io {
 
     public function testSetLengthWithInvalidLengthExpectingException(): void {
       $bytes = new ByteArray(6);
-      $this->expectException(\OutOfRangeException::class);
+      $this->expectException(OutOfRangeException::class);
       $this->expectExceptionMessage('Zero or negative length is not possible');
       $bytes->setLength(-23);
     }
@@ -51,6 +53,7 @@ namespace Carica\Io {
 
     /**
      * @dataProvider provideBinarySamples
+     * @param string $binary
      */
     public function testStringInOut($binary): void {
       $bytes = new ByteArray(strlen($binary));
@@ -60,7 +63,7 @@ namespace Carica\Io {
 
     public function testFromStringWithInvalidLengthExpectingException(): void {
       $bytes = new ByteArray(42);
-      $this->expectException(\OutOfBoundsException::class);
+      $this->expectException(OutOfBoundsException::class);
       $bytes->fromString(pack('C*', 255, 255, 255));
     }
 
@@ -78,6 +81,9 @@ namespace Carica\Io {
 
     /**
      * @dataProvider provideHexSamples
+     * @param string $string
+     * @param string $binaryString
+     * @param int $length
      */
     public function testHexStringInOut($string, $binaryString, $length): void {
       $bytes = new ByteArray($length);
@@ -87,7 +93,7 @@ namespace Carica\Io {
 
     public function testFromHexStringWithInvalidLengthExpectingException(): void {
       $bytes = new ByteArray(42);
-      $this->expectException(\OutOfBoundsException::class);
+      $this->expectException(OutOfBoundsException::class);
       $bytes->fromHexString('FFF0FF', FALSE);
     }
 
@@ -111,7 +117,7 @@ namespace Carica\Io {
 
     public function testFromArrayWithInvalidLengthExpectingException(): void {
       $bytes = new ByteArray(42);
-      $this->expectException(\OutOfBoundsException::class);
+      $this->expectException(OutOfBoundsException::class);
       $bytes->fromArray([0xFF, 0xF0, 0xFF], FALSE);
     }
 
@@ -129,6 +135,9 @@ namespace Carica\Io {
 
     /**
      * @dataProvider provideHexSamples
+     * @param string $expected
+     * @param string $binaryString
+     * @param int $length
      */
     public function testAsHex($expected, $binaryString, $length): void {
       $bytes = new ByteArray($length);
@@ -138,6 +147,9 @@ namespace Carica\Io {
 
     /**
      * @dataProvider provideBitStringSamples
+     * @param string $expected
+     * @param string $binaryString
+     * @param int $length
      */
     public function testAsBitString($expected, $binaryString, $length): void {
       $bytes = new ByteArray($length);
@@ -163,7 +175,7 @@ namespace Carica\Io {
 
     public function testBitExistsWithInvalidOffsetExpectingException(): void {
       $bytes = new ByteArray(3);
-      $this->expectException(\OutOfBoundsException::class);
+      $this->expectException(OutOfBoundsException::class);
       $bytes[[23, 23, 23]];
     }
 
@@ -227,6 +239,9 @@ namespace Carica\Io {
 
     /**
      * @dataProvider provideByteOffsetSamples
+     * @param string $expected
+     * @param int $byte
+     * @param int $value
      */
     public function testByteGetAfterSet($expected, $byte, $value): void {
       $bytes = new ByteArray(2);
@@ -242,16 +257,17 @@ namespace Carica\Io {
      */
     public function testValidateIndexExpectingException($position): void {
       $bytes = new ByteArray(2);
-      $this->expectException(\OutOfBoundsException::class);
+      $this->expectException(OutOfBoundsException::class);
       $bytes[$position] = 1;
     }
 
     /**
      * @dataProvider provideInvalidValues
+     * @param int $value
      */
     public function testValidateValueExpectingException($value): void {
       $bytes = new ByteArray(1);
-      $this->expectException(\OutOfRangeException::class);
+      $this->expectException(OutOfRangeException::class);
       $bytes[0] = $value;
     }
 

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Carica\Io {
 
+  use LogicException;
   use PHPUnit\Framework\TestCase;
   use stdClass;
 
@@ -245,13 +246,14 @@ namespace Carica\Io {
 
     public function testMagicGetWithInvalidPropertyExpectingException(): void {
       $callbacks = new Callbacks();
-      $this->expectException(\LogicException::class);
+      $this->expectException(LogicException::class);
+      /** @noinspection PhpUndefinedFieldInspection */
       $callbacks->invalidProperty;
     }
 
     public function testMagicSetExpectingException(): void {
       $callbacks = new Callbacks();
-      $this->expectException(\LogicException::class);
+      $this->expectException(LogicException::class);
       $callbacks->add = 'fail';
     }
   }

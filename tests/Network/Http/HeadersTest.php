@@ -2,23 +2,21 @@
 
 namespace Carica\Io\Network\HTTP {
 
+  use InvalidArgumentException;
   use PHPUnit\Framework\TestCase;
 
   include_once(__DIR__.'/../../Bootstrap.php');
 
+  /**
+   * @covers \Carica\Io\Network\HTTP\Headers
+   */
   class HeadersTest extends TestCase {
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Headers::count
-     */
     public function testCountExpectingZero(): void {
       $headers = new Headers();
       $this->assertCount(0, $headers);
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Headers::count
-     */
     public function testCountExpectingTwo(): void {
       $headers = new Headers();
       $headers[] = 'Content-Type: the/answer';
@@ -26,9 +24,6 @@ namespace Carica\Io\Network\HTTP {
       $this->assertCount(2, $headers);
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Headers::getIterator
-     */
     public function testIteratorWithTwoElements(): void {
       $headers = new Headers();
       $headers[] = 'Content-Type: the/answer';
@@ -42,31 +37,18 @@ namespace Carica\Io\Network\HTTP {
       );
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Headers::offsetExists
-     * @covers \Carica\Io\Network\HTTP\Headers::prepareKey
-     */
     public function testArrayAccessOffsetExistsExpectingTrue(): void {
       $headers = new Headers();
       $headers[] = 'Content-Type: the/answer';
       $this->assertTrue(isset($headers['Content-Type']));
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Headers::offsetExists
-     * @covers \Carica\Io\Network\HTTP\Headers::prepareKey
-     */
     public function testArrayAccessOffsetExistsExpectingFalse(): void {
       $headers = new Headers();
       $headers[] = 'Content-Type: the/answer';
       $this->assertFalse(isset($headers['Content-Length']));
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Headers::offsetGet
-     * @covers \Carica\Io\Network\HTTP\Headers::offsetSet
-     * @covers \Carica\Io\Network\HTTP\Headers::prepareKey
-     */
     public function testArrayAccessOffsetGetAfterOffsetSet(): void {
       $headers = new Headers();
       $headers[] = 'Content-Type: the/answer';
@@ -76,11 +58,6 @@ namespace Carica\Io\Network\HTTP {
       );
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Headers::offsetGet
-     * @covers \Carica\Io\Network\HTTP\Headers::offsetSet
-     * @covers \Carica\Io\Network\HTTP\Headers::prepareKey
-     */
     public function testArrayAccessOffsetSetWithHeaderObject(): void {
       $headers = new Headers();
       $headers['Content-Type'] = $header = new Header('Content-Type', 'the/answer');
@@ -90,11 +67,6 @@ namespace Carica\Io\Network\HTTP {
       );
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Headers::offsetGet
-     * @covers \Carica\Io\Network\HTTP\Headers::offsetSet
-     * @covers \Carica\Io\Network\HTTP\Headers::prepareKey
-     */
     public function testArrayAccessOffsetSetWithHeaderObjectButNoName(): void {
       $headers = new Headers();
       $headers[] = $header = new Header('Content-Type', 'the/answer');
@@ -104,11 +76,6 @@ namespace Carica\Io\Network\HTTP {
       );
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Headers::offsetGet
-     * @covers \Carica\Io\Network\HTTP\Headers::offsetSet
-     * @covers \Carica\Io\Network\HTTP\Headers::prepareKey
-     */
     public function testArrayAccessSetUsingStringNameAndValue(): void {
       $headers = new Headers();
       $headers['Content-Type'] = 'the/answer';
@@ -118,46 +85,31 @@ namespace Carica\Io\Network\HTTP {
       );
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Headers::offsetGet
-     * @covers \Carica\Io\Network\HTTP\Headers::offsetSet
-     * @covers \Carica\Io\Network\HTTP\Headers::prepareKey
-     */
     public function testArrayAccessSetAddsValuesToExistingHeader(): void {
       $headers = new Headers();
       $headers['Set-Cookie'] = 'chocolate';
       /** @noinspection SuspiciousAssignmentsInspection */
       $headers['Set-Cookie'] = 'double chocolate';
       /** @noinspection SuspiciousAssignmentsInspection */
-      $headers['Set-Cookie'] = 'hazlenut';
+      $headers['Set-Cookie'] = 'hazelnut';
       $this->assertEquals(
-         new Header('Set-Cookie', array('chocolate', 'double chocolate', 'hazlenut')),
+         new Header('Set-Cookie', array('chocolate', 'double chocolate', 'hazelnut')),
          $headers['Set-Cookie']
       );
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Headers::prepareKey
-     */
     public function testArrayAccessOffsetGetWithEmptyKey(): void {
       $headers = new Headers();
-      $this->expectException(\InvalidArgumentException::class);
+      $this->expectException(InvalidArgumentException::class);
       $headers['   '];
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Headers::prepareKey
-     */
     public function testArrayAccessOffsetGetWithInvalidKey(): void {
       $headers = new Headers();
-      $this->expectException(\InvalidArgumentException::class);
-      $headers['123-nogood'];
+      $this->expectException(InvalidArgumentException::class);
+      $headers['123-no-good'];
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Headers::offsetUnset
-     * @covers \Carica\Io\Network\HTTP\Headers::prepareKey
-     */
     public function testArrayAccessOffsetUnset(): void {
       $headers = new Headers();
       $headers['Content-Type'] = 'the/answer';

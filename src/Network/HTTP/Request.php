@@ -18,6 +18,7 @@ namespace Carica\Io\Network\HTTP {
   class Request {
 
     private $_patternStatus =
+      /** @lang PhpRegExp */
       '(^(?P<method>[A-Z]+) (?P<url>\S+) HTTP/(?P<version>1\.\d)\r?\n)';
 
     public $_method = 'GET';

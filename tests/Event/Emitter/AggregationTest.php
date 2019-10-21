@@ -3,19 +3,24 @@
 namespace Carica\Io\Event\Emitter {
 
   use Carica\Io\Event\Emitter;
+  use PHPUnit\Framework\MockObject\MockObject;
   use PHPUnit\Framework\TestCase;
   use ReflectionClass;
+  use ReflectionException;
 
   include_once(__DIR__.'/../../Bootstrap.php');
 
   /**
-   * @covers \Carica\Io\Event\Emitter\Aggregation::emitEvent
+   * @covers \Carica\Io\Event\Emitter\Aggregation
    */
   class AggregationTest extends TestCase {
 
     public function testGetEventsAfterSet(): void {
+      /** @var MockObject|Aggregation_TestProxy $aggregation */
       $aggregation = new Aggregation_TestProxy();
-      $aggregation->events($events = $this->createMock(Emitter::class));
+      /** @var Emitter|MockObject $events */
+      $events = $this->createMock(Emitter::class);
+      $aggregation->events($events);
       $this->assertSame($events, $aggregation->events());
     }
 
@@ -35,16 +40,20 @@ namespace Carica\Io\Event\Emitter {
     public function testEmitEventDoesNotImplicitCreateEmitter(): void {
       $aggregation = new Aggregation_TestProxy();
       $aggregation->emitEvent('dummy');
-      $reflection = new ReflectionClass($aggregation);
-      $property = $reflection->getProperty('_eventEmitter');
-      $property->setAccessible(true);
-      $this->assertNull($property->getValue($aggregation));
-      $aggregation->events();
-      $this->assertNotNull($property->getValue($aggregation));
-
+      try {
+        $reflection = new ReflectionClass($aggregation);
+        $property = $reflection->getProperty('_eventEmitter');
+        $property->setAccessible(TRUE);
+        $this->assertNull($property->getValue($aggregation));
+        $aggregation->events();
+        $this->assertNotNull($property->getValue($aggregation));
+      } catch (ReflectionException $exception) {
+        $this->fail('Could not change visibility of private property.');
+      }
     }
 
     public function testAttachEventUsingImportedMagicMethod(): void {
+      /** @var MockObject|Aggregation_TestProxy $aggregation */
       $aggregation = new Aggregation_TestProxy();
       $result = FALSE;
       $aggregation->onTest(static function() use (&$result) { $result = TRUE; });
@@ -53,6 +62,7 @@ namespace Carica\Io\Event\Emitter {
     }
 
     public function testAttachEventUsingOwnMagicMethod(): void {
+      /** @var MockObject|Aggregation_TestProxy $aggregation */
       $aggregation = new Aggregation_TestProxyWithCall();
       $result = FALSE;
       $aggregation->onTest(static function() use (&$result) { $result = TRUE; });
@@ -61,6 +71,9 @@ namespace Carica\Io\Event\Emitter {
     }
   }
 
+  /**
+   * @method onTest(callable $listener)
+   */
   class Aggregation_TestProxy {
     use Aggregation {
       Aggregation::__call as public;

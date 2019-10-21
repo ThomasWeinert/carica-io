@@ -2,22 +2,25 @@
 
 namespace Carica\Io\Event\Emitter\Listener {
 
+  use Carica\Io\Event\Emitter as EventEmitter;
+  use PHPUnit\Framework\MockObject\MockObject;
   use PHPUnit\Framework\TestCase;
 
   include_once(__DIR__.'/../../../Bootstrap.php');
 
+  /**
+   * @covers \Carica\Io\Event\Emitter\Listener\Once
+   */
   class OnceTest extends TestCase {
 
     public $calledCallback = FALSE;
 
-    /**
-     * @covers \Carica\Io\Event\Emitter\Listener\Once::__invoke
-     */
     public function testInvokeCallsCallback(): void {
       $callback = function() {
         $this->calledCallback = TRUE;
       };
-      $emitter = $this->createMock(\Carica\Io\Event\Emitter::class);
+      /** @var EventEmitter|MockObject $emitter */
+      $emitter = $this->createMock(EventEmitter::class);
       $emitter
         ->expects($this->once())
         ->method('removeListener')
