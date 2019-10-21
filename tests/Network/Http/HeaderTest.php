@@ -77,27 +77,18 @@ namespace Carica\Io\Network\HTTP {
       ];
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Header
-     */
     public function testGetSetValueProperty(): void {
       $header = new Header('Content-Type', ['text/plain', 'foo/bar']);
       $header->value = 'text/html';
       $this->assertEquals('text/html', $header->value);
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Header
-     */
     public function testGetSetValuesProperty(): void {
       $header = new Header('Content-Type', 'foo/bar');
       $header->values = ['text/plain', 'text/html'];
       $this->assertEquals(['text/plain', 'text/html'], (array)$header->values);
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Header::__get
-     */
     public function testGetInvalidPropertyExpectingException(): void {
       $header = new Header('Content-Type', 'foo/bar');
       $this->expectException(LogicException::class);
@@ -105,9 +96,6 @@ namespace Carica\Io\Network\HTTP {
       $header->invalidProperty;
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Header::__set
-     */
     public function testSetInvalidPropertyExpectingException(): void {
       $header = new Header('Content-Type', 'foo/bar');
       $this->expectException(LogicException::class);
@@ -115,76 +103,49 @@ namespace Carica\Io\Network\HTTP {
       $header->invalidProperty = 'fail';
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Header
-     */
     public function testSetOffsetInValuesProperty(): void {
       $header = new Header('Content-Type', ['text/plain', 'foo/bar']);
       $header->values[1] = 'text/html';
       $this->assertEquals(['text/plain', 'text/html'], (array)$header->values);
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Header
-     */
     public function testOffsetExistsExpectingTrue(): void {
       $header = new Header('Content-Type', ['text/plain', 'foo/bar']);
       $this->assertTrue(isset($header[1]));
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Header
-     */
     public function testOffsetExistsExpectingFalse(): void {
       $header = new Header('Content-Type', ['text/plain', 'foo/bar']);
       $this->assertFalse(isset($header[99]));
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Header
-     */
     public function testOffsetGetAfterSet(): void {
       $header = new Header('Content-Type');
       $header[] = 'text/plain';
       $this->assertEquals('text/plain', $header[0]);
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Header
-     */
     public function testOffsetUnset(): void {
       $header = new Header('Content-Type', 'text/plain');
       unset($header[0]);
       $this->assertCount(0, $header);
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Header::count
-     */
     public function testCountExpectingZero(): void {
       $header = new Header('Content-Type');
       $this->assertCount(0, $header);
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Header::count
-     */
     public function testCountExpectingOne(): void {
       $header = new Header('Content-Type', 'text/html');
       $this->assertCount(1, $header);
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Header::count
-     */
     public function testCountExpectingTwo(): void {
       $header = new Header('Content-Type', ['text/plain', 'text/html']);
       $this->assertCount(2, $header);
     }
 
-    /**
-     * @covers \Carica\Io\Network\HTTP\Header::getIterator
-     */
     public function testHeaderAsIterator(): void {
       $header = new Header('Content-Type', ['text/plain', 'foo/bar']);
       $this->assertEquals(

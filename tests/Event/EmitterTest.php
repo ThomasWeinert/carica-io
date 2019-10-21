@@ -42,9 +42,6 @@ namespace Carica\Io\Event {
       );
     }
 
-    /**
-     * @covers \Carica\Io\Event\Emitter::once
-     */
     public function testOnceAddListener(): void {
       /** @var callable|MockObject $event */
       $event = $this
@@ -58,9 +55,6 @@ namespace Carica\Io\Event {
       );
     }
 
-    /**
-     * @covers \Carica\Io\Event\Emitter::once
-     */
     public function testOnceWrapsFunction(): void {
       $emitter = new Emitter();
       $emitter->once(
@@ -74,9 +68,6 @@ namespace Carica\Io\Event {
       );
     }
 
-    /**
-     * @covers \Carica\Io\Event\Emitter::removeListener
-     */
     public function testRemoveListener(): void {
       /** @var Emitter\Listener|MockObject $listener */
       $listener = $this->createEventListenerFixture();

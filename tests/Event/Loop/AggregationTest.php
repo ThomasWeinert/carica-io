@@ -8,11 +8,11 @@ namespace Carica\Io\Event\Loop {
 
   include_once(__DIR__.'/../../Bootstrap.php');
 
+  /**
+   * @covers \Carica\Io\Event\Loop\Aggregation
+   */
   class AggregationTest extends TestCase {
 
-    /**
-     * @covers \Carica\Io\Event\Loop\Aggregation
-     */
     public function testGetAfterSet(): void {
       $aggregation = new Aggregation_TestProxy();
       /** @var Loop|MockObject $loop */
@@ -21,9 +21,6 @@ namespace Carica\Io\Event\Loop {
       $this->assertSame($loop, $aggregation->loop());
     }
 
-    /**
-     * @covers \Carica\Io\Event\Loop\Aggregation
-     */
     public function testGetImplicitCreate(): void {
       $aggregation = new Aggregation_TestProxy();
       $this->assertNotNull($aggregation->loop());
