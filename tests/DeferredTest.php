@@ -22,7 +22,7 @@ namespace Carica\Io {
       $defer = new Deferred();
       $defer
         ->done(
-          static function($text) use (&$literal) {
+          static function ($text) use (&$literal) {
             $literal = $text;
           }
         )
@@ -36,7 +36,7 @@ namespace Carica\Io {
       $defer
         ->resolve('success')
         ->done(
-          static function($text) use (&$literal) {
+          static function ($text) use (&$literal) {
             $literal = $text;
           }
         );
@@ -48,7 +48,7 @@ namespace Carica\Io {
       $defer = new Deferred();
       $defer
         ->always(
-          static function($text) use (&$literal) {
+          static function ($text) use (&$literal) {
             $literal = $text;
           }
         )
@@ -61,7 +61,7 @@ namespace Carica\Io {
       $defer = new Deferred();
       $defer
         ->fail(
-          static function($text) use (&$literal) {
+          static function ($text) use (&$literal) {
             $literal = $text;
           }
         )
@@ -75,7 +75,7 @@ namespace Carica\Io {
       $defer
         ->reject('got error')
         ->fail(
-          static function($text) use (&$literal) {
+          static function ($text) use (&$literal) {
             $literal = $text;
           }
         );
@@ -87,7 +87,7 @@ namespace Carica\Io {
       $defer = new Deferred();
       $defer
         ->always(
-          static function($text) use (&$literal) {
+          static function ($text) use (&$literal) {
             $literal = $text;
           }
         )
@@ -101,7 +101,7 @@ namespace Carica\Io {
       $defer
         ->reject('got error')
         ->always(
-          static function($text) use (&$literal) {
+          static function ($text) use (&$literal) {
             $literal = $text;
           }
         );
@@ -109,11 +109,11 @@ namespace Carica\Io {
     }
 
     public function testNotifyTriggersProgressCallback(): void {
-      $calls = array();
+      $calls = [];
       $defer = new Deferred();
       $defer
         ->progress(
-          static function(...$arguments) use (&$calls) {
+          static function (...$arguments) use (&$calls) {
             $calls[] = $arguments;
           }
         );
@@ -121,30 +121,30 @@ namespace Carica\Io {
         ->notify(1)
         ->notify(2, 3);
       $this->assertEquals(
-        array(
-          array(1),
-          array(2, 3),
-        ),
+        [
+          [1],
+          [2, 3],
+        ],
         $calls
       );
     }
 
     public function testProgressCallbackIsCalledWithStoredNotify(): void {
-      $calls = array();
+      $calls = [];
       $defer = new Deferred();
       $defer
         ->notify(1)
         ->progress(
-          static function(...$arguments) use (&$calls) {
+          static function (...$arguments) use (&$calls) {
             $calls[] = $arguments;
           }
         )
         ->notify(2, 3);
       $this->assertEquals(
-        array(
-          array(1),
-          array(2, 3),
-        ),
+        [
+          [1],
+          [2, 3],
+        ],
         $calls
       );
     }
@@ -200,7 +200,7 @@ namespace Carica\Io {
     public function testThenWithDoneFilter(): void {
       $defer = new Deferred();
       $filtered = $defer->then(
-        static function($value) {
+        static function ($value) {
           return $value * 2;
         }
       );
@@ -217,21 +217,21 @@ namespace Carica\Io {
     public function testThenWithoutDoneFilter(): void {
       $defer = new Deferred();
       $filtered = $defer->then();
-      $calls = array();
+      $calls = [];
       $filtered->done(
         static function ($value) use (&$calls) {
           $calls[] = $value;
         }
       );
       $defer->resolve(5);
-      $this->assertEquals(array(5), $calls);
+      $this->assertEquals([5], $calls);
     }
 
     public function testThenWithFailFilter(): void {
       $defer = new Deferred();
       $filtered = $defer->then(
         NULL,
-        static function($value) {
+        static function ($value) {
           return $value * 2;
         }
       );
@@ -248,52 +248,52 @@ namespace Carica\Io {
     public function testThenWithoutFailFilter(): void {
       $defer = new Deferred();
       $filtered = $defer->then();
-      $calls = array();
+      $calls = [];
       $filtered->fail(
-          static function ($value) use (&$calls) {
-            $calls[] = $value;
-          }
+        static function ($value) use (&$calls) {
+          $calls[] = $value;
+        }
       );
       $defer->reject(5);
-      $this->assertEquals(array(5), $calls);
+      $this->assertEquals([5], $calls);
     }
 
     public function testThenWithNotifyFilter(): void {
-      $calls = array();
+      $calls = [];
       $defer = new Deferred();
       $defer
         ->then(
           NULL,
           NULL,
-          static function(...$arguments) {
+          static function (...$arguments) {
             return array_sum($arguments);
           }
         )
         ->progress(
-          static function($sum) use (&$calls) {
+          static function ($sum) use (&$calls) {
             $calls[] = $sum;
           }
         );
       $defer->notify(1, 2, 4);
       $this->assertSame(
-        array(7),
+        [7],
         $calls
       );
     }
 
     public function testThenWithoutNotifyFilter(): void {
-      $calls = array();
+      $calls = [];
       $defer = new Deferred();
       $defer
         ->then()
         ->progress(
-          static function(...$arguments) use (&$calls) {
+          static function (...$arguments) use (&$calls) {
             $calls[] = $arguments;
           }
         );
       $defer->notify(1, 2, 4);
       $this->assertSame(
-        array(array(1, 2, 4)),
+        [[1, 2, 4]],
         $calls
       );
     }
@@ -320,13 +320,13 @@ namespace Carica\Io {
         $deferTwo = new Deferred()
       )->done(
         static function ($one, $two) use (&$result) {
-          $result = array($one, $two);
+          $result = [$one, $two];
         }
       );
       $deferOne->resolve('1.1', '1.2');
       $deferTwo->resolve('2.1');
       $this->assertEquals(
-        array(array('1.1', '1.2'), array('2.1')),
+        [['1.1', '1.2'], ['2.1']],
         $result
       );
     }
@@ -338,18 +338,18 @@ namespace Carica\Io {
         $defer = new Deferred()
       )->done(
         static function ($one, $two) use (&$result) {
-          $result = array($one, $two);
+          $result = [$one, $two];
         }
       );
       $defer->resolve(84);
       $this->assertEquals(
-        array(array(42), array(84)),
+        [[42], [84]],
         $result
       );
     }
 
     public function testWhenWithRejectedDefer(): void {
-      $calls = array();
+      $calls = [];
       $defer = new Deferred();
       $defer->reject(42, 'rejected');
       Deferred::when(
@@ -361,9 +361,9 @@ namespace Carica\Io {
         }
       );
       $this->assertEquals(
-        array(
-          array(42, 'rejected')
-        ),
+        [
+          [42, 'rejected']
+        ],
         $calls
       );
     }
@@ -375,22 +375,57 @@ namespace Carica\Io {
     }
 
     public function testWhenWithSeveralScalarArgumentsReturnsResolvedPromise(): void {
-      $calls = array();
+      $calls = [];
       $promise = Deferred::when('foo', 'bar', '42');
       $promise
         ->done(
-          static function(...$arguments) use (&$calls) {
+          static function (...$arguments) use (&$calls) {
             $calls[] = $arguments;
           }
         );
       $this->assertInstanceOf(Deferred\Promise::class, $promise);
       $this->assertEquals(Deferred::STATE_RESOLVED, $promise->state());
       $this->assertEquals(
-        array(
-          array(array('foo'), array('bar'), array('42'))
-        ),
+        [
+          [['foo'], ['bar'], ['42']]
+        ],
         $calls
       );
+    }
+
+    public function testWhenWithSingleScalarArgumentsReturnsResolvedPromise(): void {
+      $calls = [];
+      $promise = Deferred::when('42');
+      $promise
+        ->done(
+          static function (...$arguments) use (&$calls) {
+            $calls[] = $arguments;
+          }
+        );
+      $this->assertInstanceOf(Deferred\Promise::class, $promise);
+      $this->assertEquals(Deferred::STATE_RESOLVED, $promise->state());
+      $this->assertEquals(
+        [
+          ['42']
+        ],
+        $calls
+      );
+    }
+
+    public function testRestart(): void {
+      $counter = 0;
+      $collector = static function () use (&$counter) {
+        $counter++;
+      };
+      $defer = new Deferred();
+      $defer->done($collector);
+      $defer->resolve();
+      $this->assertSame(1, $counter);
+      $defer->resolve();
+      $this->assertSame(1, $counter);
+      $defer->restart();
+      $defer->resolve();
+      $this->assertSame(2, $counter);
     }
   }
 }
