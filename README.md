@@ -15,8 +15,6 @@ Carica Io is a collection of experimental php classes and scripts
 for non-blocking I/O. It provides the basic building blocks for 
 hardware control using Firmata (Arduino) and GPIO (Raspberry PI).
 
-***It's a playground project not a product. Use it at your own risk.***
-
 Basics
 ------
 
@@ -53,12 +51,12 @@ Related Projects
 
 *Carica\Io* provides the classes for event based programming and a simple web server.
 It defines interfaces for hardware control (Pin, ShiftOut, ...). 
-[Carica Firmata](https://github.com/ThomasWeinert/carica-firmata) is an client library 
+[Carica Firmata](https://github.com/ThomasWeinert/carica-firmata) is a client library 
 for the Firmata protocol it allows to control 
-Arduino boards over a serial or a network connection. *Carica\GPIO* implements GPIO
+Arduino boards over a serial or a network connection. [Carica\GPIO](https://github.com/ThomasWeinert/carica-gpio) implements GPIO
 into PHP using the file system or the WiringPI library for the Raspberry PI.
 
-*Carica\Chip* implements classes for hardware objects. Like a LED, a RGB-LED, a Servo,...
+[Carica\Chip](https://github.com/ThomasWeinert/carica-chip) implements classes for hardware objects. Like a LED, a RGB-LED, a Servo,...
 
 Usage
 -----
