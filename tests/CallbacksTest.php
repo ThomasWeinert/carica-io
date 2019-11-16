@@ -16,6 +16,7 @@ namespace Carica\Io {
 
     public function testAdd(): void {
       $callbacks = new Callbacks();
+      $this->assertTrue(isset($callbacks->add));
       $callbacks->add('substr');
       $this->assertEquals(
         ['substr'],
