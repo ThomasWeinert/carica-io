@@ -2,6 +2,7 @@
 
 namespace Carica\Io\Event {
 
+  use LogicException;
   use PHPUnit\Framework\MockObject\MockObject;
   use PHPUnit\Framework\TestCase;
   use UnexpectedValueException;
@@ -191,6 +192,22 @@ namespace Carica\Io\Event {
       $emitter->on(
         'invalid', static function () {}
       );
+    }
+
+    public function testDefineDuplicateAliasesEvent(): void {
+      $emitter = new Emitter();
+      $emitter->defineEvents(['foo' => ['bar']]);
+      $this->expectException(LogicException::class);
+      $this->expectExceptionMessage('Alias "bar" is already defined for event "foo".');
+      $emitter->defineEvents(['foo' => ['bar']]);
+    }
+
+    public function testDefineEventAsAlias(): void {
+      $emitter = new Emitter();
+      $emitter->defineEvents(['bar']);
+      $this->expectException(LogicException::class);
+      $this->expectExceptionMessage('Alias "bar" is already defined as event.');
+      $emitter->defineEvents(['foo' => ['bar']]);
     }
 
     /**
