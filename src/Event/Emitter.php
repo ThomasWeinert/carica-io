@@ -26,7 +26,7 @@ namespace Carica\Io\Event {
      *
      *   $events = ['read', 'write']
      *
-     * To define events use the event names as keys:
+     * To define aliases use the event names as keys:
      *
      *   $events = ['read' => ['data', 'received'], 'write' => 'send']
      *
@@ -64,7 +64,7 @@ namespace Carica\Io\Event {
               'Alias "'.$alias.'" is already defined for event "'.$event.'".'
             );
           }
-          $this->_eventNames[$aliasLower] = $eventLower;
+          $this->_eventAliases[$aliasLower] = $eventLower;
         }
       }
     }
