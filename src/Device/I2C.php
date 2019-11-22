@@ -26,7 +26,7 @@ namespace Carica\Io\Device {
      * @param int $length
      * @return PromiseLike
      */
-    public function read($length): PromiseLike;
+    public function read(int $length): PromiseLike;
 
     /**
      * Start continuous reading, repeatedly calls the listener
@@ -34,7 +34,7 @@ namespace Carica\Io\Device {
      * @param int $length
      * @param callable $listener
      */
-    public function startReading($length, callable $listener): void;
+    public function startReading(int $length, callable $listener): void;
 
     /**
      * Stop continuous reading on the specified address
