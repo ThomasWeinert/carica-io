@@ -20,7 +20,7 @@ namespace Carica\Io\Network\HTTP {
     private $_bufferOffset = 0;
     private $_request;
 
-    public function read($bytes = 65535) {
+    public function read(int $bytes = 65535): ?string {
       if ($data = parent::read($bytes)) {
         $this->_buffer .= $data;
         if (
@@ -42,6 +42,7 @@ namespace Carica\Io\Network\HTTP {
           }
         }
       }
+      return NULL;
     }
 
     private function readStatusLine() {

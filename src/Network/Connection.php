@@ -66,7 +66,7 @@ namespace Carica\Io\Network {
       return is_resource($this->_stream);
     }
 
-    public function read(int $bytes = 65535): string {
+    public function read(int $bytes = 65535): ?string {
       if ($this->isActive()) {
         $data = stream_socket_recvfrom($this->_stream, $bytes);
         if (is_string($data) && $data !== '') {
