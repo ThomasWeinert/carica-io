@@ -25,7 +25,7 @@ namespace Carica\Io\Network\HTTP {
         $this->_buffer .= $data;
         if (
           $this->_status === self::STATUS_EXPECT_REQUEST &&
-          FALSE !== ($line = $this->readStatusLine())
+          NULL !== ($line = $this->readStatusLine())
         ) {
           $this->_request = new Request($this);
           $this->_request->parseStatus($line);
@@ -45,7 +45,7 @@ namespace Carica\Io\Network\HTTP {
       return NULL;
     }
 
-    private function readStatusLine() {
+    private function readStatusLine(): ?string {
       if ($position = strpos($this->_buffer, "\n", $this->_bufferOffset)) {
         $result = substr(
           $this->_buffer, $this->_bufferOffset, $position - $this->_bufferOffset + 1
@@ -54,10 +54,10 @@ namespace Carica\Io\Network\HTTP {
         $this->_status = self::STATUS_EXPECT_HEADER;
         return $result;
       }
-      return FALSE;
+      return NULL;
     }
 
-    private function readHeader() {
+    private function readHeader(): ?string {
       $result = '';
       $offset = $this->_bufferOffset;
       while (FALSE !== ($position = strpos($this->_buffer, "\n", $offset))) {
@@ -78,7 +78,7 @@ namespace Carica\Io\Network\HTTP {
           return $result;
         }
       }
-      return FALSE;
+      return NULL;
     }
   }
 }
