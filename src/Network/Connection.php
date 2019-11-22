@@ -30,18 +30,23 @@ namespace Carica\Io\Network {
 
     /**
      * @param EventLoop $loop
-     * @param Io\Stream $stream
+     * @param resource $stream
      */
     public function __construct(EventLoop $loop, $stream) {
       $this->loop($loop);
       $this->resource($stream);
     }
+
     public function __destruct() {
       $this->resource(FALSE);
     }
 
+    /**
+     * @param resource|NULL|FALSE $stream
+     * @return resource
+     */
     public function resource($stream = NULL) {
-      if (isset($stream)) {
+      if (NULL !== $stream) {
         if (isset($this->_listener)) {
           $this->loop()->remove($this->_listener);
         }
@@ -61,7 +66,7 @@ namespace Carica\Io\Network {
       return is_resource($this->_stream);
     }
 
-    public function read($bytes = 65535) {
+    public function read(int $bytes = 65535): string {
       if ($this->isActive()) {
         $data = stream_socket_recvfrom($this->_stream, $bytes);
         if (is_string($data) && $data !== '') {
@@ -72,9 +77,9 @@ namespace Carica\Io\Network {
       return '';
     }
 
-    public function write($data) {
+    public function write(string $data): void {
       if (
-        (string)$data !== '' &&
+        $data !== '' &&
         $this->isActive() &&
         (-1 === @stream_socket_sendto($this->_stream, $data))
       ) {
@@ -82,7 +87,7 @@ namespace Carica\Io\Network {
       }
     }
 
-    public function close() {
+    public function close() : void {
       if ($this->isActive()) {
         stream_socket_shutdown($this->_stream, STREAM_SHUT_RDWR);
         $this->events()->emit(self::EVENT_CLOSE);

@@ -16,7 +16,7 @@ namespace Carica\Io\Event\Loop\StreamSelect\Listener {
      */
     private $_callback;
 
-    public function __construct(Event\Loop $loop, Callable $callback, $milliseconds) {
+    public function __construct(Event\Loop $loop, Callable $callback, int $milliseconds) {
       parent::__construct($loop);
       $this->_interval = (int)$milliseconds;
       $this->_callback = $callback;
@@ -37,12 +37,12 @@ namespace Carica\Io\Event\Loop\StreamSelect\Listener {
       $this->_next = $this->getNow() + $this->_interval;
     }
 
-    private function getNow() {
+    private function getNow(): int {
       $loop = $this->getLoop();
       if ($loop instanceOf Event\Loop\Clock) {
         return $loop->getNow();
       }
-      return ceil(microtime(TRUE) * 1000);
+      return (int)ceil(microtime(TRUE) * 1000);
     }
   }
 }

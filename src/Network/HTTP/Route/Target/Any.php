@@ -9,13 +9,10 @@ namespace Carica\Io\Network\HTTP\Route\Target {
 
   class Any extends RouteTarget {
 
-    private $_methods = array();
+    private $_methods = [];
 
-    public function methods($methods): void {
-      $this->_methods = array();
-      if (is_string($methods)) {
-        $methods = explode(' ', $methods);
-      }
+    public function methods(string ...$methods): void {
+      $this->_methods = [];
       foreach ($methods as $method) {
         $method = strtoupper(trim($method));
         if ($method !== '') {
@@ -37,11 +34,15 @@ namespace Carica\Io\Network\HTTP\Route\Target {
       );
     }
 
-    public function validate(HTTPRequest $request) {
+    /**
+     * @param HTTPRequest $request
+     * @return array|null
+     */
+    public function prepare(HTTPRequest $request): ?array {
       if (!$this->validateMethod($request->method)) {
-        return FALSE;
+        return NULL;
       }
-      return array();
+      return [];
     }
   }
 }

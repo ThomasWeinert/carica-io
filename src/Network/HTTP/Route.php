@@ -39,7 +39,7 @@ namespace Carica\Io\Network\HTTP {
      * @param Callable $callback
      * @return MatchTarget
      */
-    public function match($path, Callable $callback): MatchTarget {
+    public function match(string $path, Callable $callback): MatchTarget {
       $this->_targets[] = $target = new MatchTarget($callback, $path);
       return $target;
     }
@@ -52,7 +52,7 @@ namespace Carica\Io\Network\HTTP {
      * @param callable $callback
      * @return StartsWithTarget
      */
-    public function startsWith($path, Callable $callback): StartsWithTarget {
+    public function startsWith(string $path, Callable $callback): StartsWithTarget {
       $this->_targets[] = $target = new StartsWithTarget($callback, $path);
       return $target;
     }
@@ -63,7 +63,7 @@ namespace Carica\Io\Network\HTTP {
      * @param Request $request
      * @return NULL|Response
      */
-    public function __invoke($request) {
+    public function __invoke(Request $request): ?Response {
       return $this->fire($request);
     }
 

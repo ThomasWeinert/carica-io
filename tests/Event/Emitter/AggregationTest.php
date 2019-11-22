@@ -95,6 +95,7 @@ namespace Carica\Io\Event\Emitter {
     }
 
     public function testAttachFailureExpectingException(): void {
+      /** @var MockObject|Emitter $events */
       $events = $this->createMock(Emitter::class);
       $events
         ->expects($this->once())
@@ -109,6 +110,7 @@ namespace Carica\Io\Event\Emitter {
     }
 
     public function testAttachFailureSilentExpectingFalse(): void {
+      /** @var MockObject|Emitter $events */
       $events = $this->createMock(Emitter::class);
       $events
         ->expects($this->once())

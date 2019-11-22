@@ -75,7 +75,7 @@ namespace Carica\Io\Event {
      * @param string $event
      * @param callable|Emitter\Listener $listener
      */
-    public function on(string $event, $listener): void {
+    public function on(string $event, callable $listener): void {
       $event = $this->getName($event);
       $listener = $listener instanceOf Emitter\Listener
         ? $listener : new Emitter\Listener\On($this, $event, $listener);
@@ -90,7 +90,7 @@ namespace Carica\Io\Event {
      * @param string $event
      * @param callable|Emitter\Listener $listener
      */
-    public function once(string $event, $listener): void {
+    public function once(string $event, callable $listener): void {
       $event = $this->getName($event);
       $listener = $listener instanceOf Emitter\Listener\Once
         ? $listener : new Emitter\Listener\Once($this, $event, $listener);
@@ -103,7 +103,7 @@ namespace Carica\Io\Event {
      * @param string $event
      * @param callable|Emitter\Listener $listener
      */
-    public function removeListener(string $event, $listener): void {
+    public function removeListener(string $event, callable $listener): void {
       $event = $this->getName($event);
       if (isset($this->_events[$event])) {
         foreach ($this->_events[$event] as $key => $eventListener) {

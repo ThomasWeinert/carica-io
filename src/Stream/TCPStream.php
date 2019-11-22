@@ -81,7 +81,7 @@ namespace Carica\Io\Stream {
       return FALSE;
     }
 
-    public function close() {
+    public function close(): void {
       if ($resource = $this->resource()) {
         $this->resource(FALSE);
         stream_socket_shutdown($resource, STREAM_SHUT_RDWR);
@@ -101,6 +101,10 @@ namespace Carica\Io\Stream {
       return NULL;
     }
 
+    /**
+     * @param int[]|string $data
+     * @return bool
+     */
     public function write($data): bool {
       if ($resource = $this->resource()) {
         $bytesSent = @stream_socket_sendto(

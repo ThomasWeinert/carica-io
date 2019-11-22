@@ -13,12 +13,21 @@ namespace Carica\Io\Event\Loop\StreamSelect {
      */
     private $_loop;
 
+    /**
+     * @return bool
+     */
     abstract public function tick(): bool;
 
+    /**
+     * @param EventLoop $loop
+     */
     public function __construct(EventLoop $loop) {
       $this->_loop = $loop;
     }
 
+    /**
+     * @return EventLoop
+     */
     public function getLoop(): EventLoop {
       return $this->_loop;
     }

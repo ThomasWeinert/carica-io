@@ -32,8 +32,8 @@ namespace Carica\Io\Network {
     }
 
     /**
-     * @param null $stream
-     * @return resource|null
+     * @param NULL|resource $stream
+     * @return resource|NULL
      */
     public function resource($stream = NULL) {
       if (NULL !== $stream && is_resource($stream)) {

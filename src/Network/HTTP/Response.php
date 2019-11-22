@@ -21,11 +21,13 @@ namespace Carica\Io\Network\HTTP {
    */
   class Response {
 
-    private $_version = '1.1';
+    public const HTTP_1_0 = '1.0';
+    public const HTTP_1_1 = '1.1';
+    private $_version = self::HTTP_1_1;
 
     private $_status = 200;
 
-    protected $_statusStrings = array(
+    protected $_statusStrings = [
       100 => 'Continue',
       101 => 'Switching Protocols',
       102 => 'Processing',
@@ -76,7 +78,7 @@ namespace Carica\Io\Network\HTTP {
       506 => 'Variant Also Negotiates',
       507 => 'Insufficient Storage',
       510 => 'Not Extended'
-    );
+    ];
 
     private $_connection;
     private $_headers;
@@ -147,8 +149,8 @@ namespace Carica\Io\Network\HTTP {
       );
     }
 
-    public function setVersion($version): void {
-      if (in_array($version, array('1.0', '1.1'))) {
+    public function setVersion(string $version): void {
+      if (in_array($version, [self::HTTP_1_0, self::HTTP_1_1], TRUE)) {
         $this->_version = $version;
       } else {
         throw new InvalidArgumentException(
@@ -157,8 +159,7 @@ namespace Carica\Io\Network\HTTP {
       }
     }
 
-    public function setStatus($status): void {
-      $status = (int)$status;
+    public function setStatus(int $status): void {
       if (isset($this->_statusStrings[$status])) {
         $this->_status = $status;
       } else {

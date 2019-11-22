@@ -44,7 +44,7 @@ namespace Carica\Io {
      * @param integer $length
      * @throws OutOfRangeException
      */
-    public function setLength($length) {
+    public function setLength(int $length) {
       if ((int)$length < 1) {
         throw new OutOfRangeException('Zero or negative length is not possible');
       }
@@ -80,10 +80,11 @@ namespace Carica\Io {
      *
      * @param string $string
      * @param boolean $resize to binary string length
+     * @return $this
      * @throws OutOfRangeException
      * @throws OutOfBoundsException
      */
-    public function fromString(string $string, bool $resize = FALSE) {
+    public function fromString(string $string, bool $resize = FALSE): self {
       if ($resize && strlen($string) !== $this->getLength()) {
         $this->setLength(strlen($string));
       }
@@ -99,6 +100,7 @@ namespace Carica\Io {
           )
         );
       }
+      return $this;
     }
 
     /**
@@ -106,10 +108,11 @@ namespace Carica\Io {
      *
      * @param string $string
      * @param boolean $resize
+     * @return $this
      * @throws OutOfRangeException
      * @throws OutOfBoundsException
      */
-    public function fromHexString(string $string, bool $resize = FALSE) {
+    public function fromHexString(string $string, bool $resize = FALSE): self {
       $string = str_replace(' ', '', $string);
       $length = (int)floor(strlen($string) / 2);
       if ($resize && $length !== $this->getLength()) {
@@ -126,6 +129,7 @@ namespace Carica\Io {
           )
         );
       }
+      return $this;
     }
 
     /**
@@ -133,10 +137,11 @@ namespace Carica\Io {
      *
      * @param array $bytes
      * @param boolean $resize
+     * @return $this
      * @throws OutOfRangeException
      * @throws OutOfBoundsException
      */
-    public function fromArray(array $bytes, bool $resize = FALSE) {
+    public function fromArray(array $bytes, bool $resize = FALSE): self {
       $length = count($bytes);
       if ($resize && $length !== $this->getLength()) {
         $this->setLength($length);
@@ -152,13 +157,13 @@ namespace Carica\Io {
           )
         );
       }
+      return $this;
     }
 
     /**
      * Get the byte array as an hexadecimal encoded string.
      *
      * @param string $separator
-     *
      * @return string
      */
     public function asHex(string $separator = ''): string {
@@ -201,7 +206,7 @@ namespace Carica\Io {
      * If the $offset is an integer it is the byte offset.
      *
      * @see ArrayAccess::offsetExists()
-     * @param integer|array(integer,integer) $offset
+     * @param int|array(int,int) $offset
      * @return bool
      */
     public function offsetExists($offset): bool {
@@ -294,7 +299,7 @@ namespace Carica\Io {
      * @param integer|array(integer,integer) $offset
      * @throws OutOfBoundsException
      */
-    private function validateOffset($offset) {
+    private function validateOffset($offset): void {
       if (is_array($offset)) {
         $this->validateBitOffset($offset);
       } elseif ($offset < 0 || $offset >= $this->_length) {
@@ -312,7 +317,7 @@ namespace Carica\Io {
      * @param int[] $offset
      * @throws OutOfBoundsException
      */
-    private function validateBitOffset(array $offset) {
+    private function validateBitOffset(array $offset): void {
       if (count($offset) !== 2) {
         throw new OutOfBoundsException(
           sprintf(
@@ -366,12 +371,12 @@ namespace Carica\Io {
     /**
      * Create an ByteArray from an hexadecimal byte string
      * @param string $hexString
-     * @return ByteArray
+     * @return self
      * @throws OutOfRangeException
      * @throws OutOfBoundsException
      */
-    public static function createFromHex(string $hexString): ByteArray {
-      $bytes = new ByteArray();
+    public static function createFromHex(string $hexString): self {
+      $bytes = new self();
       $bytes->fromHexString($hexString, TRUE);
       return $bytes;
     }
@@ -380,12 +385,12 @@ namespace Carica\Io {
      * Create a new ByteArray from an array of bytes
      *
      * @param array $array
-     * @return ByteArray
+     * @return self
      * @throws OutOfBoundsException
      * @throws OutOfRangeException
      */
-    public static function createFromArray(array $array): ByteArray {
-      $bytes = new ByteArray();
+    public static function createFromArray(array $array): self {
+      $bytes = new self();
       $bytes->fromArray($array, TRUE);
       return $bytes;
     }

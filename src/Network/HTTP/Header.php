@@ -29,6 +29,7 @@ namespace Carica\Io\Network\HTTP {
 
     /**
      * The http header name
+     *
      * @var string
      */
     private $_name = '';
@@ -41,7 +42,7 @@ namespace Carica\Io\Network\HTTP {
      * @param string $name
      * @param string|array|Traversable $data
      */
-    public function __construct(string $name, $data = array()) {
+    public function __construct(string $name, $data = []) {
       $this->setName($name);
       $this->setData($data);
     }
@@ -67,7 +68,7 @@ namespace Carica\Io\Network\HTTP {
      * @param string|array|Traversable
      */
     public function setData($data) {
-      $this->_values = new ArrayObject;
+      $this->_values = new ArrayObject();
       if (is_array($data) || $data instanceOf Traversable) {
         foreach ($data as $value) {
           $this->_values[] = trim((string)$value);
@@ -79,6 +80,7 @@ namespace Carica\Io\Network\HTTP {
 
     /**
      * Casting the object to string will return the last value
+     *
      * @return string
      */
     public function __toString() {
@@ -103,7 +105,7 @@ namespace Carica\Io\Network\HTTP {
     /**
      * @param string $name
      * @return string|mixed|ArrayObject
-     *@throws LogicException
+     * @throws LogicException
      */
     public function __get($name) {
       switch ($name) {

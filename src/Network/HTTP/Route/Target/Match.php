@@ -28,19 +28,19 @@ namespace Carica\Io\Network\HTTP\Route\Target {
       }
     }
 
-    public function validate(HTTPRequest $request) {
-      if (FALSE === parent::validate($request)) {
-        return FALSE;
+    public function prepare(HTTPRequest $request): ?array  {
+      if (NULL === parent::prepare($request)) {
+        return NULL;
       }
       $parameters = array();
       if ($this->_pathLength > 0) {
         $parts = explode('/', $request->path);
         if (!$this->validateLength(count($parts))) {
-          return FALSE;
+          return NULL;
         }
         foreach ($this->_pathMatches as $index => $match) {
           if ($parts[$index] !== $match) {
-            return FALSE;
+            return NULL;
           }
         }
         foreach ($this->_pathParameters as $index => $name) {

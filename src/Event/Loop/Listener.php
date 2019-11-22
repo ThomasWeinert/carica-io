@@ -9,6 +9,6 @@ namespace Carica\Io\Event\Loop {
 
     public function getLoop(): EventLoop;
 
-    public function remove();
+    public function remove(): void;
   }
 }

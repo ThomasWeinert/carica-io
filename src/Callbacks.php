@@ -72,7 +72,7 @@ namespace Carica\Io {
      * @param callable $callback
      * @return boolean
      */
-    public function has(Callable $callback): bool {
+    public function has(callable $callback): bool {
       $hash = $this->getCallableHash($callback);
       return isset($this->_callbacks[$hash]);
     }

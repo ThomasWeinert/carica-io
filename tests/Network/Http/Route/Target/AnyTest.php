@@ -28,7 +28,7 @@ namespace Carica\Io\Network\HTTP\Route\Target {
       $target = new Any(
         static function() use (&$result) { $result = TRUE; }
       );
-      $target->methods('GET POST');
+      $target->methods('GET', 'POST');
       $target($this->getRequestFixture('POST'));
       $this->assertTrue($result);
     }
@@ -61,7 +61,6 @@ namespace Carica\Io\Network\HTTP\Route\Target {
         ->disableOriginalConstructor()
         ->getMock();
       $request
-        ->expects($this->any())
         ->method('__get')
         ->with('method')
         ->willReturn($method);

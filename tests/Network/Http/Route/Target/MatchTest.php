@@ -34,13 +34,13 @@ namespace Carica\Io\Network\HTTP\Route\Target {
     public function testWithValidPaths($path, $expectedParameters): void {
       $result = FALSE;
       $target = new Match(
-        static function (HTTP\Request $request, $parameters) use (&$result) {
+        function (/** @noinspection PhpUnusedParameterInspection */ HTTP\Request $request, $parameters) use (&$result) {
           $result = $parameters;
-          return TRUE;
+          return $this->createMock(HTTP\Response::class);
         },
         $path
       );
-      $this->assertTrue($target($this->getRequestFixture()));
+      $this->assertNotNull($target($this->getRequestFixture()));
       $this->assertEquals($expectedParameters, $result);
     }
 
@@ -60,11 +60,11 @@ namespace Carica\Io\Network\HTTP\Route\Target {
     public function testWithInvalidPaths($path): void {
       $target = new Match(
         static function () {
-          return TRUE;
+          return $this->createMock(HTTP\Response::class);
         },
         $path
       );
-      $this->assertFalse($target($this->getRequestFixture()));
+      $this->assertNull($target($this->getRequestFixture()));
     }
 
     public static function provideInvalidPaths(): array {
@@ -84,7 +84,6 @@ namespace Carica\Io\Network\HTTP\Route\Target {
         ->disableOriginalConstructor()
         ->getMock();
       $request
-        ->expects($this->any())
         ->method('__get')
         ->willReturnMap(
           [

@@ -78,7 +78,7 @@ namespace Carica\Io\Event\Loop {
       $this->_running = FALSE;
     }
 
-    public function tick($milliseconds = 1): void {
+    public function tick(int $milliseconds = 1): void {
       $stop = $this->_currentTime + $milliseconds;
       while ($this->_currentTime < $stop) {
         $this->_currentTime += $this->_resolution;

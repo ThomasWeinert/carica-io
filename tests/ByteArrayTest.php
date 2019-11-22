@@ -89,6 +89,7 @@ namespace Carica\Io {
       $bytes = new ByteArray($length);
       $bytes->fromHexString($string);
       $this->assertSame($string, $bytes->asHex());
+      $this->assertSame($binaryString, (string)$bytes);
     }
 
     public function testFromHexStringWithInvalidLengthExpectingException(): void {

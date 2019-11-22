@@ -12,6 +12,11 @@ namespace Carica\Io\Event {
 
     public function setInterval(callable $callback, int $milliseconds): EventLoopListener;
 
+    /**
+     * @param callable $callback
+     * @param resource $stream
+     * @return EventLoopListener
+     */
     public function setStreamReader(callable $callback, $stream): EventLoopListener;
 
     public function remove(EventLoopListener $listener): void;

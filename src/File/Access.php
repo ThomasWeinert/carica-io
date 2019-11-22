@@ -35,7 +35,7 @@ namespace Carica\Io\File {
      * @param string $filename
      * @return SplFileInfo
      */
-    public function getInfo($filename): SplFileInfo {
+    public function getInfo(string $filename): SplFileInfo {
       return new SplFileInfo($filename);
     }
 
@@ -47,7 +47,7 @@ namespace Carica\Io\File {
      * @param resource $context
      * @return SplFileObject
      */
-    public function getFile($filename, $mode = 'rb', $context = NULL): ?SplFileObject {
+    public function getFile(string $filename, string $mode = 'rb', $context = NULL): ?SplFileObject {
       if (NULL === $context) {
         return new SplFileObject($filename, $mode, FALSE);
       }
@@ -62,7 +62,7 @@ namespace Carica\Io\File {
      * @param resource $context
      * @return resource
      */
-    public function getFileResource($filename, $mode = 'rb', $context = NULL) {
+    public function getFileResource(string $filename, string $mode = 'rb', $context = NULL) {
       if (NULL === $context) {
         return fopen($filename, $mode, FALSE);
       }

@@ -25,12 +25,12 @@ namespace Carica\Io\Network\HTTP\Route {
         ->disableOriginalConstructor()
         ->getMock();
       $target = new Target_TestProxy(
-        static function() {
-          return TRUE;
+        function() {
+          return $this->createMock(HTTP\Response::class);
         }
       );
       $target->validationResult = array();
-      $this->assertTrue($target($request));
+      $this->assertNotNull($target($request));
     }
 
     public function testCallableInterfaceValidationFailed(): void {
@@ -40,12 +40,12 @@ namespace Carica\Io\Network\HTTP\Route {
         ->disableOriginalConstructor()
         ->getMock();
       $target = new Target_TestProxy(
-        static function() {
-          return TRUE;
+        function() {
+          return $this->createMock(HTTP\Response::class);
         }
       );
-      $target->validationResult = FALSE;
-      $this->assertFalse($target($request));
+      $target->validationResult = NULL;
+      $this->assertNull($target($request));
     }
   }
 
@@ -53,7 +53,7 @@ namespace Carica\Io\Network\HTTP\Route {
 
     public $validationResult;
 
-    public function validate(HTTP\Request $request) {
+    public function prepare(HTTP\Request $request): ?array {
       return $this->validationResult;
     }
   }

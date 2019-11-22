@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Carica\Io\Network\HTTP\Route {
 
   use Carica\Io\Network\HTTP\Request as HTTPRequest;
+  use Carica\Io\Network\HTTP\Response;
 
   abstract class Target {
 
@@ -17,14 +18,14 @@ namespace Carica\Io\Network\HTTP\Route {
       return $this->_callback;
     }
 
-    public function __invoke(HTTPRequest $request) {
-      $parameters = $this->validate($request);
+    public function __invoke(HTTPRequest $request): ?Response {
+      $parameters = $this->prepare($request);
       if (is_array($parameters)) {
         return ($this->getCallback())($request, $parameters);
       }
-      return FALSE;
+      return NULL;
     }
 
-    abstract public function validate(HTTPRequest $request);
+    abstract public function prepare(HTTPRequest $request): ?array;
   }
 }

@@ -38,6 +38,10 @@ namespace Carica\Io\Stream {
       $this->close();
     }
 
+    /**
+     * @param null|resource|FALSE $resource
+     * @return resource|null
+     */
     public function resource($resource = NULL) {
       if ($resource === FALSE) {
         $this->_resource = NULL;
@@ -74,7 +78,7 @@ namespace Carica\Io\Stream {
       return FALSE;
     }
 
-    public function close() {
+    public function close(): void {
       if ($resource = $this->resource()) {
         fclose($resource);
       }

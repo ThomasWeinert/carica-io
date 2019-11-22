@@ -50,7 +50,7 @@ namespace Carica\Io\Network\HTTP\Route {
       $this->_encodings[$mimeType] = $encoding;
     }
 
-    public function getEncoding($mimeType): string {
+    public function getEncoding(string $mimeType): string {
       return $this->_encodings[$mimeType] ?? '';
     }
 
@@ -73,16 +73,16 @@ namespace Carica\Io\Network\HTTP\Route {
 
     /**
      * @param HTTPRequest $request
-     * @return SplFileInfo|FALSE
+     * @return SplFileInfo|NULL
      */
-    private function getFileInfo(HTTPRequest $request) {
+    private function getFileInfo(HTTPRequest $request): ?SplFileInfo {
       if (
         ($localFile = $this->fileAccess()->getRealPath($this->_documentRoot.$request->path)) &&
         (0 === strpos($localFile, $this->_documentRoot.DIRECTORY_SEPARATOR))
       ) {
         return $this->fileAccess()->getInfo($localFile);
       }
-      return FALSE;
+      return NULL;
     }
   }
 }

@@ -29,7 +29,7 @@ namespace Carica\Io\Stream {
      * @param string $filename
      * @param string $mode
      */
-    public function __construct(EventLoop $loop, $filename, $mode = 'rb') {
+    public function __construct(EventLoop $loop, string $filename, string $mode = 'rb') {
       $this->loop($loop);
       $this->_filename = $filename;
       $this->_mode = $mode;
@@ -46,7 +46,7 @@ namespace Carica\Io\Stream {
      * Read/Write the file resource, if it is an valid resource attach
      * the an event listener to the loop, that calls read on new data
      *
-     * @param resource|FALSE $resource
+     * @param resource|FALSE|NULL $resource
      * @return NULL|resource
      */
     public function resource($resource = NULL) {
@@ -117,7 +117,7 @@ namespace Carica\Io\Stream {
     /**
      * Write some bytes to the file resource
      *
-     * @param string|array(integer) $data
+     * @param string|int[] $data
      * @return bool
      */
     public function write($data): bool {

@@ -6,21 +6,23 @@ namespace Carica\Io {
   use Carica\Io\Deferred\PromiseLike;
 
   /**
-  * A deferred object implementation, allows to schedule callbacks for
-  * execution after a condition is meet or not.
-  *
-  */
+   * A deferred object implementation, allows to schedule callbacks for
+   * execution after a condition is meet or not.
+   *
+   */
   class Deferred implements PromiseLike {
 
     /**
      * current state
      * .
+     *
      * @var string
      */
     private $_state = self::STATE_PENDING;
     /**
      * An promise for this object
      * .
+     *
      * @var Deferred\Promise
      */
     private $_promise;
@@ -28,19 +30,22 @@ namespace Carica\Io {
     /**
      * Callbacks if the object is resolved
      * .
-     * @var Callable|Callbacks
+     *
+     * @var callable|Callbacks
      */
     private $_done;
     /**
      * Callbacks if the object is rejected
      * .
-     * @var Callable|Callbacks
+     *
+     * @var callable|Callbacks
      */
     private $_failed;
     /**
      * Callbacks if the object is notified about a progress
      * .
-     * @var Callable|Callbacks
+     *
+     * @var callable|Callbacks
      */
     private $_progress;
 
@@ -48,6 +53,7 @@ namespace Carica\Io {
      * buffer for the arguments of the resolve/reject function,
      * used to execute functions, that are added after the object was finalized
      * .
+     *
      * @var array
      */
     private $_finishArguments = [];
@@ -55,6 +61,7 @@ namespace Carica\Io {
      * Buffer for the last progress notification arguments, used
      * to bring new callback up to date.
      * .
+     *
      * @var NULL|array
      */
     private $_progressArguments;
@@ -72,10 +79,10 @@ namespace Carica\Io {
      * Add a callback that will be execute if the object is finalized with
      * resolved or reject
      *
-     * @param Callable $callback
+     * @param callable $callback
      * @return PromiseLike
      */
-    public function always(Callable $callback): PromiseLike {
+    public function always(callable $callback): PromiseLike {
       $this->_done->add($callback);
       $this->_failed->add($callback);
       $this->callIf(
@@ -90,10 +97,10 @@ namespace Carica\Io {
     /**
      * Add a callback that will be executed if the object is resolved
      *
-     * @param Callable $callback
+     * @param callable $callback
      * @return PromiseLike
      */
-    public function done(Callable $callback): PromiseLike {
+    public function done(callable $callback): PromiseLike {
       $this->_done->add($callback);
       $this->callIf(
         $this->_state === self::STATE_RESOLVED,
@@ -106,10 +113,10 @@ namespace Carica\Io {
     /**
      * Add a callback that will be executed if the object was rejected
      *
-     * @param Callable $callback
+     * @param callable $callback
      * @return PromiseLike
      */
-    public function fail(Callable $callback): PromiseLike {
+    public function fail(callable $callback): PromiseLike {
       $this->_failed->add($callback);
       $this->callIf(
         $this->_state === self::STATE_REJECTED,
@@ -146,6 +153,7 @@ namespace Carica\Io {
 
     /**
      * Notify the object about the progress
+     *
      * @param array $arguments
      * @return $this
      */
@@ -161,10 +169,10 @@ namespace Carica\Io {
     /**
      * Add a callback that will be executed if the object is notified about progress
      *
-     * @param Callable $callback
+     * @param callable $callback
      * @return PromiseLike
      */
-    public function progress(Callable $callback): PromiseLike {
+    public function progress(callable $callback): PromiseLike {
       $this->_progress->add($callback);
       if (NULL !== $this->_progressArguments) {
         $callback(...$this->_progressArguments);
@@ -209,6 +217,7 @@ namespace Carica\Io {
 
     /**
      * Reset state to pending
+     *
      * @return $this
      */
     public function restart(): self {
@@ -247,30 +256,30 @@ namespace Carica\Io {
     /**
      * Filter and/or chain Deferred instances.
      *
-     * @param Callable $doneFilter
-     * @param Callable $failFilter
-     * @param Callable $progressFilter
+     * @param callable $doneFilter
+     * @param callable $failFilter
+     * @param callable $progressFilter
      * @return PromiseLike
      */
     public function then(
-      Callable $doneFilter = NULL,
-      Callable $failFilter = NULL,
-      Callable $progressFilter = NULL
+      callable $doneFilter = NULL,
+      callable $failFilter = NULL,
+      callable $progressFilter = NULL
     ): PromiseLike {
       $defer = new Deferred();
       $this->done(
         function (...$arguments) use ($defer, $doneFilter) {
-          $this->callFilter($doneFilter, array($defer, 'resolve'), $arguments);
+          $this->callFilter($doneFilter, [$defer, 'resolve'], $arguments);
         }
       );
       $this->fail(
-        function (...$arguments) use ($defer, $failFilter){
-          $this->callFilter($failFilter, array($defer, 'reject'), $arguments);
+        function (...$arguments) use ($defer, $failFilter) {
+          $this->callFilter($failFilter, [$defer, 'reject'], $arguments);
         }
       );
       $this->progress(
-        function (...$arguments) use ($defer, $progressFilter){
-          $this->callFilter($progressFilter, array($defer, 'notify'), $arguments);
+        function (...$arguments) use ($defer, $progressFilter) {
+          $this->callFilter($progressFilter, [$defer, 'notify'], $arguments);
         }
       );
       return $defer->promise();
@@ -301,7 +310,7 @@ namespace Carica\Io {
      */
     private function callFilter($filter, callable $callback, array $arguments): void {
       if ($filter) {
-        $arguments = array($filter(...$arguments));
+        $arguments = [$filter(...$arguments)];
       }
       $callback(...$arguments);
     }
@@ -338,12 +347,12 @@ namespace Carica\Io {
       }
       if ($counter > 0) {
         $master = new Deferred();
-        $resolveArguments = array();
+        $resolveArguments = [];
         foreach ($arguments as $index => $argument) {
           if ($argument instanceOf PromiseLike) {
             $argument
               ->done(
-                static function(...$arguments) use ($master, $index, &$counter, &$resolveArguments) {
+                static function (...$arguments) use ($master, $index, &$counter, &$resolveArguments) {
                   $resolveArguments[$index] = $arguments;
                   if (--$counter === 0) {
                     ksort($resolveArguments);
@@ -352,12 +361,12 @@ namespace Carica\Io {
                 }
               )
               ->fail(
-                static function(...$arguments) use ($master) {
+                static function (...$arguments) use ($master) {
                   $master->reject(...$arguments);
                 }
               );
           } else {
-            $resolveArguments[$index] = array($argument);
+            $resolveArguments[$index] = [$argument];
             if (--$counter === 0) {
               ksort($resolveArguments);
               $master->resolve(...$resolveArguments);
