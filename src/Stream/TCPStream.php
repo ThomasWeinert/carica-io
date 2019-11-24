@@ -32,6 +32,10 @@ namespace Carica\Io\Stream {
       $this->close();
     }
 
+    /**
+     * @param resource|FALSE|NULL $resource
+     * @return resource|NULL
+     */
     public function resource($resource = NULL) {
       if ($resource === FALSE) {
         $this->_resource = NULL;
