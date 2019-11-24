@@ -65,7 +65,7 @@ namespace Carica\Io\Stream {
         'tcp://'.$this->_host.':'.$this->_port, $no, $string, 2
       );
       if ($resource) {
-        stream_set_blocking($resource, 0);
+        stream_set_blocking($resource, FALSE);
         stream_set_read_buffer($resource, 0);
         stream_set_write_buffer($resource, 0);
         stream_set_timeout($resource, 10000);
