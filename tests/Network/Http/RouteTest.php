@@ -51,6 +51,13 @@ namespace Carica\Io\Network\HTTP {
         ->getMockBuilder(Request::class)
         ->disableOriginalConstructor()
         ->getMock();
+      $request
+        ->method('__get')
+        ->willReturnMap(
+          [
+            ['method', 'get']
+          ]
+        );
       $response = $this
         ->getMockBuilder(Response::class)
         ->disableOriginalConstructor()
@@ -71,6 +78,13 @@ namespace Carica\Io\Network\HTTP {
         ->getMockBuilder(Request::class)
         ->disableOriginalConstructor()
         ->getMock();
+      $request
+        ->method('__get')
+        ->willReturnMap(
+          [
+            ['method', 'get']
+          ]
+        );
 
       $route = new Route();
       $route->any(
