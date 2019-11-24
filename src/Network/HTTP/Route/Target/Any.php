@@ -27,7 +27,7 @@ namespace Carica\Io\Network\HTTP\Route\Target {
       }
     }
 
-    protected function validateMethod($method): bool {
+    protected function validateMethod(string $method): bool {
       return (
         empty($this->_methods) ||
         in_array(strToUpper($method), $this->_methods, TRUE)

@@ -53,7 +53,7 @@ namespace Carica\Io\Network\HTTP {
       unset($this->_headers[$this->prepareKey($name)]);
     }
 
-    private function prepareKey(string $name) {
+    private function prepareKey(string $name): string {
       $name = trim($name);
       if (empty($name)) {
         throw new InvalidArgumentException('The header name can not be empty.');
