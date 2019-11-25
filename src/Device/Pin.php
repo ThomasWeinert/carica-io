@@ -36,7 +36,7 @@ namespace Carica\Io\Device {
      *
      * @param bool $isHigh
      */
-    public function setDigital(bool $isHigh);
+    public function setDigital(bool $isHigh): void;
 
     /**
      * Get the value of a digital pin
@@ -49,7 +49,7 @@ namespace Carica\Io\Device {
      *
      * @param float $percent 0.0 - 1.0
      */
-    public function setAnalog(float $percent);
+    public function setAnalog(float $percent): void;
 
     /**
      * @return float
